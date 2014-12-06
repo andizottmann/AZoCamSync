@@ -3,7 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package azocamsyncdesktop;
+package de.quadrillenschule.azocamsyncd;
+
+import com.sun.webkit.Timer;
+import de.quadrillenschule.azocamsyncd.ftpservice.FTPConnection;
+import gui.AZoCamSyncJFrame;
+import javax.swing.SwingWorker;
 
 /**
  *
@@ -15,7 +20,8 @@ public class AZoCamSyncDesktop {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+        AZoCamSyncJFrame f=new AZoCamSyncJFrame();
+        f.setVisible(true);
     }
-    
+
 }
