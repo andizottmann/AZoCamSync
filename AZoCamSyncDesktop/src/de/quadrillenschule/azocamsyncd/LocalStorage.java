@@ -17,11 +17,12 @@ import java.util.Date;
  */
 public class LocalStorage {
 
-    File directory;
+    private File directory;
+    private File latestIncoming;
     private boolean useDateFolders = true;
     private boolean overwriteLocalFiles = true;
     //
-    private String dateFormat = "yyyy_MM_dd";
+    private String dateFormat;
 
     public LocalStorage(File directory) {
         this.directory = directory;
@@ -36,7 +37,7 @@ public class LocalStorage {
         if (isUseDateFolders()) {
             SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
 
-            dir = new File(directory, sdf.format(af.ftpFile.getTimestamp().getTime()));
+            dir = new File(getDirectory(), sdf.format(af.ftpFile.getTimestamp().getTime()));
             try {
                 dir.mkdir();
             } catch (Exception ex) {
@@ -46,7 +47,7 @@ public class LocalStorage {
             }
 
         } else {
-            dir = directory;
+            dir = getDirectory();
         }
         retval = new File(dir, af.ftpFile.getName());
 
@@ -69,6 +70,7 @@ public class LocalStorage {
         if (!retval.canWrite()) {
             return false;
         }
+        
         return true;
     }
 
@@ -113,6 +115,34 @@ public class LocalStorage {
      */
     public void setUseDateFolders(boolean useDateFolders) {
         this.useDateFolders = useDateFolders;
+    }
+
+    /**
+     * @return the directory
+     */
+    public File getDirectory() {
+        return directory;
+    }
+
+    /**
+     * @param directory the directory to set
+     */
+    public void setDirectory(File directory) {
+        this.directory = directory;
+    }
+
+    /**
+     * @return the latestIncoming
+     */
+    public File getLatestIncoming() {
+        return latestIncoming;
+    }
+
+    /**
+     * @param latestIncoming the latestIncoming to set
+     */
+    public void setLatestIncoming(File latestIncoming) {
+        this.latestIncoming = latestIncoming;
     }
 
 }

@@ -10,6 +10,6 @@ package de.quadrillenschule.azocamsyncd.ftpservice;
  * @author Andreas
  */
 public interface FTPConnectionListener {
-    public static enum FTPConnectionStatus{TRYING,DOWNLOADING,CONNECTED,SUCCESS,NOCONNECTION,DOWNLOADERROR,LOCALSTORAGEERROR,NUMBER_OF_FILES_DETECTED,NUMBER_OF_SYNCHRONISABLE_FILES_DETECTED};
+    public static enum FTPConnectionStatus{TRYING,DOWNLOADING,CONNECTED,SUCCESS,NOCONNECTION,DOWNLOADERROR,LOCALSTORAGEERROR,NUMBER_OF_FILES_DETECTED,NUMBER_OF_SYNCHRONISABLE_FILES_DETECTED,DELETING_FILES,NEW_LOCAL_FILE};
     public void receiveNotification(FTPConnectionStatus status, String message, int progress);
 }

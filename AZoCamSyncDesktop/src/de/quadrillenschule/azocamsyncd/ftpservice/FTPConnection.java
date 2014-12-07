@@ -5,6 +5,7 @@
  */
 package de.quadrillenschule.azocamsyncd.ftpservice;
 
+import de.quadrillenschule.azocamsyncd.GlobalProperties;
 import de.quadrillenschule.azocamsyncd.LocalStorage;
 import de.quadrillenschule.azocamsyncd.ftpservice.FTPConnectionListener.FTPConnectionStatus;
 import java.io.File;
@@ -12,10 +13,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.CountingOutputStream;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
@@ -29,19 +33,22 @@ public class FTPConnection {
 
     LinkedList<FTPConnectionListener> ftpConnectionListeners = new LinkedList();
 
-    private String[] possibleConnections = {"192.168.178.254","192.168.178.32"};
+    private String[] possibleConnections = {};
     private String lastWorkingConnection = "";
     private String fileTypes[] = {"JPG", "NEF", "CR2", "TIF"};
     FTPClient ftpclient;
     LinkedList<FTPFile> remotePictureDirs = new LinkedList<>();
+    public CountingOutputStream cos;
+    public long downloadsize = 0;
 
     public FTPConnection() {
+
     }
 
     public LinkedList<AZoFTPFile> checkConnection() {
-        if (lastWorkingConnection != "") {
+        if (getLastWorkingConnection() != "") {
             LinkedList<String> t = new LinkedList<>();
-            t.add(lastWorkingConnection);
+            t.add(getLastWorkingConnection());
             for (String s : possibleConnections) {
                 if (!s.equals(lastWorkingConnection)) {
                     t.add(s);
@@ -54,7 +61,7 @@ public class FTPConnection {
             ftpclient = new FTPClient();
 
             try {
-                ftpclient.setDefaultTimeout(10000);
+                ftpclient.setDefaultTimeout(5000);
                 ftpclient.connect(ip);
                 if (ftpclient.isAvailable()) {
                     // ftpclient.setSoTimeout(60000);
@@ -63,15 +70,19 @@ public class FTPConnection {
 
                     lastWorkingConnection = ip;
 
-                    remountSD();
-                    notify(FTPConnectionStatus.SUCCESS, ip, -1);
                     try {
+                        ftpclient.noop();
                         ftpclient.logout();
+
                     } catch (Exception e) {
+                        ftpclient.noop();
+                        ftpclient.logout();
                     }
+                    remountSD();
+                    notify(FTPConnectionStatus.CONNECTED, ip, -1);
+
                     return retval;
                 }
-
             } catch (IOException ex) {
 
                 Logger.getLogger(FTPConnection.class.getName()).log(Level.INFO, null, ex);
@@ -95,10 +106,10 @@ public class FTPConnection {
                 }
                 //   if (ftpclient == null || !ftpclient.isAvailable()) {
                 ftpclient = new FTPClient();
-             //   }
+                //   }
                 //   if (!ftpclient.isConnected()) {
                 ftpclient.setDefaultTimeout(90000);
-                ftpclient.connect(lastWorkingConnection);
+                ftpclient.connect(getLastWorkingConnection());
 
                 ftpclient.enterLocalPassiveMode();
                 //   }
@@ -118,13 +129,16 @@ public class FTPConnection {
     }
 
     public LinkedList<AZoFTPFile> download(LinkedList<AZoFTPFile> afs, LocalStorage localStorage) {
+        if (afs.size() <= 0) {
+            return afs;
+        }
         LinkedList<AZoFTPFile> retval = new LinkedList<>();
         for (AZoFTPFile a : afs) {
             retval.add(a);
         }
 
         downloadConnect();
-        notify(FTPConnectionStatus.CONNECTED, lastWorkingConnection, -1);
+        notify(FTPConnectionStatus.CONNECTED, getLastWorkingConnection(), -1);
 
         for (AZoFTPFile af : afs) {
             File localFile = null;
@@ -150,20 +164,37 @@ public class FTPConnection {
                 }
                 return retval;
             }
+            FileOutputStream fos = null;
+            InputStream is = null;
             try {
+
+                fos = new FileOutputStream(localFile);
+                is = ftpclient.retrieveFileStream(af.dir + af.ftpFile.getName());
+                cos = new CountingOutputStream(fos);
+                downloadsize = af.ftpFile.getSize();
                 notify(FTPConnectionStatus.DOWNLOADING, af.dir + af.ftpFile.getName(), ((int) (100.0 * ((afs.indexOf(af) + 1.0) / (double) afs.size()))));
-                FileOutputStream fos = new FileOutputStream(localFile);
-                InputStream is = ftpclient.retrieveFileStream(af.dir + af.ftpFile.getName());
-                IOUtils.copyLarge(is, fos);
-                boolean complete = ftpclient.completePendingCommand();
-                is.close();
-                fos.close();
-                if (complete) {
+
+                IOUtils.copyLarge(is, cos);
+                while (!ftpclient.completePendingCommand()) {
+                    try {
+                        Thread.currentThread().wait(500);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(FTPConnection.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                };
+
+                if (true) {
+                    is.close();
+                    fos.close();
+                    localStorage.setLatestIncoming(localFile);
+                    notify(FTPConnectionStatus.NEW_LOCAL_FILE, localFile.getAbsolutePath(), -1);
                     retval.remove(af);
                     notify(FTPConnectionStatus.SUCCESS, af.dir + af.ftpFile.getName(), ((int) (100.0 * ((afs.indexOf(af) + 2.0) / (double) afs.size()))));
                 }
             } catch (IOException ex) {
                 try {
+                    is.close();
+                    fos.close();
                     localFile.delete();
                     downloadConnect();
                 } catch (Exception ex2) {
@@ -180,11 +211,51 @@ public class FTPConnection {
         return retval;
     }
 
+    public void deleteFiles(int remainingNumber) {
+        if (remainingNumber < 0) {
+            return;
+        }
+        ftpclient = new FTPClient();
+
+        ftpclient.setDefaultTimeout(3000);
+        try {
+
+            ftpclient.connect(getLastWorkingConnection());
+            LinkedList<AZoFTPFile> afs = discoverRemoteFiles("/");
+            int todelete = afs.size() - remainingNumber;
+            if (todelete > 0) {
+                notify(FTPConnectionStatus.DELETING_FILES, "", -1);
+                int i = 0;
+                Collections.sort(afs, new Comparator<AZoFTPFile>() {
+
+                    @Override
+                    public int compare(AZoFTPFile o1, AZoFTPFile o2) {
+                        return o1.ftpFile.getTimestamp().compareTo(o2.ftpFile.getTimestamp());
+                    }
+                });
+                for (AZoFTPFile af : afs) {
+                    i++;
+                    ftpclient.deleteFile(af.dir + af.ftpFile.getName());
+                    //    System.out.println("Would delete"+af.ftpFile.getName());
+                    if (i >= todelete) {
+                        break;
+                    }
+                }
+                notify(FTPConnectionStatus.SUCCESS, "", -1);
+                ftpclient.logout();
+                remountSD();
+            }
+
+        } catch (IOException ex) {
+            Logger.getLogger(FTPConnection.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     void remountSD() {
         try {
             TelnetClient telnetclient = new TelnetClient();
 
-            telnetclient.connect(lastWorkingConnection);
+            telnetclient.connect(getLastWorkingConnection());
             IOUtils.copy(new StringReader("/usr/bin/refresh_sd\r\n"), telnetclient.getOutputStream());
             telnetclient.disconnect();
         } catch (IOException ex) {
@@ -207,6 +278,7 @@ public class FTPConnection {
             throws IOException {
         LinkedList<AZoFTPFile> retval = new LinkedList();
         for (FTPFile f : ftpclient.listFiles(root)) {
+
             AZoFTPFile af = new AZoFTPFile(f, root);
             if (f.isFile() && isPicture(af) && !retval.contains(af)) {
                 retval.add(af);
@@ -258,6 +330,13 @@ public class FTPConnection {
      */
     public void setFileTypes(String[] fileTypes) {
         this.fileTypes = fileTypes;
+    }
+
+    /**
+     * @return the lastWorkingConnection
+     */
+    public String getLastWorkingConnection() {
+        return lastWorkingConnection;
     }
 
 }

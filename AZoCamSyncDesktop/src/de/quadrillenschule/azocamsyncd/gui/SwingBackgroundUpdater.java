@@ -5,6 +5,7 @@
  */
 package de.quadrillenschule.azocamsyncd.gui;
 
+import de.quadrillenschule.azocamsyncd.GlobalProperties;
 import de.quadrillenschule.azocamsyncd.LocalStorage;
 import de.quadrillenschule.azocamsyncd.ftpservice.AZoFTPFile;
 import de.quadrillenschule.azocamsyncd.ftpservice.FTPConnection;
@@ -26,16 +27,19 @@ public class SwingBackgroundUpdater extends Thread {
     FTPConnection ftpConnection;
     LocalStorage localStorage;
     Timer timer;
+    GlobalProperties gp;
 
-    public SwingBackgroundUpdater(FTPConnection ftpConnection, LocalStorage localStorage, Timer timer) {
+    public SwingBackgroundUpdater(GlobalProperties gp, FTPConnection ftpConnection, LocalStorage localStorage, Timer timer) {
         super();
         this.ftpConnection = ftpConnection;
         this.localStorage = localStorage;
         this.timer = timer;
+        this.gp = gp;
     }
 
     @Override
     public void run() {
+        timer.setInitialDelay(timer.getDelay());
         timer.stop();
         LinkedList<AZoFTPFile> retval = ftpConnection.checkConnection();
         if (retval != null) {
@@ -52,9 +56,14 @@ public class SwingBackgroundUpdater extends Thread {
                 }
             };
             if (r != null) {
-                ftpConnection.notify(FTPConnectionListener.FTPConnectionStatus.NUMBER_OF_SYNCHRONISABLE_FILES_DETECTED,""+ r.size(), -1);
+                ftpConnection.notify(FTPConnectionListener.FTPConnectionStatus.NUMBER_OF_SYNCHRONISABLE_FILES_DETECTED, "" + r.size(), -1);
+                ftpConnection.notify(FTPConnectionListener.FTPConnectionStatus.CONNECTED, ftpConnection.getLastWorkingConnection(), -1);
 
                 ftpConnection.download(r, localStorage);
+                try {
+                    ftpConnection.deleteFiles(Integer.parseInt(gp.getProperty(GlobalProperties.CamSyncProperties.SD_FILELIMIT)));
+                } catch (NumberFormatException nfe) {
+                }
             }
         }
         timer.start();
