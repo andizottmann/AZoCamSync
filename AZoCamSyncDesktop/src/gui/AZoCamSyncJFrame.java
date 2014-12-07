@@ -6,10 +6,17 @@
 package gui;
 
 import com.oracle.jrockit.jfr.ContentType;
+import de.quadrillenschule.azocamsyncd.LocalStorage;
+import de.quadrillenschule.azocamsyncd.ftpservice.AZoFTPFile;
 import de.quadrillenschule.azocamsyncd.ftpservice.FTPConnection;
 import de.quadrillenschule.azocamsyncd.ftpservice.FTPConnectionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.SwingWorker;
 import javax.swing.Timer;
 
@@ -18,14 +25,22 @@ import javax.swing.Timer;
  * @author Andreas
  */
 public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectionListener {
-
+    
+    LocalStorage localStorage;
     Timer checkingTimer;
 
     /**
      * Creates new form AZoCamSyncJFrame
      */
     public AZoCamSyncJFrame() {
+        localStorage = new LocalStorage(new File(System.getProperty("user.home") + System.getProperty("file.separator") + "azocamsync"));
+        
         initComponents();
+        sdCardjProgressBar.setMaximum(100);
+        
+    }
+    
+    public void startService() {
         wifiSdCardEnabledjToggleButtonActionPerformed(null);
     }
 
@@ -41,11 +56,12 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
 
         sdCardjPanel = new javax.swing.JPanel();
         wifiSdCardEnabledjToggleButton = new javax.swing.JToggleButton();
-        sdCardStatusjTextField = new javax.swing.JTextField();
         sdCardPollingIntervalljComboBox = new javax.swing.JComboBox();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
         sdCardjProgressBar = new javax.swing.JProgressBar();
+        imagesOnCardLabel = new javax.swing.JLabel();
+        tobesynchronizedSDjLabel = new javax.swing.JLabel();
+        sdCardMessagejTextField1 = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new java.awt.GridBagLayout());
@@ -68,15 +84,6 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         gridBagConstraints.insets = new java.awt.Insets(27, 16, 73, 16);
         sdCardjPanel.add(wifiSdCardEnabledjToggleButton, gridBagConstraints);
 
-        sdCardStatusjTextField.setText("Service not started...");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 0.7;
-        gridBagConstraints.weighty = 0.5;
-        sdCardjPanel.add(sdCardStatusjTextField, gridBagConstraints);
-
         sdCardPollingIntervalljComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "10 sec", "20 sec", "30 sec", "60 sec" }));
         sdCardPollingIntervalljComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -85,75 +92,112 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         sdCardjPanel.add(sdCardPollingIntervalljComboBox, gridBagConstraints);
 
         jLabel1.setText("Pull Intervall:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         sdCardjPanel.add(jLabel1, gridBagConstraints);
 
-        jLabel2.setText("Status:");
+        sdCardjProgressBar.setString("");
+        sdCardjProgressBar.setStringPainted(true);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        sdCardjPanel.add(sdCardjProgressBar, gridBagConstraints);
+
+        imagesOnCardLabel.setText("Files on card: -");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        sdCardjPanel.add(imagesOnCardLabel, gridBagConstraints);
+
+        tobesynchronizedSDjLabel.setText("Files to be synchronised: -");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
-        sdCardjPanel.add(jLabel2, gridBagConstraints);
+        sdCardjPanel.add(tobesynchronizedSDjLabel, gridBagConstraints);
+
+        sdCardMessagejTextField1.setEditable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 7;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        sdCardjPanel.add(sdCardjProgressBar, gridBagConstraints);
+        sdCardjPanel.add(sdCardMessagejTextField1, gridBagConstraints);
 
-        getContentPane().add(sdCardjPanel, new java.awt.GridBagConstraints());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 0.1;
+        gridBagConstraints.weighty = 0.1;
+        getContentPane().add(sdCardjPanel, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-   private int getMillisecsFromList(){
-       
-   int secs= Integer.parseInt(sdCardPollingIntervalljComboBox.getSelectedItem().toString().split(" ")[0]);
-   return secs*1000;
-   }
+    private int getMillisecsFromList() {
+        
+        int secs = Integer.parseInt(sdCardPollingIntervalljComboBox.getSelectedItem().toString().split(" ")[0]);
+        return secs * 1000;
+    }
+    SwingWorker timeWorker;
     private void wifiSdCardEnabledjToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_wifiSdCardEnabledjToggleButtonActionPerformed
         if (wifiSdCardEnabledjToggleButton.isSelected()) {
             final FTPConnection f = new FTPConnection();
             f.addFTPConnectionListenerOnce(this);
-            if ((checkingTimer != null)&&checkingTimer.isRunning()) {
-                checkingTimer.stop();
-                checkingTimer=null;
-            }
-            checkingTimer = new Timer(getMillisecsFromList(), new ActionListener() {
-
+            
+            ActionListener updateJobAL = new ActionListener() {
+                
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    SwingWorker sw = new SwingWorker() {
-
-                        @Override
-                        protected Object doInBackground() throws Exception {
-                            
-                            long a=System.currentTimeMillis();
-                                     f.checkConnection();
-          
-                            long b=System.currentTimeMillis();
-                            checkingTimer.setDelay((int) (getMillisecsFromList()+(b-a)));
-                            return null;
+                    LinkedList<AZoFTPFile> retval = f.checkConnection();
+                    
+                    imagesOnCardLabel.setText("Files on card: " + retval.size());
+                    LinkedList<AZoFTPFile> r = new LinkedList<>();
+                    for (AZoFTPFile af : retval) {
+                        try {
+                            if (!localStorage.equalsLocal(af)) {
+                                r.add(af);
+                            }
+                        } catch (IOException ex) {
+                            Logger.getLogger(AZoCamSyncJFrame.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     };
-                    sw.execute();
-
+                    tobesynchronizedSDjLabel.setText("Files to be synchronised: " + r.size());
+                    f.download(r, localStorage);
                 }
-            });
-            checkingTimer.setInitialDelay(0);
-            checkingTimer.setDelay(getMillisecsFromList());
-            checkingTimer.start();
-
+            };
+            
+            timeWorker = new SwingWorker() {
+                
+                @Override
+                protected Object doInBackground() throws Exception {
+                    
+                    Timer t = new Timer(getMillisecsFromList(), updateJobAL);
+                    t.setInitialDelay(0);
+                    t.start();
+                    
+                    return null;
+                }
+            };
+           
+            timeWorker.execute();
+           System.out.println("here");
+            
         } else {
-        checkingTimer.stop();
+            timeWorker.cancel(false);
+            
         }
     }//GEN-LAST:event_wifiSdCardEnabledjToggleButtonActionPerformed
 
@@ -197,19 +241,24 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel imagesOnCardLabel;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
+    private javax.swing.JTextField sdCardMessagejTextField1;
     private javax.swing.JComboBox sdCardPollingIntervalljComboBox;
-    private javax.swing.JTextField sdCardStatusjTextField;
     private javax.swing.JPanel sdCardjPanel;
     private javax.swing.JProgressBar sdCardjProgressBar;
+    private javax.swing.JLabel tobesynchronizedSDjLabel;
     private javax.swing.JToggleButton wifiSdCardEnabledjToggleButton;
     // End of variables declaration//GEN-END:variables
 
     @Override
-    public void receiveNotification(FTPConnectionStatus status, String message, int progress) {
-        sdCardStatusjTextField.setText(status.name());
-        sdCardjProgressBar.setMaximum(100);
-        sdCardjProgressBar.setValue(progress);
+    synchronized public void receiveNotification(FTPConnectionStatus status, String message, int progress) {
+        //    sdCardStatusjTextField.setText(status.name());
+        sdCardMessagejTextField1.setText(message);
+        sdCardjProgressBar.setString(status.name());
+        if (progress >= 0) {
+            sdCardjProgressBar.setValue(progress);
+        }
+        revalidate();
     }
 }

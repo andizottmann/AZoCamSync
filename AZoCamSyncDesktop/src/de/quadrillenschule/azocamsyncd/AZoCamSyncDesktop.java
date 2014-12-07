@@ -22,6 +22,7 @@ public class AZoCamSyncDesktop {
     public static void main(String[] args) {
         AZoCamSyncJFrame f=new AZoCamSyncJFrame();
         f.setVisible(true);
+        f.startService();
     }
 
 }
