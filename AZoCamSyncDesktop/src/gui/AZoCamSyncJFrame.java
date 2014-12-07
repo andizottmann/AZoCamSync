@@ -15,6 +15,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.SwingWorker;
@@ -25,7 +26,7 @@ import javax.swing.Timer;
  * @author Andreas
  */
 public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectionListener {
-    
+
     LocalStorage localStorage;
     Timer checkingTimer;
 
@@ -34,12 +35,12 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
      */
     public AZoCamSyncJFrame() {
         localStorage = new LocalStorage(new File(System.getProperty("user.home") + System.getProperty("file.separator") + "azocamsync"));
-        
+
         initComponents();
         sdCardjProgressBar.setMaximum(100);
-        
+
     }
-    
+
     public void startService() {
         wifiSdCardEnabledjToggleButtonActionPerformed(null);
     }
@@ -147,57 +148,64 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
     }// </editor-fold>//GEN-END:initComponents
 
     private int getMillisecsFromList() {
-        
+
         int secs = Integer.parseInt(sdCardPollingIntervalljComboBox.getSelectedItem().toString().split(" ")[0]);
         return secs * 1000;
     }
     SwingWorker timeWorker;
+    Thread thread;
     private void wifiSdCardEnabledjToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_wifiSdCardEnabledjToggleButtonActionPerformed
         if (wifiSdCardEnabledjToggleButton.isSelected()) {
             final FTPConnection f = new FTPConnection();
             f.addFTPConnectionListenerOnce(this);
-            
+
             ActionListener updateJobAL = new ActionListener() {
-                
+
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     LinkedList<AZoFTPFile> retval = f.checkConnection();
-                    
-                    imagesOnCardLabel.setText("Files on card: " + retval.size());
-                    LinkedList<AZoFTPFile> r = new LinkedList<>();
-                    for (AZoFTPFile af : retval) {
-                        try {
-                            if (!localStorage.equalsLocal(af)) {
-                                r.add(af);
+                    if (retval != null) {
+                        imagesOnCardLabel.setText("Files on card: " + retval.size());
+
+                        LinkedList<AZoFTPFile> r = new LinkedList<>();
+                        for (AZoFTPFile af : retval) {
+                            try {
+                                if (!localStorage.equalsLocal(af)) {
+                                    r.add(af);
+                                }
+                            } catch (IOException ex) {
+                                Logger.getLogger(AZoCamSyncJFrame.class.getName()).log(Level.SEVERE, null, ex);
                             }
-                        } catch (IOException ex) {
-                            Logger.getLogger(AZoCamSyncJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                        };
+                        if (r != null) {
+                            tobesynchronizedSDjLabel.setText("Files to be synchronised: " + r.size());
+
+                            f.download(r, localStorage);
                         }
-                    };
-                    tobesynchronizedSDjLabel.setText("Files to be synchronised: " + r.size());
-                    f.download(r, localStorage);
+                    }
                 }
             };
-            
+
             timeWorker = new SwingWorker() {
-                
+
                 @Override
                 protected Object doInBackground() throws Exception {
-                    
+
                     Timer t = new Timer(getMillisecsFromList(), updateJobAL);
                     t.setInitialDelay(0);
+                    t.setRepeats(true);
                     t.start();
-                    
+
                     return null;
                 }
             };
-           
             timeWorker.execute();
-           System.out.println("here");
-            
+            System.out.println("here");
+
         } else {
             timeWorker.cancel(false);
-            
+            // thread.
+
         }
     }//GEN-LAST:event_wifiSdCardEnabledjToggleButtonActionPerformed
 
@@ -252,13 +260,14 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
     // End of variables declaration//GEN-END:variables
 
     @Override
-    synchronized public void receiveNotification(FTPConnectionStatus status, String message, int progress) {
+    public void receiveNotification(FTPConnectionStatus status, String message, int progress) {
         //    sdCardStatusjTextField.setText(status.name());
         sdCardMessagejTextField1.setText(message);
         sdCardjProgressBar.setString(status.name());
         if (progress >= 0) {
             sdCardjProgressBar.setValue(progress);
         }
-        revalidate();
+        
+
     }
 }
