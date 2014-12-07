@@ -5,9 +5,9 @@
  */
 package de.quadrillenschule.azocamsyncd;
 
+import de.quadrillenschule.azocamsyncd.gui.AZoCamSyncJFrame;
 import com.sun.webkit.Timer;
 import de.quadrillenschule.azocamsyncd.ftpservice.FTPConnection;
-import gui.AZoCamSyncJFrame;
 import javax.swing.SwingWorker;
 
 /**

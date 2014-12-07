@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package gui;
+package de.quadrillenschule.azocamsyncd.gui;
 
 import com.oracle.jrockit.jfr.ContentType;
+import de.quadrillenschule.azocamsyncd.LocalStorage;
 import de.quadrillenschule.azocamsyncd.LocalStorage;
 import de.quadrillenschule.azocamsyncd.ftpservice.AZoFTPFile;
 import de.quadrillenschule.azocamsyncd.ftpservice.FTPConnection;
@@ -154,52 +155,22 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
     }
     SwingWorker timeWorker;
     Thread thread;
+    Timer t;
     private void wifiSdCardEnabledjToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_wifiSdCardEnabledjToggleButtonActionPerformed
         if (wifiSdCardEnabledjToggleButton.isSelected()) {
             final FTPConnection f = new FTPConnection();
             f.addFTPConnectionListenerOnce(this);
 
-            ActionListener updateJobAL = new ActionListener() {
+            t = new Timer(getMillisecsFromList(), new ActionListener() {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    LinkedList<AZoFTPFile> retval = f.checkConnection();
-                    if (retval != null) {
-                        imagesOnCardLabel.setText("Files on card: " + retval.size());
+                    SwingBackgroundUpdater sbu = new SwingBackgroundUpdater(f, localStorage, t);
 
-                        LinkedList<AZoFTPFile> r = new LinkedList<>();
-                        for (AZoFTPFile af : retval) {
-                            try {
-                                if (!localStorage.equalsLocal(af)) {
-                                    r.add(af);
-                                }
-                            } catch (IOException ex) {
-                                Logger.getLogger(AZoCamSyncJFrame.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                        };
-                        if (r != null) {
-                            tobesynchronizedSDjLabel.setText("Files to be synchronised: " + r.size());
-
-                            f.download(r, localStorage);
-                        }
-                    }
+                    sbu.start();
                 }
-            };
-
-            timeWorker = new SwingWorker() {
-
-                @Override
-                protected Object doInBackground() throws Exception {
-
-                    Timer t = new Timer(getMillisecsFromList(), updateJobAL);
-                    t.setInitialDelay(0);
-                    t.setRepeats(true);
-                    t.start();
-
-                    return null;
-                }
-            };
-            timeWorker.execute();
+            });
+            t.start();
             System.out.println("here");
 
         } else {
@@ -267,7 +238,14 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         if (progress >= 0) {
             sdCardjProgressBar.setValue(progress);
         }
-        
 
+        if (status.equals(FTPConnectionStatus.NUMBER_OF_FILES_DETECTED)) {
+            imagesOnCardLabel.setText("Files on card: " + message);
+
+        }
+        if (status.equals(FTPConnectionStatus.NUMBER_OF_SYNCHRONISABLE_FILES_DETECTED)) {
+           tobesynchronizedSDjLabel.setText("Files to be synchronised: " + message);
+
+        }
     }
 }

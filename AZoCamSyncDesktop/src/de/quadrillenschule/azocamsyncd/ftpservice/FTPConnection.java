@@ -12,7 +12,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
-import java.net.InetAddress;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -152,7 +151,7 @@ public class FTPConnection {
                 return retval;
             }
             try {
-                notify(FTPConnectionStatus.DOWNLOADING, af.dir + af.ftpFile.getName(), ((int) (90.0 * ((afs.indexOf(af) + 1.0) / (double) afs.size()))));
+                notify(FTPConnectionStatus.DOWNLOADING, af.dir + af.ftpFile.getName(), ((int) (100.0 * ((afs.indexOf(af) + 1.0) / (double) afs.size()))));
                 FileOutputStream fos = new FileOutputStream(localFile);
                 InputStream is = ftpclient.retrieveFileStream(af.dir + af.ftpFile.getName());
                 IOUtils.copyLarge(is, fos);
@@ -161,7 +160,7 @@ public class FTPConnection {
                 fos.close();
                 if (complete) {
                     retval.remove(af);
-                    notify(FTPConnectionStatus.SUCCESS, af.dir + af.ftpFile.getName(), -1);
+                    notify(FTPConnectionStatus.SUCCESS, af.dir + af.ftpFile.getName(), ((int) (100.0 * ((afs.indexOf(af) + 2.0) / (double) afs.size()))));
                 }
             } catch (IOException ex) {
                 try {
