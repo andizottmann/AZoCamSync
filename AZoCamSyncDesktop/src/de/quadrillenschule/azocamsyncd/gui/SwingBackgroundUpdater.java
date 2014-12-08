@@ -28,6 +28,7 @@ public class SwingBackgroundUpdater extends Thread {
     LocalStorage localStorage;
     Timer timer;
     GlobalProperties gp;
+    public static boolean isActive = false;
 
     public SwingBackgroundUpdater(GlobalProperties gp, FTPConnection ftpConnection, LocalStorage localStorage, Timer timer) {
         super();
@@ -39,9 +40,14 @@ public class SwingBackgroundUpdater extends Thread {
 
     @Override
     public void run() {
+        if (isActive) {
+            return;
+        }
+        isActive = true;
         timer.setInitialDelay(timer.getDelay());
         timer.stop();
-        LinkedList<AZoFTPFile> retval = ftpConnection.checkConnection();
+
+        LinkedList<AZoFTPFile> retval = ftpConnection.checkConnection(false);
         if (retval != null) {
             ftpConnection.notify(FTPConnectionListener.FTPConnectionStatus.NUMBER_OF_FILES_DETECTED, "" + retval.size(), -1);
 
@@ -66,6 +72,7 @@ public class SwingBackgroundUpdater extends Thread {
                 }
             }
         }
+        isActive = false;
         timer.start();
     }
 
