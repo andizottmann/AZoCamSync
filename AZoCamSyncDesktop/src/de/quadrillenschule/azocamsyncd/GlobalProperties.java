@@ -25,12 +25,12 @@ public class GlobalProperties {
 
     public enum CamSyncProperties {
 
-        SDCARD_IPS, LOCALSTORAGE_PATH, FILETYPES, SD_FILELIMIT, DATE_FORMAT,USE_DATEFOLDERS
+        SDCARD_IPS, LOCALSTORAGE_PATH, FILETYPES, SD_FILELIMIT, DATE_FORMAT,USE_DATEFOLDERS,LATESTIMAGEPATH
     };
 
     public static final String USER_HOME = "System.user.home";
     public static final String[] DEFAULTS = {
-        "192.168.178.254,192.168.178.32", USER_HOME, "JPG,NEF,CR2,TIF,AVI", "25","yyyy_MM_dd","true"};
+        "192.168.178.254,192.168.178.32", USER_HOME, "JPG,NEF,CR2,TIF,AVI", "25","yyyy_MM_dd","true",""};
 
     public GlobalProperties() {
         props = new Properties();

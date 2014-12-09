@@ -238,14 +238,15 @@ public class FTPConnection {
                 });
                 for (AZoFTPFile af : afs) {
                     i++;
-                    ftpclient.deleteFile(af.dir + af.ftpFile.getName());
+                 //   deleteSingleFile(lastWorkingConnection)
+                    deleteSingleFile(af.dir + af.ftpFile.getName());
                     //    System.out.println("Would delete"+af.ftpFile.getName());
                     if (i >= todelete) {
                         break;
                     }
                 }
                 notify(FTPConnectionStatus.SUCCESS, "", -1);
-
+                close();
                 remountSD();
             }
 

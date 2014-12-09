@@ -34,6 +34,7 @@ import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -67,6 +68,7 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         localStorage.setDateFormat(gp.getProperty(CamSyncProperties.DATE_FORMAT));
         initComponents();
         this.setIconImage(createImage("/de/quadrillenschule/azocamsyncd/gui/res/Camera-icon32.png", "tray icon"));
+        limitSDCardFilesjTextField.setText(gp.getProperty(CamSyncProperties.SD_FILELIMIT));
         sdCardjProgressBar.setMaximum(100);
         defaultProgressBarColor = sdCardjProgressBar.getForeground();
         useDateFolderjCheckBox.setSelected(Boolean.parseBoolean(gp.getProperty(CamSyncProperties.USE_DATEFOLDERS)));
@@ -76,6 +78,12 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         configurejToggleButtonActionPerformed(null);
         imagejLabel2.setComponentPopupMenu(jPopupMenu1);
         addSystemTray();
+        try {
+            lastDownloaded = new File(gp.getProperty(CamSyncProperties.LATESTIMAGEPATH));
+            updateAllImageLabels(new File(gp.getProperty(CamSyncProperties.LATESTIMAGEPATH)));
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(AZoCamSyncJFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public void startService() {
@@ -773,11 +781,7 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
     
     @Override
     public void receiveNotification(FTPConnectionStatus status, String message, int progress) {
-        //    sdCardStatusjTextField.setText(status.name());
-        //     sdCardMessagejTextField1.setText(message);
-
         if ((status == FTPConnectionStatus.TRYING)) {
-            //   sdCardjProgressBar.setForeground(defaultProgressBarColor);
             sdCardjProgressBar.setValue(100);
         } else {
             sdCardjProgressBar.setForeground(defaultProgressBarColor);
@@ -801,24 +805,11 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         sdCardjProgressBar.setString(status.name() + " " + message);
         if (status.equals(FTPConnectionStatus.NEW_LOCAL_FILE)) {
             
+            File f = new File(message);
+            lastDownloaded = f;
+            gp.setProperty(CamSyncProperties.LATESTIMAGEPATH, f.getAbsolutePath());
             try {
-                for (JLabel j : new JLabel[]{imagejLabel2, latestImagejLabel}) {
-                    File f = new File(message);
-                    lastDownloaded = f;
-                    ImageIcon ii = new ImageIcon(f.toURI().toURL());
-                    int mywidth = j.getWidth();
-                    int width = ii.getIconWidth();
-                    int height = ii.getIconHeight();
-                    if (width <= 0) {
-                        j.setText("No image to view.");
-                    } else {
-                        j.setText("");
-                    }
-                    double factor = (double) height / (double) width;
-                    Image image = ii.getImage().getScaledInstance(mywidth, (int) ((double) mywidth * factor), Image.SCALE_FAST);
-                    j.setIcon(new ImageIcon(image));
-                    //  repaint();}
-                }
+                updateAllImageLabels(f);
             } catch (MalformedURLException ex) {
                 Logger.getLogger(AZoCamSyncJFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -836,6 +827,15 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
             }
             
         }
+        
+        if (status.equals(FTPConnectionStatus.DELETING_FILES)) {
+            imagesOnCardLabel.setText("Total (filtered): " + message);
+            
+            exploreWifiSDPanel1.updateTree();
+            treehasfirstUpdate = true;
+            
+        }
+        
         if (status.equals(FTPConnectionStatus.NUMBER_OF_SYNCHRONISABLE_FILES_DETECTED)) {
             tobesynchronizedSDjLabel.setText("To be downloaded: " + message);
             exploreWifiSDPanel1.updateTree();
@@ -877,6 +877,26 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
                 tdownload.stop();
             }
         }
+    }
+    
+    private void updateAllImageLabels(File f) throws MalformedURLException {
+        for (JLabel j : new JLabel[]{imagejLabel2, latestImagejLabel}) {
+            
+            ImageIcon ii = new ImageIcon(f.toURI().toURL());
+            int mywidth = j.getWidth();
+            int width = ii.getIconWidth();
+            int height = ii.getIconHeight();
+            if (width <= 0) {
+                j.setText("No image to view.");
+            } else {
+                j.setText("");
+            }
+            double factor = (double) height / (double) width;
+            Image image = ii.getImage().getScaledInstance(mywidth, (int) ((double) mywidth * factor), Image.SCALE_FAST);
+            j.setIcon(new ImageIcon(image));
+            //  repaint();}
+        }
+        
     }
 
     //Obtain the image URL
@@ -948,6 +968,19 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         
         popupMenu.add(mi3);
         
+        MenuItem mi4 = new MenuItem("Exit...");
+        mi4.addActionListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                
+                azf.dispose();
+                
+            }
+        });
+        
+        popupMenu.add(mi4);
+        
         trayI.setToolTip("AZoCamSync");
         trayI.setPopupMenu(popupMenu);
         
@@ -957,5 +990,12 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
             System.out.println("TrayIcon could not be added.");
         }
         trayIcon = trayI;
+    }
+    
+    public void dispose() {
+        
+        f.close();
+        super.dispose();
+        System.exit(0);
     }
 }
