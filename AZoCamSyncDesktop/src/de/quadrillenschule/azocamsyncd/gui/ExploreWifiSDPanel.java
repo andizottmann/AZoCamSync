@@ -5,14 +5,21 @@
  */
 package de.quadrillenschule.azocamsyncd.gui;
 
+import de.quadrillenschule.azocamsyncd.LocalStorage;
 import de.quadrillenschule.azocamsyncd.ftpservice.AZoFTPFile;
 import de.quadrillenschule.azocamsyncd.ftpservice.FTPConnection;
+import java.awt.Desktop;
+import java.awt.Image;
+import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
@@ -28,6 +35,8 @@ public class ExploreWifiSDPanel extends javax.swing.JPanel {
 
     DefaultMutableTreeNode rootNode;
     private FTPConnection ftpConnection;
+    private LocalStorage localStorage;
+    LinkedList<AZoFTPFile> afs;
 
     /**
      * Creates new form ExploreWifiSDPanel
@@ -37,10 +46,49 @@ public class ExploreWifiSDPanel extends javax.swing.JPanel {
         rootNode = new DefaultMutableTreeNode("/");
         DefaultTreeModel dtm = new DefaultTreeModel(rootNode);
         remotejTree.setModel(dtm);
+        remotejTree.addTreeSelectionListener(new TreeSelectionListener() {
+
+            @Override
+            public void valueChanged(TreeSelectionEvent e) {
+                updateSingleView();
+            }
+        });
+    }
+
+    private void updateSingleView() {
+        try {
+            if (remotejTree.getSelectionPaths().length > 0) {
+                TreePath tp = remotejTree.getSelectionPaths()[0];
+                String mynode = tp.getLastPathComponent().toString();
+                AZoFTPFile myaffile=null;
+                for (AZoFTPFile af : afs) {
+                    if (new String(af.dir + af.ftpFile.getName()).equals(mynode)) {
+                        myaffile = af;
+                        break;
+                    }
+                }
+                File localFile=localStorage.getLocalFile(myaffile);
+               localFileNamejTextField1.setText(localFile.getAbsolutePath());
+               ImageIcon ii = new ImageIcon(localFile.toURI().toURL());
+                    int mywidth = imagejLabel.getWidth();
+                    int width = ii.getIconWidth();
+                    int height = ii.getIconHeight();
+                    if (width <= 0) {
+                        imagejLabel.setText("No image to view.");
+                    } else {
+                        imagejLabel.setText("");
+                    }
+                    double factor = (double) height / (double) width;
+                    Image image = ii.getImage().getScaledInstance(mywidth, (int) ((double) mywidth * factor), Image.SCALE_FAST);
+                    imagejLabel.setIcon(new ImageIcon(image));
+            }
+        } catch (Exception e) {
+
+        }
     }
 
     private void createNodes(DefaultMutableTreeNode top) {
-        LinkedList<AZoFTPFile> afs = ftpConnection.checkConnection(true);
+        afs = ftpConnection.checkConnection(true);
 
         createSubNodes(top, afs);
 
@@ -67,6 +115,7 @@ public class ExploreWifiSDPanel extends javax.swing.JPanel {
                 if (nodeName.contains(parentNodeName)) {
                     if (StringUtils.countMatches(nodeName, "/") == 1 + StringUtils.countMatches(parentNodeName, "/")) {
                         DefaultMutableTreeNode tn = new DefaultMutableTreeNode(nodeName);
+
                         parent.add(tn);
 
                     }
@@ -89,12 +138,18 @@ public class ExploreWifiSDPanel extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         remotejTree = new javax.swing.JTree();
         jPanel1 = new javax.swing.JPanel();
-        updateFromRemotejButton1 = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        localFileNamejTextField1 = new javax.swing.JTextField();
+        imagejLabel = new javax.swing.JLabel();
+        jPanel3 = new javax.swing.JPanel();
         deletejButton1 = new javax.swing.JButton();
+        openLocalFilejButton = new javax.swing.JButton();
+        openfolderjButton = new javax.swing.JButton();
 
         setBorder(javax.swing.BorderFactory.createTitledBorder("Manage Files on Remote WiFI SD"));
         setLayout(new java.awt.GridBagLayout());
 
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(250, 350));
         jScrollPane1.setViewportView(remotejTree);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -104,28 +159,75 @@ public class ExploreWifiSDPanel extends javax.swing.JPanel {
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         add(jScrollPane1, gridBagConstraints);
+        add(jPanel1, new java.awt.GridBagConstraints());
 
-        updateFromRemotejButton1.setText("Update...");
-        updateFromRemotejButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                updateFromRemotejButton1ActionPerformed(evt);
-            }
-        });
-        jPanel1.add(updateFromRemotejButton1);
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Selected File"));
+        jPanel2.setLayout(new java.awt.GridBagLayout());
 
-        deletejButton1.setText("Delete");
+        localFileNamejTextField1.setEditable(false);
+        localFileNamejTextField1.setText("-");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        jPanel2.add(localFileNamejTextField1, gridBagConstraints);
+
+        imagejLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        imagejLabel.setText("No viewable image selected.");
+        imagejLabel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        imagejLabel.setMaximumSize(new java.awt.Dimension(225, 150));
+        imagejLabel.setMinimumSize(new java.awt.Dimension(225, 150));
+        imagejLabel.setPreferredSize(new java.awt.Dimension(225, 150));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        jPanel2.add(imagejLabel, gridBagConstraints);
+
+        jPanel3.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+
+        deletejButton1.setText("Delete remote files...");
         deletejButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deletejButton1ActionPerformed(evt);
             }
         });
-        jPanel1.add(deletejButton1);
+        jPanel3.add(deletejButton1);
 
-        add(jPanel1, new java.awt.GridBagConstraints());
+        openLocalFilejButton.setText("Open (local) File...");
+        openLocalFilejButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openLocalFilejButtonActionPerformed(evt);
+            }
+        });
+        jPanel3.add(openLocalFilejButton);
+
+        openfolderjButton.setText("Open (local) Folder...");
+        openfolderjButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openfolderjButtonActionPerformed(evt);
+            }
+        });
+        jPanel3.add(openfolderjButton);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        jPanel2.add(jPanel3, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
+        add(jPanel2, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
  DefaultTreeModel dtm;
-    private void updateFromRemotejButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateFromRemotejButton1ActionPerformed
 
+    public void updateTree() {
         Enumeration<TreePath> storeExpand = remotejTree.getExpandedDescendants(new TreePath(remotejTree.getModel().getRoot()));
         rootNode.removeAllChildren();
         createNodes(rootNode);
@@ -141,8 +243,7 @@ public class ExploreWifiSDPanel extends javax.swing.JPanel {
                 remotejTree.setSelectionPath(t);
             }
         }
-    }//GEN-LAST:event_updateFromRemotejButton1ActionPerformed
-
+    }
     private void deletejButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deletejButton1ActionPerformed
         LinkedList<String> deleteables = new LinkedList<>();
         for (TreePath tp : remotejTree.getSelectionPaths()) {
@@ -159,16 +260,39 @@ public class ExploreWifiSDPanel extends javax.swing.JPanel {
                 }
             }
             ftpConnection.close();
+            ftpConnection.remountSD();
+            updateTree();
         }
     }//GEN-LAST:event_deletejButton1ActionPerformed
+
+    private void openLocalFilejButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openLocalFilejButtonActionPerformed
+        try {
+            Desktop.getDesktop().open(new File(localFileNamejTextField1.getText()));
+        } catch (Exception ex) {
+            Logger.getLogger(AZoCamSyncJFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_openLocalFilejButtonActionPerformed
+
+    private void openfolderjButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openfolderjButtonActionPerformed
+          try {
+            Desktop.getDesktop().open(new File (localFileNamejTextField1.getText()).getParentFile());
+        } catch (Exception ex) {
+            Logger.getLogger(AZoCamSyncJFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_openfolderjButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton deletejButton1;
+    private javax.swing.JLabel imagejLabel;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextField localFileNamejTextField1;
+    private javax.swing.JButton openLocalFilejButton;
+    private javax.swing.JButton openfolderjButton;
     private javax.swing.JTree remotejTree;
-    private javax.swing.JButton updateFromRemotejButton1;
     // End of variables declaration//GEN-END:variables
 
     /**
@@ -183,5 +307,19 @@ public class ExploreWifiSDPanel extends javax.swing.JPanel {
      */
     public void setFtpConnection(FTPConnection ftpConnection) {
         this.ftpConnection = ftpConnection;
+    }
+
+    /**
+     * @return the localStorage
+     */
+    public LocalStorage getLocalStorage() {
+        return localStorage;
+    }
+
+    /**
+     * @param localStorage the localStorage to set
+     */
+    public void setLocalStorage(LocalStorage localStorage) {
+        this.localStorage = localStorage;
     }
 }

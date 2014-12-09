@@ -68,16 +68,7 @@ public class FTPConnection {
 
                     lastWorkingConnection = ip;
 
-                    try {
-                        ftpclient.noop();
-                        ftpclient.logout();
-                        ftpclient.disconnect();
-
-                    } catch (Exception e) {
-                        ftpclient.noop();
-                        ftpclient.logout();
-                        ftpclient.disconnect();
-                    }
+                    close();
                     remountSD();
                     notify(FTPConnectionStatus.CONNECTED, ip, -1);
 
@@ -207,18 +198,18 @@ public class FTPConnection {
         try {
             ftpclient.noop();
         } catch (IOException ex) {
-            Logger.getLogger(FTPConnection.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FTPConnection.class.getName()).log(Level.WARNING, null, ex);
         }
         try {
             ftpclient.logout();
 
         } catch (IOException ex) {
-            Logger.getLogger(FTPConnection.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FTPConnection.class.getName()).log(Level.WARNING, null, ex);
         }
         try {
             ftpclient.disconnect();
         } catch (IOException ex) {
-            Logger.getLogger(FTPConnection.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FTPConnection.class.getName()).log(Level.WARNING, null, ex);
         }
     }
 
@@ -263,7 +254,7 @@ public class FTPConnection {
          close();
     }
 
-    void remountSD() {
+    public void remountSD() {
         try {
 
             if (ftpclient.isConnected()) {
