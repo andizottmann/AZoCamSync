@@ -41,7 +41,7 @@ public class SwingBackgroundUpdater extends Thread {
     @Override
     public void run() {
         if (isActive) {
-             timer.stop();
+            timer.stop();
             return;
         }
         isActive = true;
@@ -62,7 +62,7 @@ public class SwingBackgroundUpdater extends Thread {
                     Logger.getLogger(AZoCamSyncJFrame.class.getName()).log(Level.SEVERE, null, ex);
                 }
             };
-            if ((r != null)&&(r.size()>0)) {
+            if ((r != null) && (r.size() > 0)) {
                 ftpConnection.notify(FTPConnectionListener.FTPConnectionStatus.NUMBER_OF_SYNCHRONISABLE_FILES_DETECTED, "" + r.size(), -1);
                 ftpConnection.notify(FTPConnectionListener.FTPConnectionStatus.CONNECTED, ftpConnection.getLastWorkingConnection(), -1);
 
@@ -71,14 +71,15 @@ public class SwingBackgroundUpdater extends Thread {
                     ftpConnection.deleteFiles(Integer.parseInt(gp.getProperty(GlobalProperties.CamSyncProperties.SD_FILELIMIT)));
                 } catch (NumberFormatException nfe) {
                 }
-                
-            }
-        }
-             ftpConnection.notify(FTPConnectionListener.FTPConnectionStatus.CONNECTED, ftpConnection.getLastWorkingConnection(), -1);
 
-       isActive = false;
+            }
+            ftpConnection.notify(FTPConnectionListener.FTPConnectionStatus.CONNECTED, ftpConnection.getLastWorkingConnection(), -1);
+
+        }
+
+        isActive = false;
         timer.start();
-         
+
     }
 
 }

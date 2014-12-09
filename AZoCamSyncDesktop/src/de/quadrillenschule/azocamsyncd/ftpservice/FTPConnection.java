@@ -13,6 +13,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.net.NoRouteToHostException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -75,12 +76,12 @@ public class FTPConnection {
                     return retval;
                 }
             } catch (IOException ex) {
-
+              //  notify(FTPConnectionStatus.NOCONNECTION, "", -1);
                 Logger.getLogger(FTPConnection.class.getName()).log(Level.INFO, null, ex);
             }
 
         }
-        notify(FTPConnectionStatus.NOCONNECTION, "", -1);
+ notify(FTPConnectionStatus.NOCONNECTION, "", -1);
         return null;
     }
 
@@ -244,21 +245,21 @@ public class FTPConnection {
                     }
                 }
                 notify(FTPConnectionStatus.SUCCESS, "", -1);
-               
+
                 remountSD();
             }
 
         } catch (IOException ex) {
-           close();
+            close();
         }
-         close();
+        close();
     }
 
     public void remountSD() {
         try {
 
             if (ftpclient.isConnected()) {
-              close();
+                close();
             }
             TelnetClient telnetclient = new TelnetClient();
 

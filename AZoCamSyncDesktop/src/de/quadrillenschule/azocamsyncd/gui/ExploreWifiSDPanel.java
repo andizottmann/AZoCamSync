@@ -8,6 +8,8 @@ package de.quadrillenschule.azocamsyncd.gui;
 import de.quadrillenschule.azocamsyncd.LocalStorage;
 import de.quadrillenschule.azocamsyncd.ftpservice.AZoFTPFile;
 import de.quadrillenschule.azocamsyncd.ftpservice.FTPConnection;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Desktop;
 import java.awt.Image;
 import java.io.File;
@@ -17,11 +19,14 @@ import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import org.apache.commons.lang3.StringUtils;
@@ -53,6 +58,38 @@ public class ExploreWifiSDPanel extends javax.swing.JPanel {
                 updateSingleView();
             }
         });
+        remotejTree.setCellRenderer(new TreeCellRenderer() {
+
+            @Override
+            public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+                JLabel retval = new JLabel(value.toString());
+                AZoFTPFile myaffile = null;
+                if (afs == null) {
+                    return retval;
+                }
+                for (AZoFTPFile af : afs) {
+                    if (new String(af.dir + af.ftpFile.getName()).equals(value.toString())) {
+                        myaffile = af;
+                        break;
+                    }
+                }
+                try {
+                    if (!localStorage.getLocalFile(myaffile).exists()) {
+                        if (!myaffile.ftpFile.isDirectory()) {
+                            retval.setForeground(Color.red);
+                        }
+                    }
+                } catch (Exception ex) {
+                    //           Logger.getLogger(ExploreWifiSDPanel.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                if (selected) {
+                    retval.setOpaque(true);
+                    retval.setBackground(Color.darkGray);
+                }
+                return retval;
+            }
+        });
     }
 
     private void updateSingleView() {
@@ -60,27 +97,27 @@ public class ExploreWifiSDPanel extends javax.swing.JPanel {
             if (remotejTree.getSelectionPaths().length > 0) {
                 TreePath tp = remotejTree.getSelectionPaths()[0];
                 String mynode = tp.getLastPathComponent().toString();
-                AZoFTPFile myaffile=null;
+                AZoFTPFile myaffile = null;
                 for (AZoFTPFile af : afs) {
                     if (new String(af.dir + af.ftpFile.getName()).equals(mynode)) {
                         myaffile = af;
                         break;
                     }
                 }
-                File localFile=localStorage.getLocalFile(myaffile);
-               localFileNamejTextField1.setText(localFile.getAbsolutePath());
-               ImageIcon ii = new ImageIcon(localFile.toURI().toURL());
-                    int mywidth = imagejLabel.getWidth();
-                    int width = ii.getIconWidth();
-                    int height = ii.getIconHeight();
-                    if (width <= 0) {
-                        imagejLabel.setText("No image to view.");
-                    } else {
-                        imagejLabel.setText("");
-                    }
-                    double factor = (double) height / (double) width;
-                    Image image = ii.getImage().getScaledInstance(mywidth, (int) ((double) mywidth * factor), Image.SCALE_FAST);
-                    imagejLabel.setIcon(new ImageIcon(image));
+                File localFile = localStorage.getLocalFile(myaffile);
+                localFileNamejTextField1.setText(localFile.getAbsolutePath());
+                ImageIcon ii = new ImageIcon(localFile.toURI().toURL());
+                int mywidth = imagejLabel.getWidth();
+                int width = ii.getIconWidth();
+                int height = ii.getIconHeight();
+                if (width <= 0) {
+                    imagejLabel.setText("No image to view.");
+                } else {
+                    imagejLabel.setText("");
+                }
+                double factor = (double) height / (double) width;
+                Image image = ii.getImage().getScaledInstance(mywidth, (int) ((double) mywidth * factor), Image.SCALE_FAST);
+                imagejLabel.setIcon(new ImageIcon(image));
             }
         } catch (Exception e) {
 
@@ -89,9 +126,9 @@ public class ExploreWifiSDPanel extends javax.swing.JPanel {
 
     private void createNodes(DefaultMutableTreeNode top) {
         afs = ftpConnection.checkConnection(true);
-
-        createSubNodes(top, afs);
-
+        if (afs != null) {
+            createSubNodes(top, afs);
+        }
     }
 
     private void createSubNodes(DefaultMutableTreeNode parent, LinkedList<AZoFTPFile> afs) {
@@ -234,6 +271,7 @@ public class ExploreWifiSDPanel extends javax.swing.JPanel {
         if (dtm == null) {
             dtm = new DefaultTreeModel(rootNode);
             remotejTree.setModel(dtm);
+
         }
         dtm.nodeStructureChanged(rootNode);
         if (storeExpand != null) {
@@ -274,8 +312,8 @@ public class ExploreWifiSDPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_openLocalFilejButtonActionPerformed
 
     private void openfolderjButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openfolderjButtonActionPerformed
-          try {
-            Desktop.getDesktop().open(new File (localFileNamejTextField1.getText()).getParentFile());
+        try {
+            Desktop.getDesktop().open(new File(localFileNamejTextField1.getText()).getParentFile());
         } catch (Exception ex) {
             Logger.getLogger(AZoCamSyncJFrame.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -62,6 +62,7 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         exploreWifiSDPanel1.setFtpConnection(f);
         exploreWifiSDPanel1.setLocalStorage(localStorage);
         configurejToggleButtonActionPerformed(null);
+        imagejLabel2.setComponentPopupMenu(jPopupMenu1);
     }
 
     public void startService() {
@@ -79,7 +80,13 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         java.awt.GridBagConstraints gridBagConstraints;
         bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
+        jPopupMenu1 = new javax.swing.JPopupMenu();
+        openjMenuItem = new javax.swing.JMenuItem();
+        openDirjMenuItem1 = new javax.swing.JMenuItem();
+        jPanel6 = new javax.swing.JPanel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
+        exploreWifiSDPanel1 = new de.quadrillenschule.azocamsyncd.gui.ExploreWifiSDPanel();
+        jPanel7 = new javax.swing.JPanel();
         sdCardjPanel = new javax.swing.JPanel();
         sdCardPollingIntervalljComboBox = new javax.swing.JComboBox();
         jLabel1 = new javax.swing.JLabel();
@@ -94,7 +101,6 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         fileExtensionsjTextArea = new javax.swing.JTextArea();
         limitSDCardFilesjTextField = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        exploreWifiSDPanel1 = new de.quadrillenschule.azocamsyncd.gui.ExploreWifiSDPanel();
         jPanel2 = new javax.swing.JPanel();
         localStorageSelectDirjButton = new javax.swing.JButton();
         localStorageDirjTextField = new javax.swing.JTextField();
@@ -113,11 +119,38 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         wifiSdCardEnabledjToggleButton = new javax.swing.JToggleButton();
         alwaysOnTopjCheckBox = new javax.swing.JCheckBox();
 
+        openjMenuItem.setText("Open...");
+        openjMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openjMenuItemActionPerformed(evt);
+            }
+        });
+        jPopupMenu1.add(openjMenuItem);
+
+        openDirjMenuItem1.setText("Open Dir...");
+        openDirjMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openDirjMenuItem1ActionPerformed(evt);
+            }
+        });
+        jPopupMenu1.add(openDirjMenuItem1);
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("AZoCamSyncDesktop");
         setAlwaysOnTop(true);
+        addWindowStateListener(new java.awt.event.WindowStateListener() {
+            public void windowStateChanged(java.awt.event.WindowEvent evt) {
+                formWindowStateChanged(evt);
+            }
+        });
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
+        exploreWifiSDPanel1.setBorder(null);
+        jTabbedPane1.addTab("Manage Remote Files", exploreWifiSDPanel1);
+
+        jPanel7.setLayout(new java.awt.GridLayout(1, 2));
+
+        sdCardjPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Remote WiFi SD Card"));
         sdCardjPanel.setLayout(new java.awt.GridBagLayout());
 
         sdCardPollingIntervalljComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "10 sec", "20 sec", "30 sec", "60 sec" }));
@@ -260,11 +293,9 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         gridBagConstraints.weighty = 0.4;
         sdCardjPanel.add(jPanel1, gridBagConstraints);
 
-        jTabbedPane1.addTab("Remote WiFi SD card", sdCardjPanel);
+        jPanel7.add(sdCardjPanel);
 
-        exploreWifiSDPanel1.setBorder(null);
-        jTabbedPane1.addTab("Manage Remote Files", exploreWifiSDPanel1);
-
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Local Storage"));
         jPanel2.setLayout(new java.awt.GridBagLayout());
 
         localStorageSelectDirjButton.setText("Select Directory...");
@@ -376,7 +407,9 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         jPanel2.add(dateFormatjTextField, gridBagConstraints);
 
-        jTabbedPane1.addTab("Local Storage", jPanel2);
+        jPanel7.add(jPanel2);
+
+        jTabbedPane1.addTab("Configure", jPanel7);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridwidth = 2;
@@ -581,7 +614,7 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
     private void configurejToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_configurejToggleButtonActionPerformed
         jTabbedPane1.setVisible(configurejToggleButton.isSelected());
         if (configurejToggleButton.isSelected()) {
-            
+
             setMinimumSize(new Dimension(500, 300));
         } else {
             setMinimumSize(new Dimension(300, 50));
@@ -593,6 +626,47 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
     private void alwaysOnTopjCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_alwaysOnTopjCheckBoxActionPerformed
         setAlwaysOnTop(alwaysOnTopjCheckBox.isSelected());
     }//GEN-LAST:event_alwaysOnTopjCheckBoxActionPerformed
+
+    private void openjMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openjMenuItemActionPerformed
+        try {
+            Desktop.getDesktop().open(lastDownloaded);
+        } catch (IOException ex) {
+            Logger.getLogger(AZoCamSyncJFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_openjMenuItemActionPerformed
+
+    private void openDirjMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openDirjMenuItem1ActionPerformed
+        try {
+            Desktop.getDesktop().open(lastDownloaded.getParentFile());
+        } catch (IOException ex) {
+            Logger.getLogger(AZoCamSyncJFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_openDirjMenuItem1ActionPerformed
+    boolean blockNext=false;
+    private void formWindowStateChanged(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowStateChanged
+        System.out.println(evt.getOldState() + ":" + evt.getNewState()+":"+blockNext);
+        if (blockNext){
+        blockNext=false;
+      
+        return;
+        }
+        if (evt.getNewState() == 6 && !configurejToggleButton.isSelected()) {
+            configurejToggleButton.setSelected(true);
+            configurejToggleButtonActionPerformed(null);
+            alwaysOnTopjCheckBox.setSelected(false);
+            alwaysOnTopjCheckBoxActionPerformed(null);
+            blockNext=true;
+           return;
+        }
+        if (evt.getNewState() == 6&& configurejToggleButton.isSelected()) {        
+                configurejToggleButton.setSelected(false);
+                configurejToggleButtonActionPerformed(null);
+                alwaysOnTopjCheckBox.setSelected(true);
+                alwaysOnTopjCheckBoxActionPerformed(null);
+           blockNext=true;
+           return;
+        }
+    }//GEN-LAST:event_formWindowStateChanged
 
     private void updateIPsProps() {
         gp.setProperty(GlobalProperties.CamSyncProperties.SDCARD_IPS, firstIPAdressjTextField1.getText() + "," + secondIPAdressjTextField.getText());
@@ -653,13 +727,18 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
+    private javax.swing.JPopupMenu jPopupMenu1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JLabel latestImagejLabel;
     private javax.swing.JTextField limitSDCardFilesjTextField;
     private javax.swing.JTextField localStorageDirjTextField;
     private javax.swing.JButton localStorageSelectDirjButton;
+    private javax.swing.JMenuItem openDirjMenuItem1;
     private javax.swing.JButton opendirjButton;
+    private javax.swing.JMenuItem openjMenuItem;
     private javax.swing.JButton penlastfilejButton;
     private javax.swing.JComboBox sdCardPollingIntervalljComboBox;
     private javax.swing.JPanel sdCardjPanel;
