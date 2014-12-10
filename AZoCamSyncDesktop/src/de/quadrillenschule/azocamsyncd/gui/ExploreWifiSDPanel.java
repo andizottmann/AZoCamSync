@@ -289,16 +289,8 @@ public class ExploreWifiSDPanel extends javax.swing.JPanel {
             deleteables.add(tp.getLastPathComponent().toString());
         }
         if (JOptionPane.showConfirmDialog(deletejButton1, "About to delete " + deleteables.size() + " files.", "Delete Files on Remote?", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.OK_OPTION) {
-            ftpConnection.simplyConnect(FTP.ASCII_FILE_TYPE);
-            for (String f : deleteables) {
-                try {
-                    ftpConnection.deleteSingleFile(f);
-                } catch (IOException ex) {
-                    Logger.getLogger(ExploreWifiSDPanel.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-            ftpConnection.close();
-            ftpConnection.remountSD();
+           ftpConnection.close();
+            ftpConnection.remountSD(deleteables);
             updateTree();
         }
     }//GEN-LAST:event_deletejButton1ActionPerformed

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch4jConfig>
+  <dontWrapJar>false</dontWrapJar>
+  <headerType>gui</headerType>
+  <jar>C:\Users\Andreas\Documents\AZoCamSync\AZoCamSyncDesktop\dist\AZoCamSyncDesktop.jar</jar>
+  <outfile>C:\Users\Andreas\Documents\AZoCamSync\AZoCamSyncDesktop\dist\AZoCamSync.exe</outfile>
+  <errTitle></errTitle>
+  <cmdLine></cmdLine>
+  <chdir>.</chdir>
+  <priority>normal</priority>
+  <downloadUrl>http://java.com/download</downloadUrl>
+  <supportUrl></supportUrl>
+  <stayAlive>false</stayAlive>
+  <restartOnCrash>false</restartOnCrash>
+  <manifest></manifest>
+  <icon>C:\Users\Andreas\Documents\AZoCamSync\AZoCamSyncDesktop\src\de\quadrillenschule\azocamsyncd\gui\res\Camera-icon32.ico</icon>
+  <classPath>
+    <mainClass>de.quadrillenschule.azocamsyncd.AZoCamSyncDesktop</mainClass>
+    <cp>lib/commons-lang3-3.3.2.jar</cp>
+    <cp>lib/commons-io-2.4.jar</cp>
+    <cp>lib/commons-net-3.3.jar</cp>
+    <cp>lib/beansbinding-1.2.1.jar</cp>
+  </classPath>
+  <jre>
+    <path></path>
+    <bundledJre64Bit>false</bundledJre64Bit>
+    <minVersion>1.7.0</minVersion>
+    <maxVersion></maxVersion>
+    <jdkPreference>preferJre</jdkPreference>
+    <runtimeBits>64/32</runtimeBits>
+  </jre>
+</launch4jConfig>

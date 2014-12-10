@@ -44,6 +44,7 @@ public class SwingBackgroundUpdater extends Thread {
             timer.stop();
             return;
         }
+        ftpConnection.close();
         isActive = true;
         timer.setInitialDelay(timer.getDelay());
         timer.stop();
@@ -67,18 +68,19 @@ public class SwingBackgroundUpdater extends Thread {
                 ftpConnection.notify(FTPConnectionListener.FTPConnectionStatus.CONNECTED, ftpConnection.getLastWorkingConnection(), -1);
 
                 ftpConnection.download(r, localStorage);
-                try {
-                    ftpConnection.deleteFiles(Integer.parseInt(gp.getProperty(GlobalProperties.CamSyncProperties.SD_FILELIMIT)));
-                } catch (NumberFormatException nfe) {
-                }
 
+            }
+            try {
+                ftpConnection.deleteFiles(Integer.parseInt(gp.getProperty(GlobalProperties.CamSyncProperties.SD_FILELIMIT)));
+            } catch (NumberFormatException nfe) {
             }
             ftpConnection.notify(FTPConnectionListener.FTPConnectionStatus.CONNECTED, ftpConnection.getLastWorkingConnection(), -1);
 
         }
-
+        ftpConnection.close();
         isActive = false;
         timer.start();
+        
 
     }
 

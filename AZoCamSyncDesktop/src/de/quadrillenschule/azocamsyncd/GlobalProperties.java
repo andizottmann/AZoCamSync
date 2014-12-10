@@ -10,7 +10,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,12 +24,13 @@ public class GlobalProperties {
 
     public enum CamSyncProperties {
 
-        SDCARD_IPS, LOCALSTORAGE_PATH, FILETYPES, SD_FILELIMIT, DATE_FORMAT,USE_DATEFOLDERS,LATESTIMAGEPATH
+        SDCARD_IPS, LOCALSTORAGE_PATH, FILETYPES, SD_FILELIMIT, DATE_FORMAT,USE_DATEFOLDERS,LATESTIMAGEPATH,
+        NOTIFY_CONNECTION,NOTIFY_DOWNLOAD
     };
 
     public static final String USER_HOME = "System.user.home";
     public static final String[] DEFAULTS = {
-        "192.168.178.254,192.168.178.32", USER_HOME, "JPG,NEF,CR2,TIF,AVI", "25","yyyy_MM_dd","true",""};
+        "192.168.178.254,192.168.178.32", USER_HOME, "JPG,NEF,CR2,TIF,AVI", "25","yyyy_MM_dd","true","","true","true"};
 
     public GlobalProperties() {
         props = new Properties();
