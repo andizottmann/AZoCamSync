@@ -80,7 +80,6 @@ public class SwingBackgroundUpdater extends Thread {
         ftpConnection.close();
         isActive = false;
         timer.start();
-        
 
     }
 

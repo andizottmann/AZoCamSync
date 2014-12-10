@@ -97,27 +97,44 @@ public class ExploreWifiSDPanel extends javax.swing.JPanel {
             if (remotejTree.getSelectionPaths().length > 0) {
                 TreePath tp = remotejTree.getSelectionPaths()[0];
                 String mynode = tp.getLastPathComponent().toString();
-                AZoFTPFile myaffile = null;
+                AZoFTPFile myaffilea = null;
                 for (AZoFTPFile af : afs) {
                     if (new String(af.dir + af.ftpFile.getName()).equals(mynode)) {
-                        myaffile = af;
+                        myaffilea = af;
                         break;
                     }
                 }
-                File localFile = localStorage.getLocalFile(myaffile);
-                localFileNamejTextField1.setText(localFile.getAbsolutePath());
-                ImageIcon ii = new ImageIcon(localFile.toURI().toURL());
-                int mywidth = imagejLabel.getWidth();
-                int width = ii.getIconWidth();
-                int height = ii.getIconHeight();
-                if (width <= 0) {
-                    imagejLabel.setText("No image to view.");
-                } else {
-                    imagejLabel.setText("");
-                }
-                double factor = (double) height / (double) width;
-                Image image = ii.getImage().getScaledInstance(mywidth, (int) ((double) mywidth * factor), Image.SCALE_FAST);
-                imagejLabel.setIcon(new ImageIcon(image));
+                final AZoFTPFile myaffile = myaffilea;
+                Thread imageUpdater = new Thread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        try {
+                            File localFile;
+
+                            localFile = localStorage.getLocalFile(myaffile);
+
+                            localFileNamejTextField1.setText(localFile.getAbsolutePath());
+                            ImageIcon ii = new ImageIcon(localFile.toURI().toURL());
+
+                            int mywidth = imagejLabel.getWidth();
+                            int width = ii.getIconWidth();
+                            int height = ii.getIconHeight();
+                            if (width <= 0) {
+                                imagejLabel.setText("No image to view.");
+                            } else {
+                                imagejLabel.setText("");
+                            }
+                            double factor = (double) height / (double) width;
+                            Image image = ii.getImage().getScaledInstance(mywidth, (int) ((double) mywidth * factor), Image.SCALE_FAST);
+                            imagejLabel.setIcon(new ImageIcon(image));
+                        } catch (IOException ex) {
+                            imagejLabel.setText("No image to view.");
+                        }
+                    }
+                });
+                imageUpdater.start();
+
             }
         } catch (Exception e) {
 
@@ -289,7 +306,7 @@ public class ExploreWifiSDPanel extends javax.swing.JPanel {
             deleteables.add(tp.getLastPathComponent().toString());
         }
         if (JOptionPane.showConfirmDialog(deletejButton1, "About to delete " + deleteables.size() + " files.", "Delete Files on Remote?", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.OK_OPTION) {
-           ftpConnection.close();
+            ftpConnection.close();
             ftpConnection.remountSD(deleteables);
             updateTree();
         }
@@ -310,7 +327,6 @@ public class ExploreWifiSDPanel extends javax.swing.JPanel {
             Logger.getLogger(AZoCamSyncJFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_openfolderjButtonActionPerformed
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton deletejButton1;

@@ -5,6 +5,7 @@
  */
 package de.quadrillenschule.azocamsyncd;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -24,13 +25,14 @@ public class GlobalProperties {
 
     public enum CamSyncProperties {
 
-        SDCARD_IPS, LOCALSTORAGE_PATH, FILETYPES, SD_FILELIMIT, DATE_FORMAT,USE_DATEFOLDERS,LATESTIMAGEPATH,
-        NOTIFY_CONNECTION,NOTIFY_DOWNLOAD
+        SDCARD_IPS, LOCALSTORAGE_PATH, FILETYPES, SD_FILELIMIT, DATE_FORMAT, USE_DATEFOLDERS, LATESTIMAGEPATH,
+        NOTIFY_CONNECTION, NOTIFY_DOWNLOAD
     };
 
+    public static final Color COLOR_CONNECTED = new Color(100, 200, 90), COLOR_UNCONNECTED = new Color(200, 100, 90);
     public static final String USER_HOME = "System.user.home";
     public static final String[] DEFAULTS = {
-        "192.168.178.254,192.168.178.32", USER_HOME, "JPG,NEF,CR2,TIF,AVI", "25","yyyy_MM_dd","true","","true","true"};
+        "192.168.178.254,192.168.178.32", USER_HOME, "JPG,NEF,CR2,TIF,AVI", "25", "yyyy_MM_dd", "true", "", "true", "true"};
 
     public GlobalProperties() {
         props = new Properties();

@@ -60,17 +60,18 @@ public class LocalStorage {
             return false;
         }
         try {
-            retval.createNewFile(); {
-               //return false;
+            retval.createNewFile();
+            {
+                //return false;
             }
         } catch (IOException ex) {
-         //   return false;
+            //   return false;
         }
 
         if (!retval.canWrite()) {
             return false;
         }
-        
+
         return true;
     }
 

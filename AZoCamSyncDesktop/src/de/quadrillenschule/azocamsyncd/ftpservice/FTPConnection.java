@@ -268,36 +268,34 @@ public class FTPConnection {
 
         try {
             telnetclient.connect(getLastWorkingConnection());
-          
+
             final StringWriter sw = new StringWriter();
 
-         /*   Thread tins = new Thread(new Runnable() {
+            /*   Thread tins = new Thread(new Runnable() {
 
-                @Override
-                public void run() {
-                    try {
-                        IOUtils.copy(telnetclient.getInputStream(), sw);
-                    } catch (IOException ex) {
-                        //     Logger.getLogger(FTPConnection.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+             @Override
+             public void run() {
+             try {
+             IOUtils.copy(telnetclient.getInputStream(), sw);
+             } catch (IOException ex) {
+             //     Logger.getLogger(FTPConnection.class.getName()).log(Level.SEVERE, null, ex);
+             }
 
-                }
-            });
-            tins.start();*/
-     //(telnetclient.getInputStream());
+             }
+             });
+             tins.start();*/
+            //(telnetclient.getInputStream());
             IOUtils.copy(new ByteArrayInputStream((command + "\r\n").getBytes(telnetclient.getCharset())), telnetclient.getOutputStream());
             try {
                 Thread.sleep(200);
             } catch (InterruptedException ex) {
                 Logger.getLogger(FTPConnection.class.getName()).log(Level.SEVERE, null, ex);
             }
-             
-         
-               // tins.join();
-                 telnetclient.disconnect();
+
+            // tins.join();
+            telnetclient.disconnect();
               //  System.out.println(sw.toString());
-         
-          
+
             return null;//sw.toString();//sw.toString();
 
         } catch (IOException ex) {
@@ -314,10 +312,10 @@ public class FTPConnection {
     public void remountSD(LinkedList<String> deleteables) {
         if (deleteables != null) {
             for (String delme : deleteables) {
-                telnetCommand("rm /mnt/sd" + delme+";sync");
+                telnetCommand("rm /mnt/sd" + delme + ";sync");
             }
         }
-   
+
     }
 
     public boolean isPicture(AZoFTPFile ftpfile) {
