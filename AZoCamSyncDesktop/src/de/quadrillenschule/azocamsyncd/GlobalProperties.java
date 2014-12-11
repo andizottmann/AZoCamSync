@@ -5,12 +5,14 @@
  */
 package de.quadrillenschule.azocamsyncd;
 
+import static de.quadrillenschule.azocamsyncd.GlobalProperties.CamSyncProperties;
 import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,13 +28,24 @@ public class GlobalProperties {
     public enum CamSyncProperties {
 
         SDCARD_IPS, LOCALSTORAGE_PATH, FILETYPES, SD_FILELIMIT, DATE_FORMAT, USE_DATEFOLDERS, LATESTIMAGEPATH,
-        NOTIFY_CONNECTION, NOTIFY_DOWNLOAD
+        NOTIFY_CONNECTION, NOTIFY_DOWNLOAD,TOOLTIPS
     };
 
     public static final Color COLOR_CONNECTED = new Color(100, 200, 90), COLOR_UNCONNECTED = new Color(200, 100, 90);
     public static final String USER_HOME = "System.user.home";
-    public static final String[] DEFAULTS = {
-        "192.168.178.254,192.168.178.32", USER_HOME, "JPG,NEF,CR2,TIF,AVI", "25", "yyyy_MM_dd", "true", "", "true", "true"};
+    public static final HashMap<CamSyncProperties, String> DEFAULTS = new HashMap();
+
+    static {
+        DEFAULTS.put(CamSyncProperties.SDCARD_IPS, "192.168.178.254,192.168.178.32");
+        DEFAULTS.put(CamSyncProperties.LOCALSTORAGE_PATH, USER_HOME);
+        DEFAULTS.put(CamSyncProperties.FILETYPES, "JPG,NEF,CR2,TIF,AVI");
+        DEFAULTS.put(CamSyncProperties.SD_FILELIMIT, "100");
+        DEFAULTS.put(CamSyncProperties.DATE_FORMAT, "yyyy_MM_dd");
+        DEFAULTS.put(CamSyncProperties.USE_DATEFOLDERS, "true");
+        DEFAULTS.put(CamSyncProperties.NOTIFY_CONNECTION, "true");
+        DEFAULTS.put(CamSyncProperties.NOTIFY_DOWNLOAD, "true");
+        DEFAULTS.put(CamSyncProperties.TOOLTIPS, "true");
+    }
 
     public GlobalProperties() {
         props = new Properties();
@@ -54,11 +67,14 @@ public class GlobalProperties {
 
     public String getProperty(CamSyncProperties prop) {
         if (prop.equals(CamSyncProperties.LOCALSTORAGE_PATH)) {
-            if (props.getProperty(prop.name(), DEFAULTS[prop.ordinal()]).equals(USER_HOME)) {
+            if (props.getProperty(prop.name(), DEFAULTS.get(prop)).equals(USER_HOME)) {
                 return System.getProperty("user.home") + System.getProperty("file.separator") + "azocamsync";
             }
         }
-        return props.getProperty(prop.name(), DEFAULTS[prop.ordinal()]);
+        if (DEFAULTS.get(prop) == null) {
+              return props.getProperty(prop.name(), "");
+        }
+        return props.getProperty(prop.name(), DEFAULTS.get(prop));
     }
 
     public void load() throws FileNotFoundException, IOException {
