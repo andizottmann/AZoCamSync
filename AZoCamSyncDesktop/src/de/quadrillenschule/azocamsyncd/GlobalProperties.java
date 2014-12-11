@@ -27,8 +27,8 @@ public class GlobalProperties {
 
     public enum CamSyncProperties {
 
-        SDCARD_IPS, LOCALSTORAGE_PATH, FILETYPES, SD_FILELIMIT, DATE_FORMAT, USE_DATEFOLDERS, LATESTIMAGEPATH,
-        NOTIFY_CONNECTION, NOTIFY_DOWNLOAD,TOOLTIPS
+        PULLINTERVALLSECS, SDCARD_IPS, LOCALSTORAGE_PATH, FILETYPES, SD_FILELIMIT, DATE_FORMAT, USE_DATEFOLDERS, LATESTIMAGEPATH,
+        NOTIFY_CONNECTION, NOTIFY_DOWNLOAD, TOOLTIPS
     };
 
     public static final Color COLOR_CONNECTED = new Color(100, 200, 90), COLOR_UNCONNECTED = new Color(200, 100, 90);
@@ -36,6 +36,7 @@ public class GlobalProperties {
     public static final HashMap<CamSyncProperties, String> DEFAULTS = new HashMap();
 
     static {
+        DEFAULTS.put(CamSyncProperties.PULLINTERVALLSECS, "30");
         DEFAULTS.put(CamSyncProperties.SDCARD_IPS, "192.168.178.254,192.168.178.32");
         DEFAULTS.put(CamSyncProperties.LOCALSTORAGE_PATH, USER_HOME);
         DEFAULTS.put(CamSyncProperties.FILETYPES, "JPG,NEF,CR2,TIF,AVI");
@@ -72,7 +73,7 @@ public class GlobalProperties {
             }
         }
         if (DEFAULTS.get(prop) == null) {
-              return props.getProperty(prop.name(), "");
+            return props.getProperty(prop.name(), "");
         }
         return props.getProperty(prop.name(), DEFAULTS.get(prop));
     }

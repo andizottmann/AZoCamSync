@@ -31,6 +31,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -47,7 +49,7 @@ import org.apache.commons.lang3.ClassUtils;
  * @author Andreas
  */
 public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectionListener {
-
+    
     LocalStorage localStorage;
     Timer checkingTimer;
     GlobalProperties gp;
@@ -65,7 +67,7 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
             Logger.getLogger(AZoCamSyncJFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
         gp = new GlobalProperties();
-
+        
         localStorage = new LocalStorage(new File(gp.getProperty(CamSyncProperties.LOCALSTORAGE_PATH)));
         localStorage.setUseDateFolders(Boolean.parseBoolean(gp.getProperty(CamSyncProperties.USE_DATEFOLDERS)));
         localStorage.setDateFormat(gp.getProperty(CamSyncProperties.DATE_FORMAT));
@@ -80,12 +82,15 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         exploreWifiSDPanel1.setLocalStorage(localStorage);
         configurejToggleButtonActionPerformed(null);
         imagejLabel2.setComponentPopupMenu(jPopupMenu1);
-     //   latestImagejLabel.setComponentPopupMenu(jPopupMenu1);
+        //   latestImagejLabel.setComponentPopupMenu(jPopupMenu1);
         bigImagejLabel.setComponentPopupMenu(jPopupMenu1);
+        sdCardPollingIntervalljComboBox.setModel(new DefaultComboBoxModel(PollingIntervallListEntry.allEntries().toArray()));
+        
+        sdCardPollingIntervalljComboBox.setSelectedIndex(PollingIntervallListEntry.indexOf(Integer.parseInt(gp.getProperty(CamSyncProperties.PULLINTERVALLSECS))));
         addSystemTray();
         try {
             ToolTipManager.sharedInstance().setEnabled(Boolean.parseBoolean(gp.getProperty(CamSyncProperties.TOOLTIPS)));
-
+            
             lastDownloaded = new File(gp.getProperty(CamSyncProperties.LATESTIMAGEPATH));
             updateAllImageLabels(new File(gp.getProperty(CamSyncProperties.LATESTIMAGEPATH)));
         } catch (MalformedURLException ex) {
@@ -93,7 +98,7 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         }
         startSize = getSize();
     }
-
+    
     public void startService() {
         wifiSdCardEnabledjToggleButtonActionPerformed(null);
     }
@@ -123,9 +128,7 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         sdCardPollingIntervalljComboBox = new javax.swing.JComboBox();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
         firstIPAdressjTextField1 = new javax.swing.JTextField();
-        secondIPAdressjTextField = new javax.swing.JTextField();
         jPanel1 = new javax.swing.JPanel();
         imagesOnCardLabel = new javax.swing.JLabel();
         tobesynchronizedSDjLabel = new javax.swing.JLabel();
@@ -206,6 +209,7 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         sdCardjPanel.setLayout(new java.awt.GridBagLayout());
 
         sdCardPollingIntervalljComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "10 sec", "20 sec", "30 sec", "60 sec" }));
+        sdCardPollingIntervalljComboBox.setToolTipText("The frequency when the WiFi SD card is checked for connection and new images.");
         sdCardPollingIntervalljComboBox.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 sdCardPollingIntervalljComboBoxItemStateChanged(evt);
@@ -229,19 +233,14 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         sdCardjPanel.add(jLabel1, gridBagConstraints);
 
-        jLabel2.setText("Cards 1st IP Adress:");
+        jLabel2.setText("Cards Adress:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         sdCardjPanel.add(jLabel2, gridBagConstraints);
 
-        jLabel3.setText("Cards 2nd IP Adress:");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        sdCardjPanel.add(jLabel3, gridBagConstraints);
-
-        firstIPAdressjTextField1.setText(gp.getProperty(GlobalProperties.CamSyncProperties.SDCARD_IPS).split(",")[0]);
+        firstIPAdressjTextField1.setText(gp.getProperty(GlobalProperties.CamSyncProperties.SDCARD_IPS));
+        firstIPAdressjTextField1.setToolTipText("The IP adress or the hostname. May be a comma-separated list.");
         firstIPAdressjTextField1.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 firstIPAdressjTextField1KeyReleased(evt);
@@ -252,18 +251,6 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         sdCardjPanel.add(firstIPAdressjTextField1, gridBagConstraints);
-
-        secondIPAdressjTextField.setText(gp.getProperty(GlobalProperties.CamSyncProperties.SDCARD_IPS).split(",")[1]);
-        secondIPAdressjTextField.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                secondIPAdressjTextFieldKeyReleased(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        sdCardjPanel.add(secondIPAdressjTextField, gridBagConstraints);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Files on Card"));
         jPanel1.setLayout(new java.awt.GridBagLayout());
@@ -510,8 +497,8 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
     }// </editor-fold>//GEN-END:initComponents
 
     private int getMillisecsFromList() {
-
-        int secs = Integer.parseInt(sdCardPollingIntervalljComboBox.getSelectedItem().toString().split(" ")[0]);
+        
+        int secs = ((PollingIntervallListEntry) sdCardPollingIntervalljComboBox.getSelectedItem()).seconds;
         return secs * 1000;
     }
     //  SwingWorker timeWorker;
@@ -529,11 +516,11 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
                 t.stop();
             }
             t = new Timer(getMillisecsFromList(), new ActionListener() {
-
+                
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     SwingBackgroundUpdater sbu = new SwingBackgroundUpdater(gp, f, localStorage, t);
-
+                    
                     sbu.start();
                 }
             });
@@ -541,7 +528,7 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
             t.setDelay(getMillisecsFromList());
             t.start();
             System.out.println("here");
-
+            
         } else {
             if (t != null) {
                 t.stop();
@@ -556,15 +543,12 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
 
     private void sdCardPollingIntervalljComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_sdCardPollingIntervalljComboBoxItemStateChanged
         wifiSdCardEnabledjToggleButtonActionPerformed(null);
+        gp.setProperty(CamSyncProperties.PULLINTERVALLSECS, ((PollingIntervallListEntry) sdCardPollingIntervalljComboBox.getSelectedItem()).seconds + "");
     }//GEN-LAST:event_sdCardPollingIntervalljComboBoxItemStateChanged
 
     private void firstIPAdressjTextField1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_firstIPAdressjTextField1KeyReleased
         updateIPsProps();
     }//GEN-LAST:event_firstIPAdressjTextField1KeyReleased
-
-    private void secondIPAdressjTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_secondIPAdressjTextFieldKeyReleased
-        updateIPsProps();
-    }//GEN-LAST:event_secondIPAdressjTextFieldKeyReleased
 
     private void fileExtensionsjTextAreaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_fileExtensionsjTextAreaKeyReleased
         String pf = "";
@@ -588,7 +572,7 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         if (jfc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             localStorageDirjTextField.setText(jfc.getSelectedFile().getAbsolutePath());
-
+            
             gp.setProperty(CamSyncProperties.LOCALSTORAGE_PATH, jfc.getSelectedFile().getAbsolutePath());
             localStorage.setDirectory(jfc.getSelectedFile());
         }
@@ -614,7 +598,7 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         jTabbedPane1.setVisible(configurejToggleButton.isSelected());
         configurejToggleButton.setVisible(!configurejToggleButton.isSelected());
         if (configurejToggleButton.isSelected()) {
-
+            
             setMinimumSize(new Dimension(500, 300));
         } else {
             setMinimumSize(new Dimension(300, 50));
@@ -647,7 +631,7 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         System.out.println(evt.getOldState() + ":" + evt.getNewState() + ":" + blockNext);
         if (blockNext) {
             blockNext = false;
-
+            
             return;
         }
         if (evt.getNewState() == 6 && !configurejToggleButton.isSelected()) {
@@ -669,7 +653,7 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
     }//GEN-LAST:event_formWindowStateChanged
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-
+        
 
     }//GEN-LAST:event_formWindowClosing
 
@@ -689,15 +673,15 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
             }
             configurejToggleButton.setSelected(false);
             configurejToggleButtonActionPerformed(null);
-
+            
         } else {
             lastSelectedTabbedPaneIndex = jTabbedPane1.getSelectedIndex();
         }
     }//GEN-LAST:event_jTabbedPane1StateChanged
-
+    
     private void updateIPsProps() {
-        gp.setProperty(GlobalProperties.CamSyncProperties.SDCARD_IPS, firstIPAdressjTextField1.getText() + "," + secondIPAdressjTextField.getText());
-
+        gp.setProperty(GlobalProperties.CamSyncProperties.SDCARD_IPS, firstIPAdressjTextField1.getText());
+        
     }
 
     /**
@@ -749,7 +733,6 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
     private javax.swing.JLabel imagesOnCardLabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
@@ -770,7 +753,6 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
     private javax.swing.JComboBox sdCardPollingIntervalljComboBox;
     private javax.swing.JPanel sdCardjPanel;
     private javax.swing.JProgressBar sdCardjProgressBar;
-    private javax.swing.JTextField secondIPAdressjTextField;
     private javax.swing.JLabel tobesynchronizedSDjLabel;
     private javax.swing.JCheckBox useDateFolderjCheckBox;
     private javax.swing.JToggleButton wifiSdCardEnabledjToggleButton;
@@ -781,24 +763,24 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
     Color defaultProgressBarColor;
     long lasttimestamp;
     long lastbytes;
-
+    
     boolean treehasfirstUpdate = false;
     boolean laststatewasunconnected = true;
-
+    
     @Override
     public void receiveNotification(FTPConnectionStatus status, String message, int progress) {
         if ((status == FTPConnectionStatus.TRYING)) {
             setTrayIcon(createImage("/de/quadrillenschule/azocamsyncd/gui/res/Camera-icon.png", "tray icon"));
-
+            
             sdCardjProgressBar.setValue(100);
         } else {
             sdCardjProgressBar.setForeground(defaultProgressBarColor);
         }
         if ((status == FTPConnectionStatus.CONNECTED)) {
             setTrayIcon(createImage("/de/quadrillenschule/azocamsyncd/gui/res/Camera-icon_green.png", "tray icon"));
-
+            
             sdCardjProgressBar.setForeground(GlobalProperties.COLOR_CONNECTED);
-
+            
             sdCardjProgressBar.setValue(100);
             if (laststatewasunconnected) {
                 if (Boolean.parseBoolean(gp.getProperty(CamSyncProperties.NOTIFY_CONNECTION))) {
@@ -813,7 +795,7 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
             sdCardjProgressBar.setValue(100);
             if (!laststatewasunconnected) {
                 if (Boolean.parseBoolean(gp.getProperty(CamSyncProperties.NOTIFY_CONNECTION))) {
-
+                    
                     displayTrayIconNotification("Connection Lost", "The connection to your WiFi SD card was lost.", TrayIcon.MessageType.WARNING, CamSyncProperties.NOTIFY_CONNECTION);
                 }
                 laststatewasunconnected = true;
@@ -821,7 +803,7 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         }
         sdCardjProgressBar.setString(status.name() + " " + message);
         if (status.equals(FTPConnectionStatus.NEW_LOCAL_FILE)) {
-
+            
             File f = new File(message);
             lastDownloaded = f;
             gp.setProperty(CamSyncProperties.LATESTIMAGEPATH, f.getAbsolutePath());
@@ -831,46 +813,46 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
                 Logger.getLogger(AZoCamSyncJFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
             if (Boolean.parseBoolean(gp.getProperty(CamSyncProperties.NOTIFY_DOWNLOAD))) {
-
+                
                 displayTrayIconNotification("New Downloads from Camera", message, TrayIcon.MessageType.INFO, CamSyncProperties.NOTIFY_DOWNLOAD);
             }
         }
         if (progress >= 0) {
             sdCardjProgressBar.setValue(progress);
         }
-
+        
         if (status.equals(FTPConnectionStatus.NUMBER_OF_FILES_DETECTED)) {
             imagesOnCardLabel.setText("Total (filtered): " + message);
             if (!treehasfirstUpdate) {
                 exploreWifiSDPanel1.updateTree();
                 treehasfirstUpdate = true;
             }
-
+            
         }
-
+        
         if (status.equals(FTPConnectionStatus.DELETING_FILES)) {
             imagesOnCardLabel.setText("Total (filtered): " + message);
-
+            
             exploreWifiSDPanel1.updateTree();
             treehasfirstUpdate = true;
-
+            
         }
-
+        
         if (status.equals(FTPConnectionStatus.NUMBER_OF_SYNCHRONISABLE_FILES_DETECTED)) {
             tobesynchronizedSDjLabel.setText("To be downloaded: " + message);
             exploreWifiSDPanel1.updateTree();
-
+            
         }
         if (status.equals(FTPConnectionStatus.DOWNLOADING)) {
             lasttimestamp = System.currentTimeMillis();
             lastbytes = 0;
             tdownload = new Timer(1000, new ActionListener() {
-
+                
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     //  downloadjProgressBar.setString();
                     Thread t = new Thread(new Runnable() {
-
+                        
                         @Override
                         public void run() {
                             long bytecount = f.cos.getByteCount();
@@ -885,7 +867,7 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
                         }
                     });
                     t.start();
-
+                    
                 }
             });
             tdownload.start();
@@ -893,31 +875,33 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
             downloadjProgressBar.setString("No Download");
             downloadjProgressBar.setValue(0);
             if (tdownload != null && tdownload.isRunning()) {
-
+                
                 tdownload.stop();
             }
         }
     }
-
+    
     private void displayTrayIconNotification(String caption, String message, TrayIcon.MessageType messageType, CamSyncProperties notificationType) {
         if (Boolean.parseBoolean(gp.getProperty(notificationType))) {
             trayIcon.displayMessage(caption, message, messageType);
         }
-
+        
     }
-
+    
     private void updateAllImageLabels(File pf) throws MalformedURLException {
         final File f = pf;
         Thread t = new Thread(new Runnable() {
-
+            
             @Override
             public void run() {
-                for (JLabel j : new JLabel[]{imagejLabel2,  bigImagejLabel}) {
-
+                for (JLabel j : new JLabel[]{imagejLabel2, bigImagejLabel}) {
+                    
                     try {
                         ImageIcon ii = new ImageIcon(f.toURI().toURL());
                         int mywidth = j.getWidth();
-                        if (mywidth>600){mywidth=600;}
+                        if (mywidth > 600) {
+                            mywidth = 600;
+                        }
                         int width = ii.getIconWidth();
                         int height = ii.getIconHeight();
                         if (width <= 0) {
@@ -936,13 +920,13 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
             }
         });
         t.start();
-
+        
     }
 
     //Obtain the image URL
     protected static Image createImage(String path, String description) {
         URL imageURL = AZoCamSyncJFrame.class.getResource(path);
-
+        
         if (imageURL == null) {
             System.err.println("Resource not found: " + path);
             return null;
@@ -950,7 +934,7 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
             return (new ImageIcon(imageURL, description)).getImage();
         }
     }
-
+    
     void addSystemTray() {
         if (!SystemTray.isSupported()) {
             System.out.println("SystemTray is not supported");
@@ -962,10 +946,10 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         final SystemTray tray = SystemTray.getSystemTray();
         final AZoCamSyncJFrame azf = this;
         PopupMenu popupMenu = new PopupMenu("AZoCamSync");
-
+        
         MenuItem mi1 = new MenuItem("Configure..");
         mi1.addActionListener(new ActionListener() {
-
+            
             @Override
             public void actionPerformed(ActionEvent e) {
                 azf.setState(NORMAL);
@@ -976,12 +960,12 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
                 configurejToggleButtonActionPerformed(e);
             }
         });
-
+        
         popupMenu.add(mi1);
-
+        
         MenuItem mi2 = new MenuItem("Open Folder..");
         mi2.addActionListener(new ActionListener() {
-
+            
             @Override
             public void actionPerformed(ActionEvent e) {
                 azf.setState(NORMAL);
@@ -995,12 +979,12 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
                 }
             }
         });
-
+        
         popupMenu.add(mi2);
-
+        
         MenuItem mi3 = new MenuItem("Open File..");
         mi3.addActionListener(new ActionListener() {
-
+            
             @Override
             public void actionPerformed(ActionEvent e) {
                 azf.setState(NORMAL);
@@ -1014,25 +998,25 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
                 }
             }
         });
-
+        
         popupMenu.add(mi3);
-
+        
         MenuItem mi4 = new MenuItem("Exit...");
         mi4.addActionListener(new ActionListener() {
-
+            
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                
                 azf.dispose();
-
+                
             }
         });
-
+        
         popupMenu.add(mi4);
-
+        
         trayI.setToolTip("AZoCamSync");
         trayI.setPopupMenu(popupMenu);
-
+        
         try {
             tray.add(trayI);
         } catch (AWTException e) {
@@ -1040,7 +1024,7 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         }
         trayIcon = trayI;
     }
-
+    
     public void setTrayIcon(Image image) {
         this.setIconImage(image);
         if (trayIcon == null) {
@@ -1049,10 +1033,10 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         trayIcon.setImageAutoSize(true);
         trayIcon.setImage(image);
     }
-
+    
     @Override
     public void dispose() {
-
+        
         if (JOptionPane.showConfirmDialog(rootPane, "Closing will also close the background service.", "You want to exit?", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE) == JOptionPane.OK_OPTION) {
             f.close();
             super.dispose();

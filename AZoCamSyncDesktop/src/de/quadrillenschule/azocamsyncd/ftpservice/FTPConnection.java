@@ -12,7 +12,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Collections;
 import java.util.Comparator;
@@ -242,7 +241,7 @@ public class FTPConnection {
                 for (AZoFTPFile af : afs) {
                     i++;
                     //   deleteSingleFile(lastWorkingConnection)
-                    deleteables.add((af.dir + af.ftpFile.getName()).replaceAll(" ", "*"));
+                    deleteables.add((af.dir + af.ftpFile.getName()));
                     //    System.out.println("Would delete"+af.ftpFile.getName());
                     if (i >= todelete) {
                         break;
@@ -312,7 +311,7 @@ public class FTPConnection {
     public void remountSD(LinkedList<String> deleteables) {
         if (deleteables != null) {
             for (String delme : deleteables) {
-                telnetCommand("rm /mnt/sd" + delme + ";sync");
+                telnetCommand("rm '/mnt/sd" + delme + "'");
             }
         }
 

@@ -5,7 +5,6 @@
  */
 package de.quadrillenschule.azocamsyncd.gui;
 
-import de.quadrillenschule.azocamsyncd.GlobalProperties;
 import de.quadrillenschule.azocamsyncd.LocalStorage;
 import de.quadrillenschule.azocamsyncd.ftpservice.AZoFTPFile;
 import de.quadrillenschule.azocamsyncd.ftpservice.FTPConnection;
@@ -28,10 +27,8 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeCellRenderer;
-import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.net.ftp.FTP;
 
 /**
  *
@@ -102,8 +99,8 @@ public class ExploreWifiSDPanel extends javax.swing.JPanel {
                 for (AZoFTPFile af : afs) {
                     if (new String(af.dir + af.ftpFile.getName()).equals(mynode)) {
                         myaffilea = af;
-                        GlobalProperties gp=new GlobalProperties();
-                        gp.setProperty(GlobalProperties.CamSyncProperties.LATESTIMAGEPATH, af.dir+af.ftpFile.getName());
+                   //     GlobalProperties gp=new GlobalProperties();
+                        //     gp.setProperty(GlobalProperties.CamSyncProperties.LATESTIMAGEPATH, af.dir+af.ftpFile.getName());
                         break;
                     }
                 }
@@ -114,47 +111,32 @@ public class ExploreWifiSDPanel extends javax.swing.JPanel {
                     public void run() {
                         try {
                             File localFile;
-                            if (myaffile == null) {
-                                GlobalProperties gp=new GlobalProperties();
-                                localFile = new File(gp.getProperty(GlobalProperties.CamSyncProperties.LATESTIMAGEPATH));
-                            
-                        }
-                        else{
+
                             localFile = localStorage.getLocalFile(myaffile);
+
+                            localFileNamejTextField1.setText(localFile.getAbsolutePath());
+                            ImageIcon ii = new ImageIcon(localFile.toURI().toURL());
+
+                            int mywidth = imagejLabel.getWidth();
+                            int width = ii.getIconWidth();
+                            int height = ii.getIconHeight();
+                            if (width <= 0) {
+                                imagejLabel.setText("No image to view.");
+                            } else {
+                                imagejLabel.setText("");
                             }
-                        localFileNamejTextField1.setText(localFile.getAbsolutePath());
-                        ImageIcon ii = new ImageIcon(localFile.toURI().toURL());
-
-                        int mywidth = imagejLabel.getWidth();
-                        int width = ii.getIconWidth();
-                        int height = ii.getIconHeight();
-                        if (width <= 0) {
+                            double factor = (double) height / (double) width;
+                            Image image = ii.getImage().getScaledInstance(mywidth, (int) ((double) mywidth * factor), Image.SCALE_FAST);
+                            imagejLabel.setIcon(new ImageIcon(image));
+                        } catch (IOException ex) {
                             imagejLabel.setText("No image to view.");
-                        } else {
-                            imagejLabel.setText("");
                         }
-                        double factor = (double) height / (double) width;
-                        Image image = ii.getImage().getScaledInstance(mywidth, (int) ((double) mywidth * factor), Image.SCALE_FAST);
-                        imagejLabel.setIcon(new ImageIcon(image));
                     }
-                    catch (IOException ex
+                });
+                imageUpdater.start();
 
-                    
-                        ) {
-                            imagejLabel.setText("No image to view.");
-                    }
-                }
-            });
-            imageUpdater.start();
-
-        }
-    }
-    catch (Exception e
-
-    
-    
-
-) {
+            }
+        } catch (Exception e) {
 
         }
     }
@@ -333,24 +315,20 @@ public class ExploreWifiSDPanel extends javax.swing.JPanel {
     private void openLocalFilejButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openLocalFilejButtonActionPerformed
         try {
             Desktop.getDesktop().open(new File(localFileNamejTextField1.getText()));
-        
 
-} catch (Exception ex) {
-            Logger.getLogger(AZoCamSyncJFrame.class  
-
-.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(AZoCamSyncJFrame.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_openLocalFilejButtonActionPerformed
 
     private void openfolderjButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openfolderjButtonActionPerformed
         try {
             Desktop.getDesktop().open(new File(localFileNamejTextField1.getText()).getParentFile());
-        
 
-} catch (Exception ex) {
-            Logger.getLogger(AZoCamSyncJFrame.class  
-
-.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(AZoCamSyncJFrame.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_openfolderjButtonActionPerformed
 
