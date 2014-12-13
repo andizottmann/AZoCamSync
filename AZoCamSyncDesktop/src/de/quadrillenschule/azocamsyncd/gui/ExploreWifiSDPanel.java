@@ -72,10 +72,15 @@ public class ExploreWifiSDPanel extends javax.swing.JPanel {
                     }
                 }
                 try {
-                    if (!localStorage.getLocalFile(myaffile).exists()) {
-                        if (!myaffile.ftpFile.isDirectory()) {
-                            retval.setForeground(Color.red);
-                        }
+                    if (!myaffile.ftpFile.isDirectory()) {
+                        if (!localStorage.getLocalFile(myaffile).exists()) {
+
+                            if (!localStorage.isFileSynced(myaffile)) {
+                                retval.setForeground(new Color(0,20,100));
+                            }
+                        } else {
+                             retval.setForeground(new Color(20,100,0));
+                            }
                     }
                 } catch (Exception ex) {
                     //           Logger.getLogger(ExploreWifiSDPanel.class.getName()).log(Level.SEVERE, null, ex);
@@ -99,7 +104,7 @@ public class ExploreWifiSDPanel extends javax.swing.JPanel {
                 for (AZoFTPFile af : afs) {
                     if (new String(af.dir + af.ftpFile.getName()).equals(mynode)) {
                         myaffilea = af;
-                   //     GlobalProperties gp=new GlobalProperties();
+                        //     GlobalProperties gp=new GlobalProperties();
                         //     gp.setProperty(GlobalProperties.CamSyncProperties.LATESTIMAGEPATH, af.dir+af.ftpFile.getName());
                         break;
                     }
@@ -196,7 +201,6 @@ public class ExploreWifiSDPanel extends javax.swing.JPanel {
         localFileNamejTextField1 = new javax.swing.JTextField();
         imagejLabel = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
-        deletejButton1 = new javax.swing.JButton();
         openLocalFilejButton = new javax.swing.JButton();
         openfolderjButton = new javax.swing.JButton();
 
@@ -239,14 +243,6 @@ public class ExploreWifiSDPanel extends javax.swing.JPanel {
         jPanel2.add(imagejLabel, gridBagConstraints);
 
         jPanel3.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
-
-        deletejButton1.setText("Delete remote files...");
-        deletejButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                deletejButton1ActionPerformed(evt);
-            }
-        });
-        jPanel3.add(deletejButton1);
 
         openLocalFilejButton.setText("Open (local) File...");
         openLocalFilejButton.addActionListener(new java.awt.event.ActionListener() {
@@ -299,19 +295,6 @@ public class ExploreWifiSDPanel extends javax.swing.JPanel {
             }
         }
     }
-    private void deletejButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deletejButton1ActionPerformed
-        LinkedList<String> deleteables = new LinkedList<>();
-        for (TreePath tp : remotejTree.getSelectionPaths()) {
-            //  System.out.println("Woudl delete:"+tp.getLastPathComponent().toString());
-            deleteables.add(tp.getLastPathComponent().toString());
-        }
-        if (JOptionPane.showConfirmDialog(deletejButton1, "About to delete " + deleteables.size() + " files.", "Delete Files on Remote?", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.OK_OPTION) {
-            ftpConnection.close();
-            ftpConnection.remountSD(deleteables);
-            updateTree();
-        }
-    }//GEN-LAST:event_deletejButton1ActionPerformed
-
     private void openLocalFilejButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openLocalFilejButtonActionPerformed
         try {
             Desktop.getDesktop().open(new File(localFileNamejTextField1.getText()));
@@ -333,7 +316,6 @@ public class ExploreWifiSDPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_openfolderjButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton deletejButton1;
     private javax.swing.JLabel imagejLabel;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;

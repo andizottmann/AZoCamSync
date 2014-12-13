@@ -76,10 +76,11 @@ public class SwingBackgroundUpdater extends Thread {
            
 
             try {
-                ftpConnection.deleteFiles(Integer.parseInt(gp.getProperty(GlobalProperties.CamSyncProperties.SD_FILELIMIT)));
+           //     ftpConnection.deleteFiles(Integer.parseInt(gp.getProperty(GlobalProperties.CamSyncProperties.SD_FILELIMIT)),localStorage);
             } catch (NumberFormatException nfe) {
             }
-
+              ftpConnection.remountSD();
+                  
             ftpConnection.notify(FTPConnectionListener.FTPConnectionStatus.CONNECTED, ftpConnection.getLastWorkingConnection(), -1);
 
         }

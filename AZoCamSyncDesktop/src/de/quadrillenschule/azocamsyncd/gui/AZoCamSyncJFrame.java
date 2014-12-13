@@ -134,11 +134,15 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         fileExtensionsjTextArea = new javax.swing.JTextArea();
         limitSDCardFilesjTextField = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
+        jPanel3 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         localStorageSelectDirjButton = new javax.swing.JButton();
         localStorageDirjTextField = new javax.swing.JTextField();
         useDateFolderjCheckBox = new javax.swing.JCheckBox();
         dateFormatjTextField = new javax.swing.JTextField();
+        jPanel9 = new javax.swing.JPanel();
+        notifyConnectionjCheckBox = new javax.swing.JCheckBox();
+        notifyDownloadjCheckBox = new javax.swing.JCheckBox();
         imagejPanel8 = new javax.swing.JPanel();
         bigImagejLabel = new javax.swing.JLabel();
         exploreWifiSDPanel1 = new de.quadrillenschule.azocamsyncd.gui.ExploreWifiSDPanel();
@@ -317,6 +321,8 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
 
         jSplitPane1.setLeftComponent(sdCardjPanel);
 
+        jPanel3.setLayout(new java.awt.GridBagLayout());
+
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Local Storage"));
         jPanel2.setLayout(new java.awt.GridBagLayout());
 
@@ -382,7 +388,53 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         gridBagConstraints.weighty = 0.1;
         jPanel2.add(dateFormatjTextField, gridBagConstraints);
 
-        jSplitPane1.setRightComponent(jPanel2);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 0.1;
+        gridBagConstraints.weighty = 0.1;
+        jPanel3.add(jPanel2, gridBagConstraints);
+
+        jPanel9.setBorder(javax.swing.BorderFactory.createTitledBorder("Tray Icon Notifications"));
+        jPanel9.setLayout(new java.awt.GridBagLayout());
+
+        notifyConnectionjCheckBox.setSelected(Boolean.parseBoolean(gp.getProperty(CamSyncProperties.NOTIFY_CONNECTION))
+        );
+        notifyConnectionjCheckBox.setText("Notify on Connection Status");
+        notifyConnectionjCheckBox.setActionCommand("");
+        notifyConnectionjCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                notifyConnectionjCheckBoxActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
+        jPanel9.add(notifyConnectionjCheckBox, gridBagConstraints);
+
+        notifyDownloadjCheckBox.setSelected(Boolean.parseBoolean(gp.getProperty(CamSyncProperties.NOTIFY_DOWNLOAD))
+        );
+        notifyDownloadjCheckBox.setText("Notify on Downloads");
+        notifyDownloadjCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                notifyDownloadjCheckBoxActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        jPanel9.add(notifyDownloadjCheckBox, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 0.1;
+        gridBagConstraints.weighty = 0.1;
+        jPanel3.add(jPanel9, gridBagConstraints);
+
+        jSplitPane1.setRightComponent(jPanel3);
 
         jPanel7.add(jSplitPane1);
 
@@ -676,6 +728,15 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
             lastSelectedTabbedPaneIndex = jTabbedPane1.getSelectedIndex();
         }
     }//GEN-LAST:event_jTabbedPane1StateChanged
+
+    private void notifyConnectionjCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_notifyConnectionjCheckBoxActionPerformed
+       gp.setProperty(CamSyncProperties.NOTIFY_CONNECTION, ""+notifyConnectionjCheckBox.isSelected());
+    }//GEN-LAST:event_notifyConnectionjCheckBoxActionPerformed
+
+    private void notifyDownloadjCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_notifyDownloadjCheckBoxActionPerformed
+            gp.setProperty(CamSyncProperties.NOTIFY_DOWNLOAD, ""+notifyDownloadjCheckBox.isSelected());
+
+    }//GEN-LAST:event_notifyDownloadjCheckBoxActionPerformed
     
     private void updateIPsProps() {
         gp.setProperty(GlobalProperties.CamSyncProperties.SDCARD_IPS, firstIPAdressjTextField1.getText());
@@ -734,11 +795,13 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
+    private javax.swing.JPanel jPanel9;
     private javax.swing.JPopupMenu jPopupMenu1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSplitPane jSplitPane1;
@@ -746,6 +809,8 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
     private javax.swing.JTextField limitSDCardFilesjTextField;
     private javax.swing.JTextField localStorageDirjTextField;
     private javax.swing.JButton localStorageSelectDirjButton;
+    private javax.swing.JCheckBox notifyConnectionjCheckBox;
+    private javax.swing.JCheckBox notifyDownloadjCheckBox;
     private javax.swing.JMenuItem openDirjMenuItem1;
     private javax.swing.JMenuItem openjMenuItem;
     private javax.swing.JComboBox sdCardPollingIntervalljComboBox;
