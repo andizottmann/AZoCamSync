@@ -68,7 +68,7 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         }
         gp = new GlobalProperties();
         
-        localStorage = new LocalStorage(new File(gp.getProperty(CamSyncProperties.LOCALSTORAGE_PATH)));
+        localStorage = new LocalStorage(new File(gp.getProperty(CamSyncProperties.LOCALSTORAGE_PATH)),gp);
         localStorage.setUseDateFolders(Boolean.parseBoolean(gp.getProperty(CamSyncProperties.USE_DATEFOLDERS)));
         localStorage.setDateFormat(gp.getProperty(CamSyncProperties.DATE_FORMAT));
         initComponents();
@@ -120,8 +120,6 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         jPanel6 = new javax.swing.JPanel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel8 = new javax.swing.JPanel();
-        imagejPanel8 = new javax.swing.JPanel();
-        bigImagejLabel = new javax.swing.JLabel();
         jPanel7 = new javax.swing.JPanel();
         jSplitPane1 = new javax.swing.JSplitPane();
         sdCardjPanel = new javax.swing.JPanel();
@@ -141,6 +139,8 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         localStorageDirjTextField = new javax.swing.JTextField();
         useDateFolderjCheckBox = new javax.swing.JCheckBox();
         dateFormatjTextField = new javax.swing.JTextField();
+        imagejPanel8 = new javax.swing.JPanel();
+        bigImagejLabel = new javax.swing.JLabel();
         exploreWifiSDPanel1 = new de.quadrillenschule.azocamsyncd.gui.ExploreWifiSDPanel();
         sdCardjProgressBar = new javax.swing.JProgressBar();
         downloadjProgressBar = new javax.swing.JProgressBar();
@@ -193,15 +193,6 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
             }
         });
         jTabbedPane1.addTab("Widgetize", jPanel8);
-
-        bigImagejLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        bigImagejLabel.setText("No Latest Image to View.");
-        bigImagejLabel.setToolTipText("Right-Click for menu");
-        bigImagejLabel.setMaximumSize(null);
-        bigImagejLabel.setPreferredSize(new java.awt.Dimension(600, 400));
-        imagejPanel8.add(bigImagejLabel);
-
-        jTabbedPane1.addTab("Image", imagejPanel8);
 
         jPanel7.setLayout(new java.awt.GridLayout(1, 0));
 
@@ -397,10 +388,17 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
 
         jTabbedPane1.addTab("Configure", jPanel7);
 
+        bigImagejLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        bigImagejLabel.setText("No Latest Image to View.");
+        bigImagejLabel.setToolTipText("Right-Click for menu");
+        bigImagejLabel.setMaximumSize(null);
+        bigImagejLabel.setPreferredSize(new java.awt.Dimension(600, 400));
+        imagejPanel8.add(bigImagejLabel);
+
+        jTabbedPane1.addTab("Image", imagejPanel8);
+
         exploreWifiSDPanel1.setBorder(null);
         jTabbedPane1.addTab("Manage Remote Files", exploreWifiSDPanel1);
-
-        jTabbedPane1.setSelectedIndex(1);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridwidth = 2;

@@ -118,9 +118,9 @@ public class FTPConnection {
             return afs;
         }
         LinkedList<AZoFTPFile> retval = new LinkedList<>();
-        for (AZoFTPFile a : afs) {
-            retval.add(a);
-        }
+        /* for (AZoFTPFile a : afs) {
+         retval.add(a);
+         }*/
 
         simplyConnect(FTP.BINARY_FILE_TYPE);
         notify(FTPConnectionStatus.CONNECTED, getLastWorkingConnection(), -1);
@@ -160,14 +160,14 @@ public class FTPConnection {
                     }
                 };
 
-                if (true) {
-                    is.close();
-                    fos.close();
-                    localStorage.setLatestIncoming(localFile);
-                    notify(FTPConnectionStatus.NEW_LOCAL_FILE, localFile.getAbsolutePath(), -1);
-                    retval.remove(af);
-                    notify(FTPConnectionStatus.SUCCESS, af.dir + af.ftpFile.getName(), ((int) (100.0 * ((afs.indexOf(af) + 2.0) / (double) afs.size()))));
-                }
+                is.close();
+                fos.close();
+                localStorage.setLatestIncoming(localFile);
+                localStorage.addSyncedFile(af);
+                notify(FTPConnectionStatus.NEW_LOCAL_FILE, localFile.getAbsolutePath(), -1);
+                retval.add(af);
+                notify(FTPConnectionStatus.SUCCESS, af.dir + af.ftpFile.getName(), ((int) (100.0 * ((afs.indexOf(af) + 2.0) / (double) afs.size()))));
+
             } catch (Exception ex) {
                 try {
                     is.close();
@@ -261,7 +261,7 @@ public class FTPConnection {
         close();
     }
 
-    public String telnetCommand(String command) {
+    public String telnetCommands(String[] commands) {
         close();
         final TelnetClient telnetclient = new TelnetClient();
 
@@ -269,31 +269,18 @@ public class FTPConnection {
             telnetclient.connect(getLastWorkingConnection());
 
             final StringWriter sw = new StringWriter();
-
-            /*   Thread tins = new Thread(new Runnable() {
-
-             @Override
-             public void run() {
-             try {
-             IOUtils.copy(telnetclient.getInputStream(), sw);
-             } catch (IOException ex) {
-             //     Logger.getLogger(FTPConnection.class.getName()).log(Level.SEVERE, null, ex);
-             }
-
-             }
-             });
-             tins.start();*/
-            //(telnetclient.getInputStream());
-            IOUtils.copy(new ByteArrayInputStream((command + "\r\n").getBytes(telnetclient.getCharset())), telnetclient.getOutputStream());
+            for (String command : commands) {
+                IOUtils.copy(new ByteArrayInputStream((command + "\r\n").getBytes(telnetclient.getCharset())), telnetclient.getOutputStream());
+            }
             try {
-                Thread.sleep(200);
+                Thread.sleep(1000);
             } catch (InterruptedException ex) {
                 Logger.getLogger(FTPConnection.class.getName()).log(Level.SEVERE, null, ex);
             }
 
             // tins.join();
             telnetclient.disconnect();
-              //  System.out.println(sw.toString());
+            //  System.out.println(sw.toString());
 
             return null;//sw.toString();//sw.toString();
 
@@ -310,11 +297,14 @@ public class FTPConnection {
 
     public void remountSD(LinkedList<String> deleteables) {
         if (deleteables != null) {
+            LinkedList<String> commands=new LinkedList<>();
             for (String delme : deleteables) {
-                telnetCommand("rm '/mnt/sd" + delme + "'");
+               commands.add("rm '/mnt/sd" + delme + "'");
             }
+            commands.add("/usr/bin/refresh_sd");
+             telnetCommands(commands.toArray(new String[commands.size()]));
         }
-
+       
     }
 
     public boolean isPicture(AZoFTPFile ftpfile) {

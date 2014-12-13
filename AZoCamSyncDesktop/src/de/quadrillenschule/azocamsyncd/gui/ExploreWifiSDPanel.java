@@ -128,7 +128,7 @@ public class ExploreWifiSDPanel extends javax.swing.JPanel {
                             double factor = (double) height / (double) width;
                             Image image = ii.getImage().getScaledInstance(mywidth, (int) ((double) mywidth * factor), Image.SCALE_FAST);
                             imagejLabel.setIcon(new ImageIcon(image));
-                        } catch (IOException ex) {
+                        } catch (Exception ex) {
                             imagejLabel.setText("No image to view.");
                         }
                     }

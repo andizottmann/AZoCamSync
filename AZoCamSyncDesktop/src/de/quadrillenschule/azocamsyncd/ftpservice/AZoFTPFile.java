@@ -24,8 +24,19 @@ public class AZoFTPFile {
 
     }
 
+    public String getFullName() {
+        return dir + ftpFile.getName();
+    }
+
     public boolean equals(AZoFTPFile af) {
         return (dir.equals(af.dir) && rawname.equals(af.rawname));
+    }
+
+    public boolean equalsFTPName(String s) {
+        if ((dir + ftpFile.getName()).equals(s)) {
+            return true;
+        }
+        return false;
     }
 
 }
