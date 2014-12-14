@@ -11,6 +11,8 @@ import de.quadrillenschule.azocamsyncd.ftpservice.AZoFTPFile;
 import de.quadrillenschule.azocamsyncd.ftpservice.FTPConnection;
 import de.quadrillenschule.azocamsyncd.ftpservice.FTPConnectionListener;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
@@ -54,7 +56,7 @@ public class SwingBackgroundUpdater extends Thread {
             ftpConnection.notify(FTPConnectionListener.FTPConnectionStatus.NUMBER_OF_FILES_DETECTED, "" + retval.size(), -1);
             localStorage.removeSyncedFileEntriesNotOnList(retval);
             LinkedList<AZoFTPFile> r = new LinkedList<>();
-             for (AZoFTPFile af : retval) {
+            for (AZoFTPFile af : retval) {
                 try {
                     if (!localStorage.equalsLocal(af)) {
                         if (!localStorage.isFileSynced(af)) {
@@ -65,22 +67,34 @@ public class SwingBackgroundUpdater extends Thread {
                     Logger.getLogger(AZoCamSyncJFrame.class.getName()).log(Level.SEVERE, null, ex);
                 }
             };
+
+            if ((r != null) && (r.size() == 0)) {
+                ftpConnection.notify(FTPConnectionListener.FTPConnectionStatus.FULLY_SYNCED, "" + r.size(), -1);
+
+            }
             if ((r != null) && (r.size() > 0)) {
+                Collections.sort(r, new Comparator<AZoFTPFile>() {
+
+                    @Override
+                    public int compare(AZoFTPFile o1, AZoFTPFile o2) {
+                        return o1.ftpFile.getName().compareTo(o2.ftpFile.getName());
+                    }
+                });
+
+             
                 ftpConnection.notify(FTPConnectionListener.FTPConnectionStatus.NUMBER_OF_SYNCHRONISABLE_FILES_DETECTED, "" + r.size(), -1);
                 ftpConnection.notify(FTPConnectionListener.FTPConnectionStatus.CONNECTED, ftpConnection.getLastWorkingConnection(), -1);
 
                 LinkedList<AZoFTPFile> downloaded = ftpConnection.download(r, localStorage);
-                
-            }
 
-           
+            }
 
             try {
-           //     ftpConnection.deleteFiles(Integer.parseInt(gp.getProperty(GlobalProperties.CamSyncProperties.SD_FILELIMIT)),localStorage);
+                //     ftpConnection.deleteFiles(Integer.parseInt(gp.getProperty(GlobalProperties.CamSyncProperties.SD_FILELIMIT)),localStorage);
             } catch (NumberFormatException nfe) {
             }
-              ftpConnection.remountSD();
-                  
+            ftpConnection.remountSD();
+
             ftpConnection.notify(FTPConnectionListener.FTPConnectionStatus.CONNECTED, ftpConnection.getLastWorkingConnection(), -1);
 
         }

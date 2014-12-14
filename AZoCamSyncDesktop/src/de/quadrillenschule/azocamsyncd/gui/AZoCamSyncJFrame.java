@@ -68,6 +68,7 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         localStorage.setUseDateFolders(Boolean.parseBoolean(gp.getProperty(CamSyncProperties.USE_DATEFOLDERS)));
         localStorage.setDateFormat(gp.getProperty(CamSyncProperties.DATE_FORMAT));
         initComponents();
+        photoProjectJPanel1.setFtpConnection(f);
         initMyComponents();
         addSystemTray();
         startSize = getSize();
@@ -147,6 +148,7 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         imagejPanel8 = new javax.swing.JPanel();
         bigImagejLabel = new javax.swing.JLabel();
         exploreWifiSDPanel1 = new de.quadrillenschule.azocamsyncd.gui.ExploreWifiSDPanel();
+        photoProjectJPanel1 = new de.quadrillenschule.azocamsyncd.astromode.gui.PhotoProjectJPanel();
         sdCardjProgressBar = new javax.swing.JProgressBar();
         downloadjProgressBar = new javax.swing.JProgressBar();
         jPanel4 = new javax.swing.JPanel();
@@ -453,6 +455,7 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
 
         exploreWifiSDPanel1.setBorder(null);
         jTabbedPane1.addTab("Manage Remote Files", exploreWifiSDPanel1);
+        jTabbedPane1.addTab("Astro Mode", photoProjectJPanel1);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridwidth = 2;
@@ -730,7 +733,7 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         this.setAlwaysOnTop(false);
         cwj.toFront();
         cwj.setVisible(true);
-      
+
         initMyComponents();
     }//GEN-LAST:event_wizardButtonActionPerformed
 
@@ -833,6 +836,7 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
     private javax.swing.JCheckBox notifyDownloadjCheckBox;
     private javax.swing.JMenuItem openDirjMenuItem1;
     private javax.swing.JMenuItem openjMenuItem;
+    private de.quadrillenschule.azocamsyncd.astromode.gui.PhotoProjectJPanel photoProjectJPanel1;
     private javax.swing.JComboBox sdCardPollingIntervalljComboBox;
     private javax.swing.JPanel sdCardjPanel;
     private javax.swing.JProgressBar sdCardjProgressBar;
@@ -1004,7 +1008,9 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
                 }
             }
         });
-        t.start();
+        if (!photoProjectJPanel1.isRunning()) {
+            t.start();
+        }
 
     }
 

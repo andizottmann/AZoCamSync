@@ -28,7 +28,7 @@ public class GlobalProperties {
     public enum CamSyncProperties {
 
         PULLINTERVALLSECS, SDCARD_IPS, LOCALSTORAGE_PATH, FILETYPES, SD_FILELIMIT, DATE_FORMAT, USE_DATEFOLDERS, LIST_OFSYNCED_IMAGES, LATESTIMAGEPATH,
-        NOTIFY_CONNECTION, NOTIFY_DOWNLOAD, TOOLTIPS
+        NOTIFY_CONNECTION, NOTIFY_DOWNLOAD, TOOLTIPS, LAST_ASTRO_FOLDER
     };
 
     public static final Color COLOR_CONNECTED = new Color(100, 200, 90), COLOR_UNCONNECTED = new Color(200, 100, 90);
@@ -46,6 +46,8 @@ public class GlobalProperties {
         DEFAULTS.put(CamSyncProperties.NOTIFY_CONNECTION, "true");
         DEFAULTS.put(CamSyncProperties.NOTIFY_DOWNLOAD, "true");
         DEFAULTS.put(CamSyncProperties.TOOLTIPS, "true");
+        DEFAULTS.put(CamSyncProperties.LAST_ASTRO_FOLDER, USER_HOME);
+
     }
 
     public GlobalProperties() {
@@ -68,6 +70,11 @@ public class GlobalProperties {
 
     public String getProperty(CamSyncProperties prop) {
         if (prop.equals(CamSyncProperties.LOCALSTORAGE_PATH)) {
+            if (props.getProperty(prop.name(), DEFAULTS.get(prop)).equals(USER_HOME)) {
+                return System.getProperty("user.home") + System.getProperty("file.separator") + "azocamsync";
+            }
+        }
+         if (prop.equals(CamSyncProperties.LAST_ASTRO_FOLDER)) {
             if (props.getProperty(prop.name(), DEFAULTS.get(prop)).equals(USER_HOME)) {
                 return System.getProperty("user.home") + System.getProperty("file.separator") + "azocamsync";
             }
