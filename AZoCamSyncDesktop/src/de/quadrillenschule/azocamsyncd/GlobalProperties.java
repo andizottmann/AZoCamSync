@@ -27,7 +27,7 @@ public class GlobalProperties {
 
     public enum CamSyncProperties {
 
-        PULLINTERVALLSECS, SDCARD_IPS, LOCALSTORAGE_PATH, FILETYPES, SD_FILELIMIT, DATE_FORMAT, USE_DATEFOLDERS,LIST_OFSYNCED_IMAGES, LATESTIMAGEPATH,
+        PULLINTERVALLSECS, SDCARD_IPS, LOCALSTORAGE_PATH, FILETYPES, SD_FILELIMIT, DATE_FORMAT, USE_DATEFOLDERS, LIST_OFSYNCED_IMAGES, LATESTIMAGEPATH,
         NOTIFY_CONNECTION, NOTIFY_DOWNLOAD, TOOLTIPS
     };
 
@@ -94,6 +94,14 @@ public class GlobalProperties {
     }
 
     public File getFile() {
-        return new File(System.getProperty("user.home"), "azocamsync.props");
+        File dir = new File(System.getProperty("user.home") + System.getProperty("file.separator") + "azocamsync");
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
+        return new File(System.getProperty("user.home") + System.getProperty("file.separator") + "azocamsync", "azocamsync.props");
+    }
+
+    public boolean isNewInstallation() {
+        return (!getFile().exists());
     }
 }

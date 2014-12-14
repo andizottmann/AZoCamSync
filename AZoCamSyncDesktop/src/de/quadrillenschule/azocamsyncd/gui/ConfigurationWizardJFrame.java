@@ -6,25 +6,32 @@
 package de.quadrillenschule.azocamsyncd.gui;
 
 import de.quadrillenschule.azocamsyncd.GlobalProperties;
+import de.quadrillenschule.azocamsyncd.GlobalProperties.CamSyncProperties;
+import de.quadrillenschule.azocamsyncd.ftpservice.FTPConnection;
+import static de.quadrillenschule.azocamsyncd.gui.AZoCamSyncJFrame.createImage;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileSystemView;
 import javax.swing.text.html.HTMLDocument;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 /**
  *
  * @author Andreas
  */
-public class ConfigurationWizardJFrame extends javax.swing.JFrame {
+public class ConfigurationWizardJFrame extends javax.swing.JDialog {
 
     LinkedList<JPanel> stepPanels = new LinkedList();
     int selectedPanel = 0;
@@ -36,6 +43,8 @@ public class ConfigurationWizardJFrame extends javax.swing.JFrame {
     public ConfigurationWizardJFrame() {
         gp = new GlobalProperties();
         initComponents();
+        this.setIconImage(AZoCamSyncJFrame.createImage("/de/quadrillenschule/azocamsyncd/gui/res/Camera-icon32.png", "tray icon"));
+
         stepPanels.add(step1jPanel);
         stepPanels.add(step2jPanel);
         stepPanels.add(step3jPanel);
@@ -77,22 +86,39 @@ public class ConfigurationWizardJFrame extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
+        bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
         jSplitPane1 = new javax.swing.JSplitPane();
         stepsjPanel = new javax.swing.JPanel();
         step1jPanel = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         autoruninstalljButton1 = new javax.swing.JButton();
+        step0jCheckBox = new javax.swing.JCheckBox();
         jPanel1 = new javax.swing.JPanel();
-        skipjButton = new javax.swing.JButton();
+        step0skipjButton = new javax.swing.JButton();
         step2jPanel = new javax.swing.JPanel();
+        jPanel3 = new javax.swing.JPanel();
+        step1jCheckBox = new javax.swing.JCheckBox();
+        sdCardIpsjTextField = new javax.swing.JTextField();
+        checkConnectionjButton = new javax.swing.JButton();
+        jPanel4 = new javax.swing.JPanel();
+        step1skipjButton = new javax.swing.JButton();
         step3jPanel = new javax.swing.JPanel();
+        jPanel5 = new javax.swing.JPanel();
+        step2jCheckBox = new javax.swing.JCheckBox();
+        localStorageDirjTextField1 = new javax.swing.JTextField();
+        localStorageDirjButton1 = new javax.swing.JButton();
+        jPanel6 = new javax.swing.JPanel();
+        step2skipjButton = new javax.swing.JButton();
         infojPanel = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextPane1 = new javax.swing.JTextPane();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        getContentPane().setLayout(new java.awt.GridLayout());
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("AZoCamSync Desktop - Setup Wizard");
+        setModal(true);
+        getContentPane().setLayout(new java.awt.GridLayout(1, 0));
 
         jSplitPane1.setDividerLocation(300);
         jSplitPane1.setDividerSize(1);
@@ -111,6 +137,10 @@ public class ConfigurationWizardJFrame extends javax.swing.JFrame {
         jPanel2.setOpaque(false);
 
         autoruninstalljButton1.setText("Save file to main folder of SD Card...");
+
+        org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, step1jPanel, org.jdesktop.beansbinding.ELProperty.create("${enabled}"), autoruninstalljButton1, org.jdesktop.beansbinding.BeanProperty.create("enabled"));
+        bindingGroup.addBinding(binding);
+
         autoruninstalljButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 autoruninstalljButton1ActionPerformed(evt);
@@ -118,19 +148,26 @@ public class ConfigurationWizardJFrame extends javax.swing.JFrame {
         });
         jPanel2.add(autoruninstalljButton1);
 
+        step0jCheckBox.setEnabled(false);
+        jPanel2.add(step0jCheckBox);
+
         step1jPanel.add(jPanel2, java.awt.BorderLayout.CENTER);
 
         jPanel1.setOpaque(false);
         jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
-        skipjButton.setText("Skip this step");
-        skipjButton.setOpaque(false);
-        skipjButton.addActionListener(new java.awt.event.ActionListener() {
+        step0skipjButton.setText("Skip this step");
+        step0skipjButton.setOpaque(false);
+
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, step1jPanel, org.jdesktop.beansbinding.ELProperty.create("${enabled}"), step0skipjButton, org.jdesktop.beansbinding.BeanProperty.create("enabled"));
+        bindingGroup.addBinding(binding);
+
+        step0skipjButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                skipjButtonActionPerformed(evt);
+                step0skipjButtonActionPerformed(evt);
             }
         });
-        jPanel1.add(skipjButton);
+        jPanel1.add(step0skipjButton);
 
         step1jPanel.add(jPanel1, java.awt.BorderLayout.SOUTH);
 
@@ -143,15 +180,144 @@ public class ConfigurationWizardJFrame extends javax.swing.JFrame {
             }
         });
         step2jPanel.setLayout(new java.awt.BorderLayout());
+
+        jPanel3.setOpaque(false);
+        jPanel3.setLayout(new java.awt.GridBagLayout());
+
+        step1jCheckBox.setEnabled(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LAST_LINE_END;
+        jPanel3.add(step1jCheckBox, gridBagConstraints);
+
+        sdCardIpsjTextField.setText(gp.getProperty(CamSyncProperties.SDCARD_IPS)
+        );
+
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, step2jPanel, org.jdesktop.beansbinding.ELProperty.create("${enabled}"), sdCardIpsjTextField, org.jdesktop.beansbinding.BeanProperty.create("enabled"));
+        bindingGroup.addBinding(binding);
+
+        sdCardIpsjTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                sdCardIpsjTextFieldKeyReleased(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        jPanel3.add(sdCardIpsjTextField, gridBagConstraints);
+
+        checkConnectionjButton.setText("Check Connection...");
+
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, step2jPanel, org.jdesktop.beansbinding.ELProperty.create("${enabled}"), checkConnectionjButton, org.jdesktop.beansbinding.BeanProperty.create("enabled"));
+        bindingGroup.addBinding(binding);
+
+        checkConnectionjButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                checkConnectionjButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        jPanel3.add(checkConnectionjButton, gridBagConstraints);
+
+        step2jPanel.add(jPanel3, java.awt.BorderLayout.CENTER);
+
+        jPanel4.setOpaque(false);
+        jPanel4.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+
+        step1skipjButton.setText("Skip this step");
+        step1skipjButton.setOpaque(false);
+
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, step2jPanel, org.jdesktop.beansbinding.ELProperty.create("${enabled}"), step1skipjButton, org.jdesktop.beansbinding.BeanProperty.create("enabled"));
+        bindingGroup.addBinding(binding);
+
+        step1skipjButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                step1skipjButtonActionPerformed(evt);
+            }
+        });
+        jPanel4.add(step1skipjButton);
+
+        step2jPanel.add(jPanel4, java.awt.BorderLayout.SOUTH);
+
         stepsjPanel.add(step2jPanel);
 
         step3jPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Step 3: Configure local storage"));
+        step3jPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                step3jPanelMouseClicked(evt);
+            }
+        });
         step3jPanel.setLayout(new java.awt.BorderLayout());
+
+        jPanel5.setOpaque(false);
+        jPanel5.setLayout(new java.awt.GridBagLayout());
+
+        step2jCheckBox.setEnabled(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LAST_LINE_END;
+        jPanel5.add(step2jCheckBox, gridBagConstraints);
+
+        localStorageDirjTextField1.setText(gp.getProperty(CamSyncProperties.LOCALSTORAGE_PATH)
+        );
+
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, step3jPanel, org.jdesktop.beansbinding.ELProperty.create("${enabled}"), localStorageDirjTextField1, org.jdesktop.beansbinding.BeanProperty.create("enabled"));
+        bindingGroup.addBinding(binding);
+
+        localStorageDirjTextField1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                localStorageDirjTextField1KeyReleased(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        jPanel5.add(localStorageDirjTextField1, gridBagConstraints);
+
+        localStorageDirjButton1.setText("Select Directory for incoming files...");
+
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, step3jPanel, org.jdesktop.beansbinding.ELProperty.create("${enabled}"), localStorageDirjButton1, org.jdesktop.beansbinding.BeanProperty.create("enabled"));
+        bindingGroup.addBinding(binding);
+
+        localStorageDirjButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                localStorageDirjButton1ActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        jPanel5.add(localStorageDirjButton1, gridBagConstraints);
+
+        step3jPanel.add(jPanel5, java.awt.BorderLayout.CENTER);
+
+        jPanel6.setOpaque(false);
+        jPanel6.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+
+        step2skipjButton.setText("Skip this step");
+        step2skipjButton.setOpaque(false);
+
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, step3jPanel, org.jdesktop.beansbinding.ELProperty.create("${enabled}"), step2skipjButton, org.jdesktop.beansbinding.BeanProperty.create("enabled"));
+        bindingGroup.addBinding(binding);
+
+        step2skipjButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                step2skipjButtonActionPerformed(evt);
+            }
+        });
+        jPanel6.add(step2skipjButton);
+
+        step3jPanel.add(jPanel6, java.awt.BorderLayout.SOUTH);
+
         stepsjPanel.add(step3jPanel);
 
         jSplitPane1.setLeftComponent(stepsjPanel);
 
-        infojPanel.setLayout(new java.awt.GridLayout());
+        infojPanel.setLayout(new java.awt.GridLayout(1, 0));
 
         jTextPane1.setEditable(false);
         jTextPane1.setContentType("text/html"); // NOI18N
@@ -163,6 +329,8 @@ public class ConfigurationWizardJFrame extends javax.swing.JFrame {
         jSplitPane1.setRightComponent(infojPanel);
 
         getContentPane().add(jSplitPane1);
+
+        bindingGroup.bind();
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -178,14 +346,18 @@ public class ConfigurationWizardJFrame extends javax.swing.JFrame {
         updateSelectedPanel(1);
     }//GEN-LAST:event_step2jPanelMouseClicked
 
-    private void skipjButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_skipjButtonActionPerformed
+    private void step0skipjButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_step0skipjButtonActionPerformed
         updateSelectedPanel(1);
+        step0jCheckBox.setSelected(false);
+        step0jCheckBox.setText("Skipped");
 
-    }//GEN-LAST:event_skipjButtonActionPerformed
+    }//GEN-LAST:event_step0skipjButtonActionPerformed
 
     private void autoruninstalljButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_autoruninstalljButton1ActionPerformed
+        boolean success = false;
         JFileChooser jfc = new JFileChooser();
         jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        jfc.setApproveButtonText("Prepare card...");
         File startFile = new File(System.getProperty("user.dir")); //Get the current directory
 
         // Find System Root
@@ -194,62 +366,128 @@ public class ConfigurationWizardJFrame extends javax.swing.JFrame {
         }
 
         jfc.setCurrentDirectory(startFile);
-         int origDriveChooserRetVal = jfc.showDialog(rootPane,"Open");
-            if (origDriveChooserRetVal == JFileChooser.APPROVE_OPTION)
-            {
-                File dir = jfc.getSelectedFile();
+        int origDriveChooserRetVal = jfc.showDialog(rootPane, "Open");
+        if (origDriveChooserRetVal == JFileChooser.APPROVE_OPTION) {
+            try {
+                File myfile = new File(jfc.getSelectedFile().getAbsolutePath(), "autorun.sh");
+                myfile.createNewFile();
+                FileOutputStream fos;
+                try {
+                    fos = new FileOutputStream(myfile);
+                    IOUtils.copy(getClass().getResourceAsStream("/de/quadrillenschule/azocamsyncd/ftpservice/res/autorun.sh"), fos);
+                    fos.close();
+                    success = true;
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(ConfigurationWizardJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                }
 
+            } catch (IOException ex) {
+                Logger.getLogger(ConfigurationWizardJFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
 
+        }
+        if (!success) {
+            JOptionPane.showMessageDialog(rootPane, "The WiFi is SD card could not be written to. Please check if you selected the right card and it is not write-protected.", "SD card could not be prepared", JOptionPane.WARNING_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(rootPane, "The WiFi SD card is prepared for operating an FTP and Telnet server.", "Success!", JOptionPane.INFORMATION_MESSAGE);
+            step0jCheckBox.setSelected(true);
+            step0jCheckBox.setText("Done");
+            updateSelectedPanel(1);
+        }
     }//GEN-LAST:event_autoruninstalljButton1ActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ConfigurationWizardJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ConfigurationWizardJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ConfigurationWizardJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ConfigurationWizardJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+    private void step1skipjButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_step1skipjButtonActionPerformed
+        updateSelectedPanel(2);
+        step1jCheckBox.setSelected(false);
+        step1jCheckBox.setText("Skipped");
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new ConfigurationWizardJFrame().setVisible(true);
-            }
-        });
-    }
+    }//GEN-LAST:event_step1skipjButtonActionPerformed
+
+    private void sdCardIpsjTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_sdCardIpsjTextFieldKeyReleased
+        gp.setProperty(GlobalProperties.CamSyncProperties.SDCARD_IPS, sdCardIpsjTextField.getText());
+
+    }//GEN-LAST:event_sdCardIpsjTextFieldKeyReleased
+
+    private void checkConnectionjButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkConnectionjButtonActionPerformed
+        FTPConnection f = new FTPConnection();
+        f.setPossibleConnections(gp.getProperty(CamSyncProperties.SDCARD_IPS).split(","));
+        f.setFileTypes(gp.getProperty(CamSyncProperties.FILETYPES).split(","));
+        boolean success = false;
+        success = f.checkConnection(true).size() > 0;
+        if (success) {
+            JOptionPane.showMessageDialog(rootPane, "The connection to your SD card was estabilshed.", "Success!", JOptionPane.INFORMATION_MESSAGE);
+
+            step1jCheckBox.setSelected(true);
+            step1jCheckBox.setText("Connection OK");
+            updateSelectedPanel(2);
+        } else {
+            JOptionPane.showConfirmDialog(rootPane, "The connection to the WiFi SD card failed. Please check, if it is on power and the IPs are correct.", "Connection to SD card failed", JOptionPane.WARNING_MESSAGE);
+        }
+    }//GEN-LAST:event_checkConnectionjButtonActionPerformed
+
+    private void localStorageDirjTextField1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_localStorageDirjTextField1KeyReleased
+        gp.setProperty(CamSyncProperties.LOCALSTORAGE_PATH, localStorageDirjButton1.getText());
+    }//GEN-LAST:event_localStorageDirjTextField1KeyReleased
+
+    private void localStorageDirjButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_localStorageDirjButton1ActionPerformed
+        boolean success = false;
+        JFileChooser jfc = new JFileChooser();
+        jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        jfc.setSelectedFile(new File(gp.getProperty(CamSyncProperties.LOCALSTORAGE_PATH)));
+        if (jfc.showDialog(jPanel1, "Choose as local directory") == JFileChooser.APPROVE_OPTION) {
+
+            File f = new File(jfc.getSelectedFile().getAbsolutePath(), "azocamsynctest");
+            success = f.mkdir();
+            success = f.delete();
+            gp.setProperty(CamSyncProperties.LOCALSTORAGE_PATH, jfc.getSelectedFile().getAbsolutePath());
+        }
+        if (success) {
+            JOptionPane.showMessageDialog(rootPane, "You've setup the path for incoming files.\nAll configuration steps are performed now.\n Let's start the service!", "Success!", JOptionPane.INFORMATION_MESSAGE);
+
+            step2jCheckBox.setSelected(true);
+            step2jCheckBox.setText("Success");
+            this.setVisible(false);
+        } else {
+            JOptionPane.showConfirmDialog(rootPane, "This directory cannot read &write. Please choose another one.", "Local storage directory not working", JOptionPane.WARNING_MESSAGE);
+        }
+
+    }//GEN-LAST:event_localStorageDirjButton1ActionPerformed
+
+    private void step2skipjButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_step2skipjButtonActionPerformed
+        this.setVisible(false);
+    }//GEN-LAST:event_step2skipjButtonActionPerformed
+
+    private void step3jPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_step3jPanelMouseClicked
+        updateSelectedPanel(2);
+    }//GEN-LAST:event_step3jPanelMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton autoruninstalljButton1;
+    private javax.swing.JButton checkConnectionjButton;
     private javax.swing.JPanel infojPanel;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTextPane jTextPane1;
-    private javax.swing.JButton skipjButton;
+    private javax.swing.JButton localStorageDirjButton1;
+    private javax.swing.JTextField localStorageDirjTextField1;
+    private javax.swing.JTextField sdCardIpsjTextField;
+    private javax.swing.JCheckBox step0jCheckBox;
+    private javax.swing.JButton step0skipjButton;
+    private javax.swing.JCheckBox step1jCheckBox;
     private javax.swing.JPanel step1jPanel;
+    private javax.swing.JButton step1skipjButton;
+    private javax.swing.JCheckBox step2jCheckBox;
     private javax.swing.JPanel step2jPanel;
+    private javax.swing.JButton step2skipjButton;
     private javax.swing.JPanel step3jPanel;
     private javax.swing.JPanel stepsjPanel;
+    private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
 }
