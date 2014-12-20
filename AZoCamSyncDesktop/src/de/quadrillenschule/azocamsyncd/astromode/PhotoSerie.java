@@ -5,6 +5,7 @@
  */
 package de.quadrillenschule.azocamsyncd.astromode;
 
+import de.quadrillenschule.azocamsyncd.GlobalProperties;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -42,6 +43,10 @@ public class PhotoSerie {
         }
         File newFile = new File(getFolder().getAbsolutePath(), file.getName());
         Files.move(file.toPath(), newFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        GlobalProperties gp = new GlobalProperties();
+        if (newFile.getAbsolutePath().toUpperCase().endsWith("JPG")) {
+            gp.setProperty(GlobalProperties.CamSyncProperties.LATESTIMAGEPATH, newFile.getAbsolutePath());
+        }
         photos.add(file);
         status = Status.RECEIVING_FILES;
         if (isComplete()) {

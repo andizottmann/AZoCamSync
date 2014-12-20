@@ -40,7 +40,7 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
         GlobalProperties gp=new GlobalProperties();
         initComponents();
         
-           project = new PhotoProject(new File(gp.getProperty(GlobalProperties.CamSyncProperties.LAST_ASTRO_FOLDER)));
+           project = new PhotoProject(new File(gp.getProperty(GlobalProperties.CamSyncProperties.LAST_ASTRO_FOLDER),"New Project"));
             project.setName("New Project");
             populateSeriesJPanels();
     }
@@ -271,6 +271,11 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
             }
             i++;
         }
+        if (!firstUncompletedFound){
+        //All are complete
+            startjToggleButton.setSelected(false);
+            startjToggleButtonActionPerformed(null);
+        }
         
     }
     public void clickedOnPanel(PhotoSerieJPanel psp) {
@@ -321,7 +326,7 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
             File file = new File(message);
             try {
                 activePanel.getPhotoSerie().receiveFile(file);
-                wfd.update(activePanel.getPhotoSerie());
+           //     wfd.update(activePanel.getPhotoSerie());
             } catch (IOException ex) {
                 Logger.getLogger(PhotoProjectJPanel.class.getName()).log(Level.SEVERE, null, ex);
             }

@@ -158,7 +158,11 @@ public class PhotoSerieJPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void numberOfPlannedFilesjTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_numberOfPlannedFilesjTextFieldKeyReleased
+       try {
         photoSerie.setNumberOfPlannedPhotos(Integer.parseInt(numberOfPlannedFilesjTextField.getText()));
+       } catch (NumberFormatException nfe){
+       
+       }
     }//GEN-LAST:event_numberOfPlannedFilesjTextFieldKeyReleased
 
     private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked

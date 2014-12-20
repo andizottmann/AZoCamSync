@@ -911,7 +911,9 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
 
             File f = new File(message);
             lastDownloaded = f;
+            if (f.getAbsolutePath().toUpperCase().endsWith("JPG")){
             gp.setProperty(CamSyncProperties.LATESTIMAGEPATH, f.getAbsolutePath());
+            }
             try {
                 updateAllImageLabels(f);
             } catch (MalformedURLException ex) {
@@ -1001,6 +1003,9 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
 
     private void updateAllImageLabels(File pf) throws MalformedURLException {
         final File f = pf;
+            if (!f.getAbsolutePath().toUpperCase().endsWith("JPG")){
+                return;
+            }
         Thread t = new Thread(new Runnable() {
 
             @Override
