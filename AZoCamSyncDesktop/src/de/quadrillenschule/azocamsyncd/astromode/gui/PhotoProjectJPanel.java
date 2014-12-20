@@ -11,12 +11,14 @@ import de.quadrillenschule.azocamsyncd.astromode.PhotoSerie;
 import de.quadrillenschule.azocamsyncd.ftpservice.FTPConnection;
 import de.quadrillenschule.azocamsyncd.ftpservice.FTPConnectionListener;
 import java.awt.Component;
+import java.awt.Frame;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.border.LineBorder;
 import org.apache.commons.net.ftp.FTPCommand;
 
 /**
@@ -24,17 +26,23 @@ import org.apache.commons.net.ftp.FTPCommand;
  * @author Andreas
  */
 public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnectionListener {
-
+    
     private PhotoProject project;
     private FTPConnection ftpConnection;
     private PhotoSerieJPanel activePanel;
-    private boolean running=false;
+    private boolean running = false;
+    private Frame parent;
 
     /**
      * Creates new form PhotoProjectJPanel
      */
     public PhotoProjectJPanel() {
+        GlobalProperties gp=new GlobalProperties();
         initComponents();
+        
+           project = new PhotoProject(new File(gp.getProperty(GlobalProperties.CamSyncProperties.LAST_ASTRO_FOLDER)));
+            project.setName("New Project");
+            populateSeriesJPanels();
     }
 
     /**
@@ -66,7 +74,7 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
         projectjPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Project"));
         projectjPanel.setLayout(new javax.swing.BoxLayout(projectjPanel, javax.swing.BoxLayout.LINE_AXIS));
 
-        newProjectjButton.setText("New...");
+        newProjectjButton.setText("Directory...");
         newProjectjButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 newProjectjButtonActionPerformed(evt);
@@ -147,21 +155,19 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
 
     private void newProjectjButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newProjectjButtonActionPerformed
         GlobalProperties gp = new GlobalProperties();
-
+        
         JFileChooser jfc = new JFileChooser(gp.getProperty(GlobalProperties.CamSyncProperties.LAST_ASTRO_FOLDER));
         jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         if (jfc.showDialog(this, "Select Directory") == JFileChooser.APPROVE_OPTION) {
             gp.setProperty(GlobalProperties.CamSyncProperties.LAST_ASTRO_FOLDER, jfc.getSelectedFile().getAbsolutePath());
-            String name = JOptionPane.showInputDialog(this, "Give a name to this project");
-            File projectFolder = new File(jfc.getSelectedFile(), name);
-            if (!projectFolder.exists()) {
-                projectFolder.mkdir();
-            }
+       //     String name = JOptionPane.showInputDialog(this, "Give a name to this project");
+            File projectFolder = new File(jfc.getSelectedFile(), projectNamejTextField1.getText());
+          
             project = new PhotoProject(projectFolder);
-            project.setName(name);
-            update();
+            project.setName(projectNamejTextField1.getText());
+            populateSeriesJPanels();
         };
-
+        
 
     }//GEN-LAST:event_newProjectjButtonActionPerformed
 
@@ -182,37 +188,41 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
     }//GEN-LAST:event_addBiasFramesjButtonActionPerformed
 
     private void removejButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removejButtonActionPerformed
-
+        
         int i = 0;
         for (Component c : seriesjPanel.getComponents()) {
             if (c.isEnabled()) {
-
+                
                 break;
             }
             i++;
         }
         project.getPhotoSeries().remove(i);
-        update();
+        populateSeriesJPanels();
 
     }//GEN-LAST:event_removejButtonActionPerformed
-
+    WaitingForFilesJDialog wfd = null;
     private void startjToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startjToggleButtonActionPerformed
+        wfd = new WaitingForFilesJDialog(parent, this);
         if (startjToggleButton.isSelected()) {
             startjToggleButton.setText("Stop");
             ftpConnection.addFTPConnectionListenerOnce(this);
-            running=true;
+            running = true;
+            //    wfd.setVisible(true);
         } else {
             startjToggleButton.setText("Start!");
             ftpConnection.removeFTPConnectionListener(this);
+            //       wfd.setVisible(false);
+            running = false;
         }
     }//GEN-LAST:event_startjToggleButtonActionPerformed
-
+    
     private void addStandardSeries(String name, int number) {
         PhotoSerie ps = new PhotoSerie(project);
         ps.setName(name);
         ps.setNumberOfPlannedPhotos(number);
         project.getPhotoSeries().add(ps);
-        update();
+        populateSeriesJPanels();
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addBiasFramesjButton;
@@ -231,7 +241,7 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
     private javax.swing.JPanel toolsjPanel;
     // End of variables declaration//GEN-END:variables
 
-    void update() {
+    void populateSeriesJPanels() {
         projectNamejTextField1.setText(project.getName());
         seriesjPanel.removeAll();
         activePanel = null;
@@ -244,14 +254,32 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
                 firstUncompletedFound = true;
             }
         }
+        
         validate();
     }
-
+    
+    void updateSeriesJPanels(){
+        boolean firstUncompletedFound = false;
+        int i=0;
+        for (PhotoSerie ps : project.getPhotoSeries()) {
+          //  PhotoSerieJPanel psp = new PhotoSerieJPanel(ps, this);
+            //seriesjPanel.add(psp);
+            if (!ps.isComplete() && (!firstUncompletedFound)) {
+                PhotoSerieJPanel psp=(PhotoSerieJPanel)seriesjPanel.getComponent(i);
+                activePanel = psp;
+                firstUncompletedFound = true;
+            }
+            i++;
+        }
+        
+    }
     public void clickedOnPanel(PhotoSerieJPanel psp) {
         for (Component c : seriesjPanel.getComponents()) {
-            c.setEnabled(false);
+            c.setEnabled(true);
+            ((PhotoSerieJPanel) c).setBorderForState(false);
         }
         psp.setEnabled(true);
+        psp.setBorderForState(true);
     }
 
     /**
@@ -281,24 +309,26 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
     public void setFtpConnection(FTPConnection ftpConnection) {
         this.ftpConnection = ftpConnection;
     }
-
+    
     @Override
     public void receiveNotification(FTPConnectionStatus status, String message, int progress) {
         if (activePanel == null) {
             ftpConnection.removeFTPConnectionListener(this);
             startjToggleButton.setSelected(false);
-            running=false;
+            running = false;
         }
         if (status == FTPConnectionStatus.NEW_LOCAL_FILE) {
             File file = new File(message);
             try {
                 activePanel.getPhotoSerie().receiveFile(file);
+                wfd.update(activePanel.getPhotoSerie());
             } catch (IOException ex) {
                 Logger.getLogger(PhotoProjectJPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
             activePanel.update();
             if (activePanel.getPhotoSerie().isComplete()) {
-                update();
+                updateSeriesJPanels();
+                activePanel.update();
             }
         }
         jScrollPane1.scrollRectToVisible(activePanel.getVisibleRect());
@@ -309,5 +339,12 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
      */
     public boolean isRunning() {
         return running;
+    }
+
+    /**
+     * @param parent the parent to set
+     */
+    public void setParent(Frame parent) {
+        this.parent = parent;
     }
 }

@@ -34,6 +34,12 @@ public class PhotoSerie {
     }
 
     public void receiveFile(File file) throws IOException {
+        if (!project.getFolder().exists()) {
+            project.getFolder().mkdir();
+        }
+        if (!getFolder().exists()) {
+            getFolder().mkdir();
+        }
         File newFile = new File(getFolder().getAbsolutePath(), file.getName());
         Files.move(file.toPath(), newFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
         photos.add(file);
@@ -102,9 +108,7 @@ public class PhotoSerie {
      */
     public File getFolder() {
         File retval = new File(project.getFolder().getAbsolutePath(), getName());
-        if (!retval.exists()) {
-            retval.mkdir();
-        }
+
         return retval;
     }
 

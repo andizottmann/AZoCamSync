@@ -41,6 +41,7 @@ public class FTPConnection {
     public CountingOutputStream cos;
     public long downloadsize = 0;
     public static final int TIMEOUT = 4000;
+    private boolean looksFullySynced=false;
 
     public FTPConnection() {
 
@@ -88,6 +89,7 @@ public class FTPConnection {
             }
 
         }
+        setLooksFullySynced(false);
         notify(FTPConnectionStatus.NOCONNECTION, "", -1);
         return null;
     }
@@ -394,6 +396,20 @@ public class FTPConnection {
      */
     public String getLastWorkingConnection() {
         return lastWorkingConnection;
+    }
+
+    /**
+     * @return the looksFullySynced
+     */
+    public boolean isLooksFullySynced() {
+        return looksFullySynced;
+    }
+
+    /**
+     * @param looksFullySynced the looksFullySynced to set
+     */
+    public void setLooksFullySynced(boolean looksFullySynced) {
+        this.looksFullySynced = looksFullySynced;
     }
 
 }

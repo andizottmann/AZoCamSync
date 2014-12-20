@@ -69,10 +69,12 @@ public class SwingBackgroundUpdater extends Thread {
             };
 
             if ((r != null) && (r.size() == 0)) {
+                ftpConnection.setLooksFullySynced(true);
                 ftpConnection.notify(FTPConnectionListener.FTPConnectionStatus.FULLY_SYNCED, "" + r.size(), -1);
 
             }
             if ((r != null) && (r.size() > 0)) {
+                ftpConnection.setLooksFullySynced(false);
                 Collections.sort(r, new Comparator<AZoFTPFile>() {
 
                     @Override
@@ -81,12 +83,13 @@ public class SwingBackgroundUpdater extends Thread {
                     }
                 });
 
-             
                 ftpConnection.notify(FTPConnectionListener.FTPConnectionStatus.NUMBER_OF_SYNCHRONISABLE_FILES_DETECTED, "" + r.size(), -1);
                 ftpConnection.notify(FTPConnectionListener.FTPConnectionStatus.CONNECTED, ftpConnection.getLastWorkingConnection(), -1);
 
                 LinkedList<AZoFTPFile> downloaded = ftpConnection.download(r, localStorage);
-
+                if (downloaded.size() == r.size()) {
+                    ftpConnection.setLooksFullySynced(true);
+                }
             }
 
             try {

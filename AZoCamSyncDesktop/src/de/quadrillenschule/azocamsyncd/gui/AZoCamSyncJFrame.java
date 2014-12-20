@@ -68,6 +68,7 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         localStorage.setUseDateFolders(Boolean.parseBoolean(gp.getProperty(CamSyncProperties.USE_DATEFOLDERS)));
         localStorage.setDateFormat(gp.getProperty(CamSyncProperties.DATE_FORMAT));
         initComponents();
+        photoProjectJPanel1.setParent(this);
         photoProjectJPanel1.setFtpConnection(f);
         initMyComponents();
         addSystemTray();
@@ -158,6 +159,7 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         wifiSdCardEnabledjToggleButton = new javax.swing.JToggleButton();
         alwaysOnTopjCheckBox = new javax.swing.JCheckBox();
         jButton1 = new javax.swing.JButton();
+        syncedjRadioButton = new javax.swing.JRadioButton();
 
         openjMenuItem.setText("Open...");
         openjMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -177,7 +179,6 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("AZoCamSyncDesktop");
-        setAlwaysOnTop(true);
         setMaximumSize(new java.awt.Dimension(700, 800));
         addWindowStateListener(new java.awt.event.WindowStateListener() {
             public void windowStateChanged(java.awt.event.WindowEvent evt) {
@@ -517,8 +518,7 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         jPanel5.add(configurejToggleButton, gridBagConstraints);
 
         wifiSdCardEnabledjToggleButton.setFont(wifiSdCardEnabledjToggleButton.getFont().deriveFont(wifiSdCardEnabledjToggleButton.getFont().getStyle() | java.awt.Font.BOLD, wifiSdCardEnabledjToggleButton.getFont().getSize()+1));
-        wifiSdCardEnabledjToggleButton.setSelected(true);
-        wifiSdCardEnabledjToggleButton.setText("RUNNING");
+        wifiSdCardEnabledjToggleButton.setText("NOT RUNNING");
         wifiSdCardEnabledjToggleButton.setToolTipText("Start and stop the background service");
         wifiSdCardEnabledjToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -533,7 +533,6 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel5.add(wifiSdCardEnabledjToggleButton, gridBagConstraints);
 
-        alwaysOnTopjCheckBox.setSelected(true);
         alwaysOnTopjCheckBox.setText("on Top");
         alwaysOnTopjCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -558,6 +557,14 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(2, 1, 0, 0);
         jPanel5.add(jButton1, gridBagConstraints);
+
+        syncedjRadioButton.setSelected(true);
+        syncedjRadioButton.setText("Unsynced");
+        syncedjRadioButton.setEnabled(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 0;
+        jPanel5.add(syncedjRadioButton, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -840,6 +847,7 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
     private javax.swing.JComboBox sdCardPollingIntervalljComboBox;
     private javax.swing.JPanel sdCardjPanel;
     private javax.swing.JProgressBar sdCardjProgressBar;
+    private javax.swing.JRadioButton syncedjRadioButton;
     private javax.swing.JLabel tobesynchronizedSDjLabel;
     private javax.swing.JCheckBox useDateFolderjCheckBox;
     private javax.swing.JToggleButton wifiSdCardEnabledjToggleButton;
@@ -857,6 +865,14 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
 
     @Override
     public void receiveNotification(FTPConnectionStatus status, String message, int progress) {
+        syncedjRadioButton.setSelected(f.isLooksFullySynced());
+        if (f.isLooksFullySynced()) {
+            syncedjRadioButton.setForeground(Color.green);
+            syncedjRadioButton.setText("Synced");
+        } else {
+            syncedjRadioButton.setForeground(Color.black);
+            syncedjRadioButton.setText("No Status");
+        };
         if ((status == FTPConnectionStatus.TRYING)) {
             setTrayIcon(createImage("/de/quadrillenschule/azocamsyncd/gui/res/Camera-icon.png", "tray icon"));
 
@@ -911,6 +927,7 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         }
 
         if (status.equals(FTPConnectionStatus.NUMBER_OF_FILES_DETECTED)) {
+
             imagesOnCardLabel.setText("Total (filtered): " + message);
             if (!treehasfirstUpdate) {
                 exploreWifiSDPanel1.updateTree();
@@ -928,11 +945,16 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         }
 
         if (status.equals(FTPConnectionStatus.NUMBER_OF_SYNCHRONISABLE_FILES_DETECTED)) {
+            syncedjRadioButton.setForeground(Color.blue);
+            syncedjRadioButton.setText("Downloading");
             tobesynchronizedSDjLabel.setText("To be downloaded: " + message);
             exploreWifiSDPanel1.updateTree();
 
         }
         if (status.equals(FTPConnectionStatus.DOWNLOADING)) {
+            syncedjRadioButton.setForeground(Color.blue);
+            syncedjRadioButton.setText("Downloading");
+
             lasttimestamp = System.currentTimeMillis();
             lastbytes = 0;
             tdownload = new Timer(1000, new ActionListener() {
