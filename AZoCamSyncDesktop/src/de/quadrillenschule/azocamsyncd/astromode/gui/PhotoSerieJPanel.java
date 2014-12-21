@@ -52,6 +52,8 @@ public class PhotoSerieJPanel extends javax.swing.JPanel {
         namejTextField = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
         numberOfPlannedFilesjTextField = new javax.swing.JTextField();
+        jPanel3 = new javax.swing.JPanel();
+        exposureTimejTextField = new javax.swing.JTextField();
 
         setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 51), 4));
         setEnabled(false);
@@ -104,7 +106,7 @@ public class PhotoSerieJPanel extends javax.swing.JPanel {
         add(folderjLabel, gridBagConstraints);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Series", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 10))); // NOI18N
-        jPanel1.setLayout(new java.awt.GridLayout());
+        jPanel1.setLayout(new java.awt.GridLayout(1, 0));
 
         namejTextField.setText(photoSerie.getName());
 
@@ -127,7 +129,7 @@ public class PhotoSerieJPanel extends javax.swing.JPanel {
         add(jPanel1, gridBagConstraints);
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Number of Files", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 10))); // NOI18N
-        jPanel2.setLayout(new java.awt.GridLayout());
+        jPanel2.setLayout(new java.awt.GridLayout(1, 0));
 
         numberOfPlannedFilesjTextField.setText("jTextField1");
 
@@ -154,25 +156,59 @@ public class PhotoSerieJPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 1.0;
         add(jPanel2, gridBagConstraints);
 
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Exposure Time in s", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 10))); // NOI18N
+        jPanel3.setLayout(new java.awt.GridLayout());
+
+        exposureTimejTextField.setText("jTextField1");
+        exposureTimejTextField.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                exposureTimejTextFieldformMouseClicked(evt);
+            }
+        });
+        exposureTimejTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                exposureTimejTextFieldKeyReleased(evt);
+            }
+        });
+        jPanel3.add(exposureTimejTextField);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(jPanel3, gridBagConstraints);
+
         bindingGroup.bind();
     }// </editor-fold>//GEN-END:initComponents
 
     private void numberOfPlannedFilesjTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_numberOfPlannedFilesjTextFieldKeyReleased
-       try {
-        photoSerie.setNumberOfPlannedPhotos(Integer.parseInt(numberOfPlannedFilesjTextField.getText()));
-       } catch (NumberFormatException nfe){
-       
-       }
+        try {
+            photoSerie.setNumberOfPlannedPhotos(Integer.parseInt(numberOfPlannedFilesjTextField.getText()));
+        } catch (NumberFormatException nfe) {
+
+        }
     }//GEN-LAST:event_numberOfPlannedFilesjTextFieldKeyReleased
 
     private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked
         projectPanel.clickedOnPanel(this);
     }//GEN-LAST:event_formMouseClicked
 
+    private void exposureTimejTextFieldformMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exposureTimejTextFieldformMouseClicked
+        projectPanel.clickedOnPanel(this);
+    }//GEN-LAST:event_exposureTimejTextFieldformMouseClicked
+
+    private void exposureTimejTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_exposureTimejTextFieldKeyReleased
+        try {
+            photoSerie.setExposureTimeInMs(Long.parseLong(exposureTimejTextField.getText()) * 1000);
+        } catch (NumberFormatException nfe) {
+
+        }
+    }//GEN-LAST:event_exposureTimejTextFieldKeyReleased
+
     public void update() {
         numberOfPlannedFilesjTextField.setText("" + getPhotoSerie().getNumberOfPlannedPhotos());
         currentFilesjLabel.setText("Current number of files: " + getPhotoSerie().getPhotos().size());
-      
+        exposureTimejTextField.setText("" + (getPhotoSerie().getExposureTimeInMs() / 1000));
         statusjLabel.setText(photoSerie.getStatus().name());
         folderjLabel.setText(photoSerie.getFolder().getAbsolutePath());
         setBorderForState(false);
@@ -200,9 +236,11 @@ public class PhotoSerieJPanel extends javax.swing.JPanel {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel currentFilesjLabel;
+    private javax.swing.JTextField exposureTimejTextField;
     private javax.swing.JLabel folderjLabel;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JTextField namejTextField;
     private javax.swing.JTextField numberOfPlannedFilesjTextField;
     private javax.swing.JLabel statusjLabel;

@@ -7,6 +7,7 @@ package de.quadrillenschule.azocamsyncd.astromode.gui;
 
 import de.quadrillenschule.azocamsyncd.GlobalProperties;
 import de.quadrillenschule.azocamsyncd.astromode.PhotoProject;
+import de.quadrillenschule.azocamsyncd.astromode.PhotoProjectProfile;
 import de.quadrillenschule.azocamsyncd.astromode.PhotoSerie;
 import de.quadrillenschule.azocamsyncd.ftpservice.FTPConnection;
 import de.quadrillenschule.azocamsyncd.ftpservice.FTPConnectionListener;
@@ -14,8 +15,10 @@ import java.awt.Component;
 import java.awt.Frame;
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.border.LineBorder;
@@ -26,23 +29,26 @@ import org.apache.commons.net.ftp.FTPCommand;
  * @author Andreas
  */
 public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnectionListener {
-    
+
     private PhotoProject project;
     private FTPConnection ftpConnection;
     private PhotoSerieJPanel activePanel;
     private boolean running = false;
     private Frame parent;
+    GlobalProperties gp;
 
     /**
      * Creates new form PhotoProjectJPanel
      */
     public PhotoProjectJPanel() {
-        GlobalProperties gp=new GlobalProperties();
+        gp = new GlobalProperties();
         initComponents();
-        
-           project = new PhotoProject(new File(gp.getProperty(GlobalProperties.CamSyncProperties.LAST_ASTRO_FOLDER),"New Project"));
-            project.setName("New Project");
-            populateSeriesJPanels();
+
+        project = new PhotoProject(new File(gp.getProperty(GlobalProperties.CamSyncProperties.LAST_ASTRO_FOLDER), "New Project"));
+        project.setName("New Project");
+        populateSeriesJPanels();
+        populateProfilesJComboBox();
+        profilesjComboBoxActionPerformed(null);
     }
 
     /**
@@ -53,6 +59,7 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         projectjPanel = new javax.swing.JPanel();
         newProjectjButton = new javax.swing.JButton();
@@ -66,6 +73,12 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
         addBiasFramesjButton = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         removejButton = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        profilesjComboBox = new javax.swing.JComboBox();
+        jPanel2 = new javax.swing.JPanel();
+        profileNamejTextField = new javax.swing.JTextField();
+        storeProfilejButton = new javax.swing.JButton();
+        deleteProfilejButton1 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         seriesjPanel = new javax.swing.JPanel();
 
@@ -144,6 +157,61 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
         });
         toolsjPanel.add(removejButton);
 
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Series Profile", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 10))); // NOI18N
+        jPanel1.setLayout(new java.awt.GridBagLayout());
+
+        profilesjComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        profilesjComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                profilesjComboBoxActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        jPanel1.add(profilesjComboBox, gridBagConstraints);
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Profile Name", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 10))); // NOI18N
+        jPanel2.setLayout(new java.awt.GridLayout());
+
+        profileNamejTextField.setText("UnnamedProfile");
+        jPanel2.add(profileNamejTextField);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
+        gridBagConstraints.weighty = 1.0;
+        jPanel1.add(jPanel2, gridBagConstraints);
+
+        storeProfilejButton.setText("Store Profile");
+        storeProfilejButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                storeProfilejButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        gridBagConstraints.weightx = 1.0;
+        jPanel1.add(storeProfilejButton, gridBagConstraints);
+
+        deleteProfilejButton1.setText("Delete Profile");
+        deleteProfilejButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteProfilejButton1ActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        gridBagConstraints.weightx = 1.0;
+        jPanel1.add(deleteProfilejButton1, gridBagConstraints);
+
+        toolsjPanel.add(jPanel1);
+
         add(toolsjPanel, java.awt.BorderLayout.EAST);
 
         seriesjPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Series"));
@@ -155,19 +223,19 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
 
     private void newProjectjButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newProjectjButtonActionPerformed
         GlobalProperties gp = new GlobalProperties();
-        
+
         JFileChooser jfc = new JFileChooser(gp.getProperty(GlobalProperties.CamSyncProperties.LAST_ASTRO_FOLDER));
         jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         if (jfc.showDialog(this, "Select Directory") == JFileChooser.APPROVE_OPTION) {
             gp.setProperty(GlobalProperties.CamSyncProperties.LAST_ASTRO_FOLDER, jfc.getSelectedFile().getAbsolutePath());
-       //     String name = JOptionPane.showInputDialog(this, "Give a name to this project");
+            //     String name = JOptionPane.showInputDialog(this, "Give a name to this project");
             File projectFolder = new File(jfc.getSelectedFile(), projectNamejTextField1.getText());
-          
+
             project = new PhotoProject(projectFolder);
             project.setName(projectNamejTextField1.getText());
             populateSeriesJPanels();
         };
-        
+
 
     }//GEN-LAST:event_newProjectjButtonActionPerformed
 
@@ -188,11 +256,11 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
     }//GEN-LAST:event_addBiasFramesjButtonActionPerformed
 
     private void removejButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removejButtonActionPerformed
-        
+
         int i = 0;
         for (Component c : seriesjPanel.getComponents()) {
             if (c.isEnabled()) {
-                
+
                 break;
             }
             i++;
@@ -216,7 +284,40 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
             running = false;
         }
     }//GEN-LAST:event_startjToggleButtonActionPerformed
-    
+
+    void populateProfilesJComboBox() {
+        profilesjComboBox.setModel(new DefaultComboBoxModel(gp.getProfiles().toArray()));
+    }
+    private void storeProfilejButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_storeProfilejButtonActionPerformed
+
+        project.setProfileName(profileNamejTextField.getText());
+        gp.removeProfile(project);
+        gp.setProfile(project);
+        populateProfilesJComboBox();
+    }//GEN-LAST:event_storeProfilejButtonActionPerformed
+
+    private void profilesjComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_profilesjComboBoxActionPerformed
+        project.getPhotoSeries().clear();
+        PhotoProjectProfile ppp = (PhotoProjectProfile) profilesjComboBox.getSelectedItem();
+
+        project.getPhotoSeries().addAll(ppp.getPhotoSeries());
+        for (PhotoSerie ps : project.getPhotoSeries()) {
+            ps.setProject(project);
+        }
+        profileNamejTextField.setText(ppp.toString());
+        populateSeriesJPanels();
+    }//GEN-LAST:event_profilesjComboBoxActionPerformed
+
+    private void deleteProfilejButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteProfilejButton1ActionPerformed
+        gp.removeProfile(project);
+        try {
+            gp.store();
+        } catch (IOException ex) {
+            Logger.getLogger(PhotoProjectJPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        populateProfilesJComboBox();
+    }//GEN-LAST:event_deleteProfilejButton1ActionPerformed
+
     private void addStandardSeries(String name, int number) {
         PhotoSerie ps = new PhotoSerie(project);
         ps.setName(name);
@@ -229,15 +330,21 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
     private javax.swing.JButton addDarkFramesjButton;
     private javax.swing.JButton addFlatFramesjButton;
     private javax.swing.JButton addLightFramesjButton;
+    private javax.swing.JButton deleteProfilejButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton newProjectjButton;
+    private javax.swing.JTextField profileNamejTextField;
+    private javax.swing.JComboBox profilesjComboBox;
     private javax.swing.JTextField projectNamejTextField1;
     private javax.swing.JPanel projectjPanel;
     private javax.swing.JButton removejButton;
     private javax.swing.JPanel seriesjPanel;
     private javax.swing.JToggleButton startjToggleButton;
+    private javax.swing.JButton storeProfilejButton;
     private javax.swing.JPanel toolsjPanel;
     // End of variables declaration//GEN-END:variables
 
@@ -254,30 +361,31 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
                 firstUncompletedFound = true;
             }
         }
-        
+
         validate();
     }
-    
-    void updateSeriesJPanels(){
+
+    void updateSeriesJPanels() {
         boolean firstUncompletedFound = false;
-        int i=0;
+        int i = 0;
         for (PhotoSerie ps : project.getPhotoSeries()) {
-          //  PhotoSerieJPanel psp = new PhotoSerieJPanel(ps, this);
+            //  PhotoSerieJPanel psp = new PhotoSerieJPanel(ps, this);
             //seriesjPanel.add(psp);
             if (!ps.isComplete() && (!firstUncompletedFound)) {
-                PhotoSerieJPanel psp=(PhotoSerieJPanel)seriesjPanel.getComponent(i);
+                PhotoSerieJPanel psp = (PhotoSerieJPanel) seriesjPanel.getComponent(i);
                 activePanel = psp;
                 firstUncompletedFound = true;
             }
             i++;
         }
-        if (!firstUncompletedFound){
-        //All are complete
+        if (!firstUncompletedFound) {
+            //All are complete
             startjToggleButton.setSelected(false);
             startjToggleButtonActionPerformed(null);
         }
-        
+
     }
+
     public void clickedOnPanel(PhotoSerieJPanel psp) {
         for (Component c : seriesjPanel.getComponents()) {
             c.setEnabled(true);
@@ -314,7 +422,7 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
     public void setFtpConnection(FTPConnection ftpConnection) {
         this.ftpConnection = ftpConnection;
     }
-    
+
     @Override
     public void receiveNotification(FTPConnectionStatus status, String message, int progress) {
         if (activePanel == null) {
@@ -326,7 +434,7 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
             File file = new File(message);
             try {
                 activePanel.getPhotoSerie().receiveFile(file);
-           //     wfd.update(activePanel.getPhotoSerie());
+                //     wfd.update(activePanel.getPhotoSerie());
             } catch (IOException ex) {
                 Logger.getLogger(PhotoProjectJPanel.class.getName()).log(Level.SEVERE, null, ex);
             }

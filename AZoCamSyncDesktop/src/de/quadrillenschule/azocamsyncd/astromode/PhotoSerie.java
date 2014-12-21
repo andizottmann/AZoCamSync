@@ -18,6 +18,27 @@ import java.util.LinkedList;
  */
 public class PhotoSerie {
 
+    /**
+     * @return the exposureTimeInMs
+     */
+    public long getExposureTimeInMs() {
+        return exposureTimeInMs;
+    }
+
+    /**
+     * @param exposureTimeInMs the exposureTimeInMs to set
+     */
+    public void setExposureTimeInMs(long exposureTimeInMs) {
+        this.exposureTimeInMs = exposureTimeInMs;
+    }
+
+    /**
+     * @param project the project to set
+     */
+    public void setProject(PhotoProject project) {
+        this.project = project;
+    }
+
     public enum Status {
 
         NEW, RECEIVING_FILES, COMPLETED
@@ -28,6 +49,7 @@ public class PhotoSerie {
     private String name = "lightframes";
     private LinkedList<File> photos;
     private PhotoProject project;
+    private long exposureTimeInMs=0;
 
     public PhotoSerie(PhotoProject project) {
         photos = new LinkedList<>();
@@ -36,7 +58,7 @@ public class PhotoSerie {
 
     public void receiveFile(File file) throws IOException {
         if (!project.getFolder().exists()) {
-            project.getFolder().mkdir();
+            getProject().getFolder().mkdir();
         }
         if (!getFolder().exists()) {
             getFolder().mkdir();
@@ -112,7 +134,7 @@ public class PhotoSerie {
      * @return the folder
      */
     public File getFolder() {
-        File retval = new File(project.getFolder().getAbsolutePath(), getName());
+        File retval = new File(getProject().getFolder().getAbsolutePath(), getName());
 
         return retval;
     }

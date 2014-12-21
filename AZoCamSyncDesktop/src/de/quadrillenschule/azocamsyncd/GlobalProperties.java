@@ -6,6 +6,7 @@
 package de.quadrillenschule.azocamsyncd;
 
 import static de.quadrillenschule.azocamsyncd.GlobalProperties.CamSyncProperties;
+import de.quadrillenschule.azocamsyncd.astromode.PhotoProjectProfile;
 import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,6 +14,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,7 +30,7 @@ public class GlobalProperties {
     public enum CamSyncProperties {
 
         PULLINTERVALLSECS, SDCARD_IPS, LOCALSTORAGE_PATH, FILETYPES, SD_FILELIMIT, DATE_FORMAT, USE_DATEFOLDERS, LIST_OFSYNCED_IMAGES, LATESTIMAGEPATH,
-        NOTIFY_CONNECTION, NOTIFY_DOWNLOAD, TOOLTIPS, LAST_ASTRO_FOLDER
+        NOTIFY_CONNECTION, NOTIFY_DOWNLOAD, TOOLTIPS, LAST_ASTRO_FOLDER, ASTRO_PROFILE
     };
 
     public static final Color COLOR_CONNECTED = new Color(100, 200, 90), COLOR_UNCONNECTED = new Color(200, 100, 90);
@@ -74,7 +76,7 @@ public class GlobalProperties {
                 return System.getProperty("user.home") + System.getProperty("file.separator") + "azocamsync";
             }
         }
-         if (prop.equals(CamSyncProperties.LAST_ASTRO_FOLDER)) {
+        if (prop.equals(CamSyncProperties.LAST_ASTRO_FOLDER)) {
             if (props.getProperty(prop.name(), DEFAULTS.get(prop)).equals(USER_HOME)) {
                 return System.getProperty("user.home") + System.getProperty("file.separator") + "azocamsync";
             }
@@ -110,5 +112,34 @@ public class GlobalProperties {
 
     public boolean isNewInstallation() {
         return (!getFile().exists());
+    }
+
+    public LinkedList<PhotoProjectProfile> getProfiles() {
+        LinkedList<PhotoProjectProfile> retval = new LinkedList<>();
+        for (Object key : props.keySet()) {
+            if (key.toString().startsWith(CamSyncProperties.ASTRO_PROFILE.name())) {
+                String name = key.toString().replaceAll(CamSyncProperties.ASTRO_PROFILE.name(), "");
+                String profile = props.getProperty(key.toString());
+                PhotoProjectProfile ppp = new PhotoProjectProfile();
+                ppp.setProfileName(name);
+                ppp.fromProfile(profile, null);
+                retval.add(ppp);
+            }
+        }
+
+        return retval;
+    }
+
+    public void removeProfile(PhotoProjectProfile profile) {
+        props.remove(CamSyncProperties.ASTRO_PROFILE + profile.getProfileName());
+    }
+
+    public void setProfile(PhotoProjectProfile profile) {
+        props.setProperty(CamSyncProperties.ASTRO_PROFILE + profile.getProfileName(), profile.toProfile());
+        try {
+            store();
+        } catch (IOException ex) {
+            Logger.getLogger(GlobalProperties.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

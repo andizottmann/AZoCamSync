@@ -12,26 +12,17 @@ import java.util.LinkedList;
  *
  * @author Andreas
  */
-public class PhotoProject {
-    private LinkedList<PhotoSerie> photoSeries;
-    private String name="Unnamed";
+public class PhotoProject extends PhotoProjectProfile{
+
+    private String name = "Unnamed";
     private File folder;
 
     public PhotoProject(File folder) {
+        super();
         setFolder(folder);
-        photoSeries=new LinkedList<>();
+     
     }
 
-    
-    
-    
-
-    /**
-     * @return the photoSeries
-     */
-    public LinkedList<PhotoSerie> getPhotoSeries() {
-        return photoSeries;
-    }
 
     /**
      * @return the name
@@ -60,4 +51,5 @@ public class PhotoProject {
     public void setFolder(File folder) {
         this.folder = folder;
     }
+
 }
