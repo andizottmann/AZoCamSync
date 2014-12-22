@@ -122,7 +122,7 @@ public class GlobalProperties {
                 String profile = props.getProperty(key.toString());
                 PhotoProjectProfile ppp = new PhotoProjectProfile();
                 ppp.setProfileName(name);
-                ppp.fromProfile(profile, null);
+                ppp.fromJSONProfile(profile, null);
                 retval.add(ppp);
             }
         }
@@ -135,7 +135,7 @@ public class GlobalProperties {
     }
 
     public void setProfile(PhotoProjectProfile profile) {
-        props.setProperty(CamSyncProperties.ASTRO_PROFILE + profile.getProfileName(), profile.toProfile());
+        props.setProperty(CamSyncProperties.ASTRO_PROFILE + profile.getProfileName(), profile.toJSONProfile().toString());
         try {
             store();
         } catch (IOException ex) {

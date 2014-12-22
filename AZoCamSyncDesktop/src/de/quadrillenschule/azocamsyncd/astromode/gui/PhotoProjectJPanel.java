@@ -11,18 +11,13 @@ import de.quadrillenschule.azocamsyncd.astromode.PhotoProjectProfile;
 import de.quadrillenschule.azocamsyncd.astromode.PhotoSerie;
 import de.quadrillenschule.azocamsyncd.ftpservice.FTPConnection;
 import de.quadrillenschule.azocamsyncd.ftpservice.FTPConnectionListener;
-import java.awt.Component;
 import java.awt.Frame;
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.border.LineBorder;
-import org.apache.commons.net.ftp.FTPCommand;
 
 /**
  *
@@ -32,7 +27,6 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
 
     private PhotoProject project;
     private FTPConnection ftpConnection;
-    private PhotoSerieJPanel activePanel;
     private boolean running = false;
     private Frame parent;
     GlobalProperties gp;
@@ -42,11 +36,12 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
      */
     public PhotoProjectJPanel() {
         gp = new GlobalProperties();
-        initComponents();
-
         project = new PhotoProject(new File(gp.getProperty(GlobalProperties.CamSyncProperties.LAST_ASTRO_FOLDER), "New Project"));
         project.setName("New Project");
-        populateSeriesJPanels();
+
+        initComponents();
+
+        createPhotoProjectJTable();
         populateProfilesJComboBox();
         profilesjComboBoxActionPerformed(null);
     }
@@ -71,6 +66,8 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
         addDarkFramesjButton = new javax.swing.JButton();
         addFlatFramesjButton = new javax.swing.JButton();
         addBiasFramesjButton = new javax.swing.JButton();
+        moveUpjButton = new javax.swing.JButton();
+        moveDownjButton = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         removejButton = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
@@ -80,7 +77,7 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
         storeProfilejButton = new javax.swing.JButton();
         deleteProfilejButton1 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        seriesjPanel = new javax.swing.JPanel();
+        photoProjectjTable = new javax.swing.JTable();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -98,7 +95,7 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
         jLabel1.setText("  Name: ");
         projectjPanel.add(jLabel1);
 
-        projectNamejTextField1.setText("jTextField1");
+        projectNamejTextField1.setText(project.getName());
         projectjPanel.add(projectNamejTextField1);
 
         startjToggleButton.setText("Start!");
@@ -146,6 +143,22 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
         });
         toolsjPanel.add(addBiasFramesjButton);
 
+        moveUpjButton.setText("Move up");
+        moveUpjButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                moveUpjButtonActionPerformed(evt);
+            }
+        });
+        toolsjPanel.add(moveUpjButton);
+
+        moveDownjButton.setText("Move down");
+        moveDownjButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                moveDownjButtonActionPerformed(evt);
+            }
+        });
+        toolsjPanel.add(moveDownjButton);
+
         jLabel2.setText("   ");
         toolsjPanel.add(jLabel2);
 
@@ -171,7 +184,7 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
         jPanel1.add(profilesjComboBox, gridBagConstraints);
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Profile Name", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 10))); // NOI18N
-        jPanel2.setLayout(new java.awt.GridLayout());
+        jPanel2.setLayout(new java.awt.GridLayout(1, 0));
 
         profileNamejTextField.setText("UnnamedProfile");
         jPanel2.add(profileNamejTextField);
@@ -214,9 +227,19 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
 
         add(toolsjPanel, java.awt.BorderLayout.EAST);
 
-        seriesjPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Series"));
-        seriesjPanel.setLayout(new javax.swing.BoxLayout(seriesjPanel, javax.swing.BoxLayout.PAGE_AXIS));
-        jScrollPane1.setViewportView(seriesjPanel);
+        photoProjectjTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        photoProjectjTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane1.setViewportView(photoProjectjTable);
 
         add(jScrollPane1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
@@ -233,7 +256,7 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
 
             project = new PhotoProject(projectFolder);
             project.setName(projectNamejTextField1.getText());
-            populateSeriesJPanels();
+            createPhotoProjectJTable();
         };
 
 
@@ -257,16 +280,9 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
 
     private void removejButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removejButtonActionPerformed
 
-        int i = 0;
-        for (Component c : seriesjPanel.getComponents()) {
-            if (c.isEnabled()) {
-
-                break;
-            }
-            i++;
-        }
+        int i = photoProjectjTable.getSelectedRow();
         project.getPhotoSeries().remove(i);
-        populateSeriesJPanels();
+        tableDataChanged();
 
     }//GEN-LAST:event_removejButtonActionPerformed
     WaitingForFilesJDialog wfd = null;
@@ -293,7 +309,8 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
         project.setProfileName(profileNamejTextField.getText());
         gp.removeProfile(project);
         gp.setProfile(project);
-        populateProfilesJComboBox();
+        tableDataChanged();
+        System.out.println(project.toJSONProfile().toString());
     }//GEN-LAST:event_storeProfilejButtonActionPerformed
 
     private void profilesjComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_profilesjComboBoxActionPerformed
@@ -305,7 +322,7 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
             ps.setProject(project);
         }
         profileNamejTextField.setText(ppp.toString());
-        populateSeriesJPanels();
+        tableDataChanged();
     }//GEN-LAST:event_profilesjComboBoxActionPerformed
 
     private void deleteProfilejButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteProfilejButton1ActionPerformed
@@ -318,12 +335,42 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
         populateProfilesJComboBox();
     }//GEN-LAST:event_deleteProfilejButton1ActionPerformed
 
+    private void moveUpjButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveUpjButtonActionPerformed
+        int selectedRow = photoProjectjTable.getSelectedRow();
+        if (selectedRow > 0) {
+            PhotoSerie mover = project.getPhotoSeries().remove(selectedRow);
+            project.getPhotoSeries().add(selectedRow - 1, mover);
+            tableDataChanged();
+            photoProjectjTable.setRowSelectionInterval(selectedRow - 1, selectedRow - 1);
+        }
+    }//GEN-LAST:event_moveUpjButtonActionPerformed
+
+    private void moveDownjButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveDownjButtonActionPerformed
+        int selectedRow = photoProjectjTable.getSelectedRow();
+        if ((selectedRow >= 0) && (selectedRow < photoProjectjTable.getRowCount() - 1)) {
+            PhotoSerie mover = project.getPhotoSeries().remove(selectedRow);
+            project.getPhotoSeries().add(selectedRow + 1, mover);
+            tableDataChanged();
+            photoProjectjTable.setRowSelectionInterval(selectedRow + 1, selectedRow + 1);
+
+        }
+    }//GEN-LAST:event_moveDownjButtonActionPerformed
+
     private void addStandardSeries(String name, int number) {
         PhotoSerie ps = new PhotoSerie(project);
         ps.setName(name);
         ps.setNumberOfPlannedPhotos(number);
-        project.getPhotoSeries().add(ps);
-        populateSeriesJPanels();
+        int row = photoProjectjTable.getSelectedRow();
+        if (row < 0) {
+            project.getPhotoSeries().add(ps);
+            tableDataChanged();
+            photoProjectjTable.setRowSelectionInterval(project.getPhotoSeries().size() - 1, project.getPhotoSeries().size() - 1);
+        } else {
+            project.getPhotoSeries().add(row, ps);
+            tableDataChanged();
+            photoProjectjTable.setRowSelectionInterval(row, row);
+        }
+
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addBiasFramesjButton;
@@ -336,63 +383,25 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton moveDownjButton;
+    private javax.swing.JButton moveUpjButton;
     private javax.swing.JButton newProjectjButton;
+    private javax.swing.JTable photoProjectjTable;
     private javax.swing.JTextField profileNamejTextField;
     private javax.swing.JComboBox profilesjComboBox;
     private javax.swing.JTextField projectNamejTextField1;
     private javax.swing.JPanel projectjPanel;
     private javax.swing.JButton removejButton;
-    private javax.swing.JPanel seriesjPanel;
     private javax.swing.JToggleButton startjToggleButton;
     private javax.swing.JButton storeProfilejButton;
     private javax.swing.JPanel toolsjPanel;
     // End of variables declaration//GEN-END:variables
 
-    void populateSeriesJPanels() {
-        projectNamejTextField1.setText(project.getName());
-        seriesjPanel.removeAll();
-        activePanel = null;
-        boolean firstUncompletedFound = false;
-        for (PhotoSerie ps : project.getPhotoSeries()) {
-            PhotoSerieJPanel psp = new PhotoSerieJPanel(ps, this);
-            seriesjPanel.add(psp);
-            if (!ps.isComplete() && (!firstUncompletedFound)) {
-                activePanel = psp;
-                firstUncompletedFound = true;
-            }
-        }
+    void createPhotoProjectJTable() {
+        PhotoProjectTableModel ptm = new PhotoProjectTableModel(project);
+        photoProjectjTable.setModel(ptm);
 
         validate();
-    }
-
-    void updateSeriesJPanels() {
-        boolean firstUncompletedFound = false;
-        int i = 0;
-        for (PhotoSerie ps : project.getPhotoSeries()) {
-            //  PhotoSerieJPanel psp = new PhotoSerieJPanel(ps, this);
-            //seriesjPanel.add(psp);
-            if (!ps.isComplete() && (!firstUncompletedFound)) {
-                PhotoSerieJPanel psp = (PhotoSerieJPanel) seriesjPanel.getComponent(i);
-                activePanel = psp;
-                firstUncompletedFound = true;
-            }
-            i++;
-        }
-        if (!firstUncompletedFound) {
-            //All are complete
-            startjToggleButton.setSelected(false);
-            startjToggleButtonActionPerformed(null);
-        }
-
-    }
-
-    public void clickedOnPanel(PhotoSerieJPanel psp) {
-        for (Component c : seriesjPanel.getComponents()) {
-            c.setEnabled(true);
-            ((PhotoSerieJPanel) c).setBorderForState(false);
-        }
-        psp.setEnabled(true);
-        psp.setBorderForState(true);
     }
 
     /**
@@ -425,26 +434,23 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
 
     @Override
     public void receiveNotification(FTPConnectionStatus status, String message, int progress) {
-        if (activePanel == null) {
-            ftpConnection.removeFTPConnectionListener(this);
-            startjToggleButton.setSelected(false);
-            running = false;
-        }
+
         if (status == FTPConnectionStatus.NEW_LOCAL_FILE) {
             File file = new File(message);
             try {
-                activePanel.getPhotoSerie().receiveFile(file);
+                project.getActivePhotoSerie().receiveFile(file);
                 //     wfd.update(activePanel.getPhotoSerie());
             } catch (IOException ex) {
                 Logger.getLogger(PhotoProjectJPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
-            activePanel.update();
-            if (activePanel.getPhotoSerie().isComplete()) {
-                updateSeriesJPanels();
-                activePanel.update();
-            }
+            tableDataChanged();
         }
-        jScrollPane1.scrollRectToVisible(activePanel.getVisibleRect());
+
+    }
+
+    void tableDataChanged() {
+        ((PhotoProjectTableModel) photoProjectjTable.getModel()).fireTableDataChanged();
+
     }
 
     /**

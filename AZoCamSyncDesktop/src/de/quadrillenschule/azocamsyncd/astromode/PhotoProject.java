@@ -5,6 +5,7 @@
  */
 package de.quadrillenschule.azocamsyncd.astromode;
 
+import de.quadrillenschule.azocamsyncd.astromode.PhotoSerie.Status;
 import java.io.File;
 import java.util.LinkedList;
 
@@ -12,7 +13,7 @@ import java.util.LinkedList;
  *
  * @author Andreas
  */
-public class PhotoProject extends PhotoProjectProfile{
+public class PhotoProject extends PhotoProjectProfile {
 
     private String name = "Unnamed";
     private File folder;
@@ -20,9 +21,8 @@ public class PhotoProject extends PhotoProjectProfile{
     public PhotoProject(File folder) {
         super();
         setFolder(folder);
-     
-    }
 
+    }
 
     /**
      * @return the name
@@ -52,4 +52,16 @@ public class PhotoProject extends PhotoProjectProfile{
         this.folder = folder;
     }
 
+    public PhotoSerie getActivePhotoSerie() {
+        for (PhotoSerie ps : photoSeries) {
+            if (ps.getStatus().equals(Status.RECEIVING_FILES)) {
+                return ps;
+            }
+            if (ps.getStatus().equals(Status.NEW)) {
+                return ps;
+            }
+            
+        }
+        return null;
+    }
 }
