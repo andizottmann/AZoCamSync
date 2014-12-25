@@ -41,7 +41,7 @@ public class FTPConnection {
     public CountingOutputStream cos;
     public long downloadsize = 0;
     public static final int TIMEOUT = 4000;
-    private boolean looksFullySynced=false;
+    private boolean looksFullySynced = false;
 
     public FTPConnection() {
 
@@ -129,11 +129,18 @@ public class FTPConnection {
         /* for (AZoFTPFile a : afs) {
          retval.add(a);
          }*/
+        Collections.sort(afs, new Comparator<AZoFTPFile>() {
 
+            @Override
+            public int compare(AZoFTPFile o1, AZoFTPFile o2) {
+                return o1.ftpFile.getTimestamp().compareTo(o2.ftpFile.getTimestamp());
+            }
+        }
+        );
         simplyConnect(FTP.BINARY_FILE_TYPE);
         notify(FTPConnectionStatus.CONNECTED, getLastWorkingConnection(), -1);
-
-        for (AZoFTPFile af : afs) {
+        if (afs.size() > 0) {
+            AZoFTPFile af = afs.getFirst();//) {
             File localFile = null;
 
             try {
@@ -186,7 +193,7 @@ public class FTPConnection {
                 } catch (Exception ex2) {
                     close();
                 }
-                break;
+               
             }
         }
         close();

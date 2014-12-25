@@ -29,7 +29,7 @@ public class SwingBackgroundUpdater extends Thread {
 
     FTPConnection ftpConnection;
     LocalStorage localStorage;
-    Timer timer;
+    private Timer timer;
     GlobalProperties gp;
     public static boolean isActive = false;
 
@@ -44,13 +44,13 @@ public class SwingBackgroundUpdater extends Thread {
     @Override
     public void run() {
         if (isActive) {
-            timer.stop();
+            getTimer().stop();
             return;
         }
         ftpConnection.close();
         isActive = true;
-        timer.setInitialDelay(timer.getDelay());
-        timer.stop();
+        getTimer().setInitialDelay(getTimer().getDelay());
+        getTimer().stop();
         LinkedList<AZoFTPFile> retval = ftpConnection.checkConnection(false);
         if (retval != null) {
             ftpConnection.notify(FTPConnectionListener.FTPConnectionStatus.NUMBER_OF_FILES_DETECTED, "" + retval.size(), -1);
@@ -89,7 +89,9 @@ public class SwingBackgroundUpdater extends Thread {
                 LinkedList<AZoFTPFile> downloaded = ftpConnection.download(r, localStorage);
                 if (downloaded.size() == r.size()) {
                     ftpConnection.setLooksFullySynced(true);
-                }
+                } else {
+                    ftpConnection.setLooksFullySynced(false);
+                };
             }
 
             try {
@@ -104,7 +106,15 @@ public class SwingBackgroundUpdater extends Thread {
 
         ftpConnection.close();
         isActive = false;
-        timer.start();
+        if (ftpConnection.isLooksFullySynced()) {
+            getTimer().setDelay(1000 * Integer.parseInt(gp.getProperty(GlobalProperties.CamSyncProperties.PULLINTERVALLSECS)));
+            getTimer().setInitialDelay(1000 * Integer.parseInt(gp.getProperty(GlobalProperties.CamSyncProperties.PULLINTERVALLSECS)));
+        } else {
+            getTimer().setDelay(500);
+
+            getTimer().setDelay(500);
+        }
+        getTimer().start();
 
     }
 
@@ -132,5 +142,12 @@ public class SwingBackgroundUpdater extends Thread {
             i++;
         }
         return false;
+    }
+
+    /**
+     * @return the timer
+     */
+    public Timer getTimer() {
+        return timer;
     }
 }

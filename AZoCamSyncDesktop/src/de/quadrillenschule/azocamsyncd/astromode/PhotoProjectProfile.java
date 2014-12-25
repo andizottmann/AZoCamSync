@@ -54,20 +54,12 @@ public class PhotoProjectProfile {
 
             PhotoSerie[] psArray = new PhotoSerie[jsa.names().length()];
             for (int i = 0; i < jsa.names().length(); i++) {
-                //  for (int i=0;i<jsa.length();i++){
-
                 JSONObject seriesArray = (JSONObject) jsa.get(jsa.names().getString(i));
-
-                //  JSONObject seriesObject = seriesArray.getJSONObject(0);
-                //   JSONArray jso=jsa.getJSONArray();
                 PhotoSerie ps = new PhotoSerie(project);
                 ps.setName(jsa.names().get(i).toString());
                 ps.setNumberOfPlannedPhotos(seriesArray.getInt(Columns.NUMBER_OF_PLANNED_PHOTOS.name()));
                 ps.setExposureTimeInMs(seriesArray.getLong(Columns.EXPOSURE_TIME.name()));
-
                 psArray[seriesArray.getInt("ORDER_NUMBER")] = ps;
-
-                //  photoSeries.add(ps);
             }
             for (PhotoSerie ps : psArray) {
                 photoSeries.add(ps);

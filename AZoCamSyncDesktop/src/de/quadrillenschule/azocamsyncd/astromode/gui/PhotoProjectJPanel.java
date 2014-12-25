@@ -61,6 +61,7 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
         jLabel1 = new javax.swing.JLabel();
         projectNamejTextField1 = new javax.swing.JTextField();
         startjToggleButton = new javax.swing.JToggleButton();
+        jPanel3 = new javax.swing.JPanel();
         toolsjPanel = new javax.swing.JPanel();
         addLightFramesjButton = new javax.swing.JButton();
         addDarkFramesjButton = new javax.swing.JButton();
@@ -108,8 +109,10 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
 
         add(projectjPanel, java.awt.BorderLayout.NORTH);
 
+        jPanel3.setLayout(new java.awt.GridBagLayout());
+
         toolsjPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Edit Series"));
-        toolsjPanel.setLayout(new javax.swing.BoxLayout(toolsjPanel, javax.swing.BoxLayout.PAGE_AXIS));
+        toolsjPanel.setLayout(new java.awt.GridBagLayout());
 
         addLightFramesjButton.setText("Add lightframes");
         addLightFramesjButton.addActionListener(new java.awt.event.ActionListener() {
@@ -117,7 +120,10 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
                 addLightFramesjButtonActionPerformed(evt);
             }
         });
-        toolsjPanel.add(addLightFramesjButton);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_END;
+        toolsjPanel.add(addLightFramesjButton, gridBagConstraints);
 
         addDarkFramesjButton.setText("Add darkframes");
         addDarkFramesjButton.addActionListener(new java.awt.event.ActionListener() {
@@ -125,7 +131,12 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
                 addDarkFramesjButtonActionPerformed(evt);
             }
         });
-        toolsjPanel.add(addDarkFramesjButton);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_END;
+        toolsjPanel.add(addDarkFramesjButton, gridBagConstraints);
 
         addFlatFramesjButton.setText("Add flatframes");
         addFlatFramesjButton.addActionListener(new java.awt.event.ActionListener() {
@@ -133,7 +144,12 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
                 addFlatFramesjButtonActionPerformed(evt);
             }
         });
-        toolsjPanel.add(addFlatFramesjButton);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_END;
+        toolsjPanel.add(addFlatFramesjButton, gridBagConstraints);
 
         addBiasFramesjButton.setText("Add bias frames");
         addBiasFramesjButton.addActionListener(new java.awt.event.ActionListener() {
@@ -141,7 +157,12 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
                 addBiasFramesjButtonActionPerformed(evt);
             }
         });
-        toolsjPanel.add(addBiasFramesjButton);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_END;
+        toolsjPanel.add(addBiasFramesjButton, gridBagConstraints);
 
         moveUpjButton.setText("Move up");
         moveUpjButton.addActionListener(new java.awt.event.ActionListener() {
@@ -149,7 +170,13 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
                 moveUpjButtonActionPerformed(evt);
             }
         });
-        toolsjPanel.add(moveUpjButton);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_END;
+        gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
+        toolsjPanel.add(moveUpjButton, gridBagConstraints);
 
         moveDownjButton.setText("Move down");
         moveDownjButton.addActionListener(new java.awt.event.ActionListener() {
@@ -157,10 +184,15 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
                 moveDownjButtonActionPerformed(evt);
             }
         });
-        toolsjPanel.add(moveDownjButton);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_END;
+        toolsjPanel.add(moveDownjButton, gridBagConstraints);
 
         jLabel2.setText("   ");
-        toolsjPanel.add(jLabel2);
+        toolsjPanel.add(jLabel2, new java.awt.GridBagConstraints());
 
         removejButton.setText("Remove");
         removejButton.addActionListener(new java.awt.event.ActionListener() {
@@ -168,7 +200,17 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
                 removejButtonActionPerformed(evt);
             }
         });
-        toolsjPanel.add(removejButton);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_END;
+        gridBagConstraints.insets = new java.awt.Insets(7, 0, 0, 0);
+        toolsjPanel.add(removejButton, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        jPanel3.add(toolsjPanel, gridBagConstraints);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Series Profile", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 10))); // NOI18N
         jPanel1.setLayout(new java.awt.GridBagLayout());
@@ -206,7 +248,8 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_END;
         gridBagConstraints.weightx = 1.0;
         jPanel1.add(storeProfilejButton, gridBagConstraints);
 
@@ -219,13 +262,20 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_END;
         gridBagConstraints.weightx = 1.0;
         jPanel1.add(deleteProfilejButton1, gridBagConstraints);
 
-        toolsjPanel.add(jPanel1);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        jPanel3.add(jPanel1, gridBagConstraints);
 
-        add(toolsjPanel, java.awt.BorderLayout.EAST);
+        add(jPanel3, java.awt.BorderLayout.EAST);
 
         photoProjectjTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -382,6 +432,7 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton moveDownjButton;
     private javax.swing.JButton moveUpjButton;
