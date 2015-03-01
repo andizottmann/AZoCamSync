@@ -6,6 +6,7 @@
 package de.quadrillenschule.azocamsyncd.astromode.gui;
 
 import de.quadrillenschule.azocamsyncd.GlobalProperties;
+import de.quadrillenschule.azocamsyncd.GlobalProperties.CamSyncProperties;
 import de.quadrillenschule.azocamsyncd.astromode.PhotoProject;
 import de.quadrillenschule.azocamsyncd.astromode.PhotoProjectProfile;
 import de.quadrillenschule.azocamsyncd.astromode.PhotoSerie;
@@ -14,6 +15,8 @@ import de.quadrillenschule.azocamsyncd.ftpservice.FTPConnectionListener;
 import java.awt.Frame;
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
@@ -58,8 +61,10 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
 
         projectjPanel = new javax.swing.JPanel();
         newProjectjButton = new javax.swing.JButton();
+        astroDateFolderjCheckBox = new javax.swing.JCheckBox();
         jLabel1 = new javax.swing.JLabel();
         projectNamejTextField1 = new javax.swing.JTextField();
+        createjButton = new javax.swing.JButton();
         startjToggleButton = new javax.swing.JToggleButton();
         jPanel3 = new javax.swing.JPanel();
         toolsjPanel = new javax.swing.JPanel();
@@ -85,7 +90,7 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
         projectjPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Project"));
         projectjPanel.setLayout(new javax.swing.BoxLayout(projectjPanel, javax.swing.BoxLayout.LINE_AXIS));
 
-        newProjectjButton.setText("Directory...");
+        newProjectjButton.setText("Astro Dir...");
         newProjectjButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 newProjectjButtonActionPerformed(evt);
@@ -93,11 +98,29 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
         });
         projectjPanel.add(newProjectjButton);
 
+        astroDateFolderjCheckBox.setSelected(Boolean.parseBoolean(gp.getProperty(CamSyncProperties.USE_DATE_ASTRO_FOLDER))
+        );
+        astroDateFolderjCheckBox.setText("Date folders");
+        astroDateFolderjCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                astroDateFolderjCheckBoxActionPerformed(evt);
+            }
+        });
+        projectjPanel.add(astroDateFolderjCheckBox);
+
         jLabel1.setText("  Name: ");
         projectjPanel.add(jLabel1);
 
         projectNamejTextField1.setText(project.getName());
         projectjPanel.add(projectNamejTextField1);
+
+        createjButton.setText("Create");
+        createjButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                createjButtonActionPerformed(evt);
+            }
+        });
+        projectjPanel.add(createjButton);
 
         startjToggleButton.setText("Start!");
         startjToggleButton.addActionListener(new java.awt.event.ActionListener() {
@@ -294,6 +317,26 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
         add(jScrollPane1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void createNewProject() {
+        //     String name = JOptionPane.showInputDialog(this, "Give a name to this project");
+        File selectedFile = new File(gp.getProperty(GlobalProperties.CamSyncProperties.LAST_ASTRO_FOLDER));
+        File projectFolder = new File(selectedFile, projectNamejTextField1.getText());
+        if (Boolean.parseBoolean(gp.getProperty(CamSyncProperties.USE_DATE_ASTRO_FOLDER))) {
+            SimpleDateFormat sdf = new SimpleDateFormat(gp.getProperty(CamSyncProperties.DATE_FORMAT));
+            File dateFolder = new File(selectedFile, sdf.format(new Date(System.currentTimeMillis())));
+            if (!dateFolder.exists()) {
+                dateFolder.mkdir();
+            }
+            projectFolder = new File(dateFolder, projectNamejTextField1.getText());
+
+        }
+        if (!projectFolder.exists()) {
+            projectFolder.mkdir();
+        }
+        project = new PhotoProject(projectFolder);
+        project.setName(projectNamejTextField1.getText());
+        createPhotoProjectJTable();
+    }
     private void newProjectjButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newProjectjButtonActionPerformed
         GlobalProperties gp = new GlobalProperties();
 
@@ -301,12 +344,7 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
         jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         if (jfc.showDialog(this, "Select Directory") == JFileChooser.APPROVE_OPTION) {
             gp.setProperty(GlobalProperties.CamSyncProperties.LAST_ASTRO_FOLDER, jfc.getSelectedFile().getAbsolutePath());
-            //     String name = JOptionPane.showInputDialog(this, "Give a name to this project");
-            File projectFolder = new File(jfc.getSelectedFile(), projectNamejTextField1.getText());
-
-            project = new PhotoProject(projectFolder);
-            project.setName(projectNamejTextField1.getText());
-            createPhotoProjectJTable();
+            createNewProject();
         };
 
 
@@ -359,8 +397,8 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
         project.setProfileName(profileNamejTextField.getText());
         gp.removeProfile(project);
         gp.setProfile(project);
-        tableDataChanged();
-        System.out.println(project.toJSONProfile().toString());
+       tableDataChanged();
+       populateProfilesJComboBox();
     }//GEN-LAST:event_storeProfilejButtonActionPerformed
 
     private void profilesjComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_profilesjComboBoxActionPerformed
@@ -406,6 +444,14 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
         }
     }//GEN-LAST:event_moveDownjButtonActionPerformed
 
+    private void astroDateFolderjCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_astroDateFolderjCheckBoxActionPerformed
+        gp.setProperty(GlobalProperties.CamSyncProperties.USE_DATE_ASTRO_FOLDER, astroDateFolderjCheckBox.isSelected() + "");
+    }//GEN-LAST:event_astroDateFolderjCheckBoxActionPerformed
+
+    private void createjButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createjButtonActionPerformed
+        createNewProject();
+    }//GEN-LAST:event_createjButtonActionPerformed
+
     private void addStandardSeries(String name, int number) {
         PhotoSerie ps = new PhotoSerie(project);
         ps.setName(name);
@@ -427,6 +473,8 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
     private javax.swing.JButton addDarkFramesjButton;
     private javax.swing.JButton addFlatFramesjButton;
     private javax.swing.JButton addLightFramesjButton;
+    private javax.swing.JCheckBox astroDateFolderjCheckBox;
+    private javax.swing.JButton createjButton;
     private javax.swing.JButton deleteProfilejButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

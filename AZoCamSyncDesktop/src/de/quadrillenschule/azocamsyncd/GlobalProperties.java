@@ -30,7 +30,7 @@ public class GlobalProperties {
     public enum CamSyncProperties {
 
         PULLINTERVALLSECS, SDCARD_IPS, LOCALSTORAGE_PATH, FILETYPES, SD_FILELIMIT, DATE_FORMAT, USE_DATEFOLDERS, LIST_OFSYNCED_IMAGES, LATESTIMAGEPATH,
-        NOTIFY_CONNECTION, NOTIFY_DOWNLOAD, TOOLTIPS, LAST_ASTRO_FOLDER, ASTRO_PROFILE
+        NOTIFY_CONNECTION, NOTIFY_DOWNLOAD, TOOLTIPS, LAST_ASTRO_FOLDER, USE_DATE_ASTRO_FOLDER, ASTRO_PROFILE
     };
 
     public static final Color COLOR_CONNECTED = new Color(100, 200, 90), COLOR_UNCONNECTED = new Color(200, 100, 90);
@@ -49,7 +49,7 @@ public class GlobalProperties {
         DEFAULTS.put(CamSyncProperties.NOTIFY_DOWNLOAD, "true");
         DEFAULTS.put(CamSyncProperties.TOOLTIPS, "true");
         DEFAULTS.put(CamSyncProperties.LAST_ASTRO_FOLDER, USER_HOME);
-
+        DEFAULTS.put(CamSyncProperties.USE_DATE_ASTRO_FOLDER, "true");
     }
 
     public GlobalProperties() {

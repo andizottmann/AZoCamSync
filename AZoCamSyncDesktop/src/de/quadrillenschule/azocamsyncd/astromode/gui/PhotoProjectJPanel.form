@@ -34,10 +34,21 @@
       <SubComponents>
         <Component class="javax.swing.JButton" name="newProjectjButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Directory..."/>
+            <Property name="text" type="java.lang.String" value="Astro Dir..."/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="newProjectjButtonActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JCheckBox" name="astroDateFolderjCheckBox">
+          <Properties>
+            <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="Boolean.parseBoolean(gp.getProperty(CamSyncProperties.USE_DATE_ASTRO_FOLDER))&#xd;&#xa;" type="code"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Date folders"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="astroDateFolderjCheckBoxActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel1">
@@ -51,6 +62,14 @@
               <Connection code="project.getName()" type="code"/>
             </Property>
           </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="createjButton">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Create"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="createjButtonActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JToggleButton" name="startjToggleButton">
           <Properties>
