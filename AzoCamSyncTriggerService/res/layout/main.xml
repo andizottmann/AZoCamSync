@@ -1,28 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
 >
-    <TextView  
-        android:layout_width="fill_parent" 
-        android:layout_height="wrap_content" 
-        android:text="AZoTriggerServiceActivity"
-    />
-    <Button
-        android:id="@+id/trigger"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Trigger"
-       
-    />
     
-      <Button
-        android:id="@+id/triggerJobTest"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Trigger 3 x 5"
+    <LinearLayout 
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+    >
+        <TextView  
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content" 
+            android:text="AZoTriggerServiceActivity"
+        />
+        <Button
+            android:id="@+id/trigger"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Trigger Single"
        
-    />
-</LinearLayout>
+        />
+        <Button
+            android:id="@+id/triggerJobButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Trigger Configured"
+       
+        />
+    
+        <TextView  
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content" 
+            android:text="Number of exposures"
+        />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+        >
+            <NumberPicker
+                android:layout_width="wrap_content" 
+                android:layout_height="wrap_content" 
+       
+                android:id="@+id/numberOfExposuresPicker"
+            />
+            <Button
+                android:id="@+id/numberOfExposuresHistoryButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="History"
+       
+            />
+        </LinearLayout>
+        <TextView  
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content" 
+            android:text="Exposure"
+        />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+        >
+            <com.ikovac.timepickerwithseconds.view.TimePicker
+                android:id="@+id/exposureTimePicker"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+            />
+            <Button
+                android:id="@+id/exposureHistoryButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="History"
+       
+            />
+        </LinearLayout>
+          <TextView  
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content" 
+            android:text="Initial delay"
+        />
+          <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+        >
+            <com.ikovac.timepickerwithseconds.view.TimePicker
+                android:id="@+id/initialDelayPicker"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+            />
+            <Button
+                android:id="@+id/initialDelayHistoryButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="History"
+       
+            />
+        </LinearLayout>
+          <TextView  
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content" 
+            android:text="Additional gap"
+        />
+          <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+        >
+            <com.ikovac.timepickerwithseconds.view.TimePicker
+                android:id="@+id/exposureGapPicker"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+            />
+            <Button
+                android:id="@+id/exposureGapHistoryButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="History"
+       
+            />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>
+
 

@@ -6,6 +6,7 @@
 package de.quadrillenschule.azocamsynca;
 
 import android.app.Activity;
+import android.app.Application;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -15,7 +16,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 /**
  *
  * @author Andreas
@@ -24,19 +24,20 @@ public class NikonIR {
 
     String TRIGGER_CODE = "0000 0069 0005 0000 004b 0447 0014 003b 0014 008b 000f 09c4 0050 0000";
     Object irdaService;
-    Method irWrite,irTest;
-Activity ac;
+    Method irWrite, irTest;
+    Activity ac;
     String rawTrigger;
+    private long delayBetweenTrigger = 3000;
 
     public NikonIR(Activity ac) {
-        this.ac=ac;
+        this.ac = ac;
         irdaService = ac.getSystemService("consumer_ir");
 
         Class c = irdaService.getClass();
         Class p[] = {int.class, int[].class};
         try {
             irWrite = c.getMethod("transmit", p);
-            irTest=c.getMethod("hasIrEmitter", null);
+            irTest = c.getMethod("hasIrEmitter", null);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -57,7 +58,7 @@ Activity ac;
         try {
             Class p[] = {int.class, int[].class};
             Object[] args = new Object[2];
-            args[0] = (Object)Integer.parseInt(rawTrigger.split(",")[0]);
+            args[0] = (Object) Integer.parseInt(rawTrigger.split(",")[0]);
             LinkedList<Integer> code = new LinkedList();
             for (String s : rawTrigger.split(",")) {
                 code.add(Integer.parseInt(s));
@@ -72,7 +73,7 @@ Activity ac;
             }
 
             args[1] = myIntArray;
-            
+
             irWrite.invoke(ac.getSystemService("consumer_ir"), args);
 
         } catch (IllegalAccessException ex) {
@@ -105,4 +106,27 @@ Activity ac;
         }
         return irData;
     }
+
+    /**
+     * @return the delayBetweenTrigger
+     */
+    public long getDelayBetweenTrigger() {
+        return delayBetweenTrigger;
+    }
+
+    /**
+     * @param delayBetweenTrigger the delayBetweenTrigger to set
+     */
+    public void setDelayBetweenTrigger(long delayBetweenTrigger) {
+        this.delayBetweenTrigger = delayBetweenTrigger;
+    }
+
+    /**
+     * @return the exposureSetOnCamera
+     */
+    public boolean isExposureSetOnCamera(long exposureTime) {
+        return exposureTime<30000;
+    }
+
+   
 }
