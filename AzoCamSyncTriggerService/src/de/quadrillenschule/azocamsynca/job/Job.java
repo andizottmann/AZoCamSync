@@ -14,6 +14,7 @@ public interface Job {
 
         NEW, PREPARED, RUNNING, FINISHED
     };
-    public void execute();
+    
     public JobStatus getStatus();
+    public void setJobProcessor(JobProcessor jp);
 }

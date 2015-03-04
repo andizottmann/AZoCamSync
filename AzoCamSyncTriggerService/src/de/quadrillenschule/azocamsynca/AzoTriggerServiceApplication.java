@@ -14,7 +14,7 @@ import de.quadrillenschule.azocamsynca.job.JobProcessor;
  */
 public class AzoTriggerServiceApplication extends Application {
 
-    private final JobProcessor jobProcessor = new JobProcessor();
+    private JobProcessor jobProcessor;
     private  NikonIR camera;
 
     public AzoTriggerServiceApplication() {
@@ -41,5 +41,12 @@ public class AzoTriggerServiceApplication extends Application {
      */
     public void setCamera(NikonIR camera) {
         this.camera = camera;
+    }
+
+    /**
+     * @param jobProcessor the jobProcessor to set
+     */
+    public void setJobProcessor(JobProcessor jobProcessor) {
+        this.jobProcessor = jobProcessor;
     }
 }

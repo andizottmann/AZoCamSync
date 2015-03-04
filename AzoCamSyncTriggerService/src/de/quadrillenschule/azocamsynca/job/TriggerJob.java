@@ -34,80 +34,16 @@ public class TriggerJob implements Job {
     private boolean toggleIsOpen = false;
 
     Activity ac;
+    private JobProcessor jobProcessor;
 
     public TriggerJob(Activity ac) {
         id = UUID.randomUUID().toString();
         this.ac = ac;
     }
-
-    public void execute() {
-    final NikonIR camera = ((AzoTriggerServiceApplication) ac.getApplication()).getCamera();
+    
    
-        if (status.equals(JobStatus.NEW)) {
 
-            AlertDialog.Builder ad = new AlertDialog.Builder(ac);
-            ad.setMessage("Confirm that everything is prepared for:\n "
-                    + getProject() + ": " + seriesName+"\n"
-                    +number+" x "+(int)(exposure/1000)+"s"
-                    +"Camera controls time: "+camera.isExposureSetOnCamera(exposure)
-            );
-            ad.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-
-                public void onClick(DialogInterface arg0, int arg1) {
-                    status = JobStatus.PREPARED;
-                    execute();
-                }
-            });
-            ad.setNegativeButton("Abort", new DialogInterface.OnClickListener() {
-
-                public void onClick(DialogInterface arg0, int arg1) {
-                    status = JobStatus.FINISHED;
-                }
-            });
-            ad.create().show();
-        }
-
-        final Handler handler = new Handler();
-         if (status == JobStatus.PREPARED) {
-            handler.postDelayed(new Runnable() {
-
-                public void run() {
-
-                    camera.trigger();
-                    if (firstTriggerTime == 0) {
-                        firstTriggerTime = System.currentTimeMillis();
-                    }
-                    status = JobStatus.RUNNING;
-
-                    toggleIsOpen = !toggleIsOpen;
-
-                    if (!camera.isExposureSetOnCamera(exposure)) {
-                        if (!toggleIsOpen) {
-                            triggered++;
-                            lastTriggerTime = System.currentTimeMillis();
-                        }
-                    } else {
-                        triggered++;
-                    }
-                    if (triggered < number) {
-                        long time;
-                        if (camera.isExposureSetOnCamera(exposure)) {
-                            time = exposure + exposureGapTime +camera.getDelayBetweenTrigger();
-                        } else {
-                            if (toggleIsOpen) {
-                                time = exposure;
-                            } else {
-                                time = camera.getDelayBetweenTrigger();
-                            }
-                        }
-                        handler.postDelayed(this, time);
-                    } else {
-                        status = JobStatus.FINISHED;
-                    }
-                }
-            }, initialDelay);
-        }
-    }
+   
 
     /**
      * @return the initialDelay
@@ -226,6 +162,55 @@ public class TriggerJob implements Job {
      */
     public void setProject(String project) {
         this.project = project;
+    }
+
+    /**
+     * @return the jobProcessor
+     */
+    public JobProcessor getJobProcessor() {
+        return jobProcessor;
+    }
+
+    /**
+     * @param jobProcessor the jobProcessor to set
+     */
+    public void setJobProcessor(JobProcessor jobProcessor) {
+        this.jobProcessor = jobProcessor;
+    }
+
+    /**
+     * @param status the status to set
+     */
+    public void setStatus(JobStatus status) {
+        this.status = status;
+    }
+
+    /**
+     * @param firstTriggerTime the firstTriggerTime to set
+     */
+    public void setFirstTriggerTime(long firstTriggerTime) {
+        this.firstTriggerTime = firstTriggerTime;
+    }
+
+    /**
+     * @param lastTriggerTime the lastTriggerTime to set
+     */
+    public void setLastTriggerTime(long lastTriggerTime) {
+        this.lastTriggerTime = lastTriggerTime;
+    }
+
+    /**
+     * @return the toggleIsOpen
+     */
+    public boolean isToggleIsOpen() {
+        return toggleIsOpen;
+    }
+
+    /**
+     * @param toggleIsOpen the toggleIsOpen to set
+     */
+    public void setToggleIsOpen(boolean toggleIsOpen) {
+        this.toggleIsOpen = toggleIsOpen;
     }
 
 }
