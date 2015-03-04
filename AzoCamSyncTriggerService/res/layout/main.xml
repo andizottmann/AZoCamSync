@@ -10,11 +10,6 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
     >
-        <TextView  
-            android:layout_width="fill_parent" 
-            android:layout_height="wrap_content" 
-            android:text="AZoTriggerServiceActivity"
-        />
         <Button
             android:id="@+id/trigger"
             android:layout_width="match_parent"
@@ -39,11 +34,12 @@
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
         >
             <NumberPicker
                 android:layout_width="wrap_content" 
                 android:layout_height="wrap_content" 
-       
+                android:layout_gravity="center_horizontal"
                 android:id="@+id/numberOfExposuresPicker"
             />
             <Button
@@ -78,12 +74,12 @@
        
             />
         </LinearLayout>
-          <TextView  
+        <TextView  
             android:layout_width="fill_parent" 
             android:layout_height="wrap_content" 
             android:text="Initial delay"
         />
-          <LinearLayout
+        <LinearLayout
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -102,12 +98,12 @@
        
             />
         </LinearLayout>
-          <TextView  
+        <TextView  
             android:layout_width="fill_parent" 
             android:layout_height="wrap_content" 
             android:text="Additional gap"
         />
-          <LinearLayout
+        <LinearLayout
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -120,6 +116,54 @@
             />
             <Button
                 android:id="@+id/exposureGapHistoryButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="History"
+       
+            />
+        </LinearLayout>
+         <TextView  
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content" 
+            android:text="Project"
+        />
+         <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+        >
+            <EditText
+                android:id="@+id/projectEditText"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+            />
+            <Button
+                android:id="@+id/projectHistoryButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="History"
+       
+            />
+        </LinearLayout>
+         <TextView  
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content" 
+            android:text="Series"
+        />
+         <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+        >
+            <EditText
+                android:id="@+id/seriesEditText"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+            />
+            <Button
+                android:id="@+id/seriesHistoryButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="History"

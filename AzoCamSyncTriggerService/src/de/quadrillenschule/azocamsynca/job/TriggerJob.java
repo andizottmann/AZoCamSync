@@ -47,7 +47,7 @@ public class TriggerJob implements Job {
 
             AlertDialog.Builder ad = new AlertDialog.Builder(ac);
             ad.setMessage("Confirm that everything is prepared for:\n "
-                    + project + ": " + seriesName+"\n"
+                    + getProject() + ": " + seriesName+"\n"
                     +number+" x "+(int)(exposure/1000)+"s"
                     +"Camera controls time: "+camera.isExposureSetOnCamera(exposure)
             );
@@ -212,6 +212,20 @@ public class TriggerJob implements Job {
      */
     public void setExposureGapTime(long exposureGapTime) {
         this.exposureGapTime = exposureGapTime;
+    }
+
+    /**
+     * @return the project
+     */
+    public String getProject() {
+        return project;
+    }
+
+    /**
+     * @param project the project to set
+     */
+    public void setProject(String project) {
+        this.project = project;
     }
 
 }
