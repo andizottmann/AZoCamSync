@@ -4,20 +4,24 @@
           android:versionCode="1"
           android:versionName="1.0"
 >
-      <uses-sdk android:minSdkVersion="11"/>
+    <uses-sdk android:minSdkVersion="11"/>
   
     <uses-feature android:name="android.hardware.consumerir" android:required="true" />
     <uses-permission android:name="android.permission.TRANSMIT_IR"
                      android:required="false" />
+    <uses-permission android:name="android.permission.INTERNET" />
     <application android:label="@string/app_name" android:name="AzoTriggerServiceApplication">
        
         <activity android:name="AZoTriggerServiceActivity"
                   android:label="@string/app_name">
+          
+            
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-         
+        <activity android:name="AZoJobListActivity"
+                     android:label="@string/app_name"/>
     </application>
 </manifest> 

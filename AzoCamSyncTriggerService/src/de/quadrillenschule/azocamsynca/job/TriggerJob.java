@@ -5,22 +5,20 @@
  */
 package de.quadrillenschule.azocamsynca.job;
 
-import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.os.Handler;
-import de.quadrillenschule.azocamsynca.AzoTriggerServiceApplication;
-import de.quadrillenschule.azocamsynca.NikonIR;
 import java.util.UUID;
 
 /**
  *
  * @author Andreas
  */
-public class TriggerJob implements Job {
+public class TriggerJob {
 
-    private JobStatus status = JobStatus.NEW;
+    public enum TriggerJobStatus {
+
+        NEW, PREPARED, RUNNING, FINISHED
+    };
+    private TriggerJobStatus status = TriggerJobStatus.NEW;
     String id;
     private String project = "New Project";
     private String seriesName = "flats";
@@ -40,10 +38,6 @@ public class TriggerJob implements Job {
         id = UUID.randomUUID().toString();
         this.ac = ac;
     }
-    
-   
-
-   
 
     /**
      * @return the initialDelay
@@ -104,7 +98,7 @@ public class TriggerJob implements Job {
     /**
      * @return the status
      */
-    public JobStatus getStatus() {
+    public TriggerJobStatus getStatus() {
         return status;
     }
 
@@ -181,7 +175,7 @@ public class TriggerJob implements Job {
     /**
      * @param status the status to set
      */
-    public void setStatus(JobStatus status) {
+    public void setStatus(TriggerJobStatus status) {
         this.status = status;
     }
 

@@ -5,8 +5,10 @@
  */
 package de.quadrillenschule.azocamsynca;
 
+import android.app.Activity;
 import android.app.Application;
 import de.quadrillenschule.azocamsynca.job.JobProcessor;
+import de.quadrillenschule.azocamsynca.webservice.WebService;
 
 /**
  *
@@ -15,11 +17,23 @@ import de.quadrillenschule.azocamsynca.job.JobProcessor;
 public class AzoTriggerServiceApplication extends Application {
 
     private JobProcessor jobProcessor;
-    private  NikonIR camera;
+    private WebService webService;
+    private NikonIR camera;
 
     public AzoTriggerServiceApplication() {
         super();
-        
+
+    }
+
+    public void onActivityCreate(Activity a) {
+        setCamera(new NikonIR(a));
+
+        if (jobProcessor == null) {
+            jobProcessor = new JobProcessor(a);
+        }
+        if (webService == null) {
+            webService = new WebService(jobProcessor);
+        }
     }
 
     /**
