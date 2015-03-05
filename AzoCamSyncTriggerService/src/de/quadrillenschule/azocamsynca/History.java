@@ -16,6 +16,7 @@ import java.util.LinkedList;
  */
 public class History {
 
+    static int SIZE=7;
     public enum Fields {
 
         PROJECT, SERIES_NAME, INITIAL_DELAY, EXPOSURE, EXPOSURE_GAP_NUMBER, NUMBER_OF_EXPOSURES
@@ -45,9 +46,13 @@ public class History {
         }
         history.addFirst(value);
         String retval = "", sep = "";
-        for (String s : history) {
+        int size = SIZE;
+        if (history.size() < SIZE) {
+            size = history.size();
+        }
+        for (String s : history.subList(0, size)) {
             retval += sep + s;
-            sep=",";
+            sep = ",";
         }
         prefs.edit().putString(field.name(), retval).commit();
     }

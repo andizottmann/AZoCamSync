@@ -71,7 +71,7 @@ public class JobProcessor {
                     + "Additional Gap:" + currentJob.getExposureGapTime() / 1000 + "s\n"
                     + "Camera controls time: " + camera.isExposureSetOnCamera(currentJob.getExposure())
                     + "Camera delays between trigger:" + camera.getDelayBetweenTrigger() / 1000 + "s\n"
-                    + "Total time: " + (currentJob.getExposure() + currentJob.getExposureGapTime() + camera.getDelayBetweenTrigger()) / 1000
+                    + "Total time: " + (currentJob.getNumber()*currentJob.getExposure() + currentJob.getExposureGapTime() + camera.getDelayBetweenTrigger() / 1000)
             );
             ad.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
 

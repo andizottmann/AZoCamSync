@@ -38,7 +38,7 @@ public class AZoTriggerServiceActivity extends Activity {
         final NumberPicker numberOfexposuresPicker = (NumberPicker) findViewById(R.id.numberOfExposuresPicker);
         numberOfexposuresPicker.setMinValue(1);
         numberOfexposuresPicker.setMaxValue(999);
-        numberOfexposuresPicker.setValue(10);
+        numberOfexposuresPicker.setValue(Integer.parseInt(history.getHistory(History.Fields.NUMBER_OF_EXPOSURES, "10").getFirst()));
 
         Button numberOfExposuresHistory = (Button) findViewById(R.id.numberOfExposuresHistoryButton);
         numberOfExposuresHistory.setOnClickListener(new View.OnClickListener() {
