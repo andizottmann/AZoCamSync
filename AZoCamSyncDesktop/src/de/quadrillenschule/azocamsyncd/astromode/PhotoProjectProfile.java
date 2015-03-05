@@ -10,11 +10,8 @@ import de.quadrillenschule.azocamsyncd.astromode.gui.PhotoProjectTableModel.Colu
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jdk.nashorn.internal.runtime.JSONFunctions;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import sun.swing.MenuItemLayoutHelper;
 
 /**
  *

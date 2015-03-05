@@ -397,19 +397,21 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
         project.setProfileName(profileNamejTextField.getText());
         gp.removeProfile(project);
         gp.setProfile(project);
-       tableDataChanged();
-       populateProfilesJComboBox();
+        tableDataChanged();
+        populateProfilesJComboBox();
     }//GEN-LAST:event_storeProfilejButtonActionPerformed
 
     private void profilesjComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_profilesjComboBoxActionPerformed
         project.getPhotoSeries().clear();
         PhotoProjectProfile ppp = (PhotoProjectProfile) profilesjComboBox.getSelectedItem();
 
-        project.getPhotoSeries().addAll(ppp.getPhotoSeries());
-        for (PhotoSerie ps : project.getPhotoSeries()) {
-            ps.setProject(project);
+        if (ppp != null) {
+            project.getPhotoSeries().addAll(ppp.getPhotoSeries());
+            for (PhotoSerie ps : project.getPhotoSeries()) {
+                ps.setProject(project);
+            }
+            profileNamejTextField.setText(ppp.toString());
         }
-        profileNamejTextField.setText(ppp.toString());
         tableDataChanged();
     }//GEN-LAST:event_profilesjComboBoxActionPerformed
 
