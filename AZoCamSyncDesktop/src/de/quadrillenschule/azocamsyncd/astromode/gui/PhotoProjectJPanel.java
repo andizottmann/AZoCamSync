@@ -9,7 +9,7 @@ import de.quadrillenschule.azocamsyncd.GlobalProperties;
 import de.quadrillenschule.azocamsyncd.GlobalProperties.CamSyncProperties;
 import de.quadrillenschule.azocamsyncd.astromode.PhotoProject;
 import de.quadrillenschule.azocamsyncd.astromode.PhotoProjectProfile;
-import de.quadrillenschule.azocamsyncd.astromode.PhotoSerie;
+import de.quadrillenschule.azocamsyncd.astromode.ReceivePhotoSerie;
 import de.quadrillenschule.azocamsyncd.ftpservice.FTPConnection;
 import de.quadrillenschule.azocamsyncd.ftpservice.FTPConnectionListener;
 import java.awt.Frame;
@@ -407,7 +407,7 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
 
         if (ppp != null) {
             project.getPhotoSeries().addAll(ppp.getPhotoSeries());
-            for (PhotoSerie ps : project.getPhotoSeries()) {
+            for (ReceivePhotoSerie ps : project.getPhotoSeries()) {
                 ps.setProject(project);
             }
             profileNamejTextField.setText(ppp.toString());
@@ -428,7 +428,7 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
     private void moveUpjButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveUpjButtonActionPerformed
         int selectedRow = photoProjectjTable.getSelectedRow();
         if (selectedRow > 0) {
-            PhotoSerie mover = project.getPhotoSeries().remove(selectedRow);
+            ReceivePhotoSerie mover = project.getPhotoSeries().remove(selectedRow);
             project.getPhotoSeries().add(selectedRow - 1, mover);
             tableDataChanged();
             photoProjectjTable.setRowSelectionInterval(selectedRow - 1, selectedRow - 1);
@@ -438,7 +438,7 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
     private void moveDownjButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveDownjButtonActionPerformed
         int selectedRow = photoProjectjTable.getSelectedRow();
         if ((selectedRow >= 0) && (selectedRow < photoProjectjTable.getRowCount() - 1)) {
-            PhotoSerie mover = project.getPhotoSeries().remove(selectedRow);
+            ReceivePhotoSerie mover = project.getPhotoSeries().remove(selectedRow);
             project.getPhotoSeries().add(selectedRow + 1, mover);
             tableDataChanged();
             photoProjectjTable.setRowSelectionInterval(selectedRow + 1, selectedRow + 1);
@@ -455,7 +455,7 @@ public class PhotoProjectJPanel extends javax.swing.JPanel implements FTPConnect
     }//GEN-LAST:event_createjButtonActionPerformed
 
     private void addStandardSeries(String name, int number) {
-        PhotoSerie ps = new PhotoSerie(project);
+        ReceivePhotoSerie ps = new ReceivePhotoSerie(project);
         ps.setName(name);
         ps.setNumberOfPlannedPhotos(number);
         int row = photoProjectjTable.getSelectedRow();

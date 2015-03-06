@@ -5,7 +5,7 @@
  */
 package de.quadrillenschule.azocamsyncd.astromode.gui;
 
-import de.quadrillenschule.azocamsyncd.astromode.PhotoSerie;
+import de.quadrillenschule.azocamsyncd.astromode.ReceivePhotoSerie;
 
 /**
  *
@@ -24,7 +24,7 @@ public class WaitingForFilesJDialog extends javax.swing.JDialog {
         initComponents();
     }
     
-    public void update(PhotoSerie ps) {
+    public void update(ReceivePhotoSerie ps) {
         projectjLabel.setText(ppj.getProject().getName());
         seriesjLabel.setText(ps.getName()+": Waiting for "+(ps.getPhotos().size()+1)+" from "+ps.getNumberOfPlannedPhotos()+" files");
         

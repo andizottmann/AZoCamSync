@@ -5,7 +5,7 @@
  */
 package de.quadrillenschule.azocamsyncd.astromode;
 
-import de.quadrillenschule.azocamsyncd.astromode.PhotoSerie.Status;
+import de.quadrillenschule.azocamsyncd.astromode.ReceivePhotoSerie.ReceiveStatus;
 import java.io.File;
 import java.util.LinkedList;
 
@@ -52,12 +52,12 @@ public class PhotoProject extends PhotoProjectProfile {
         this.folder = folder;
     }
 
-    public PhotoSerie getActivePhotoSerie() {
-        for (PhotoSerie ps : photoSeries) {
-            if (ps.getStatus().equals(Status.RECEIVING_FILES)) {
+    public ReceivePhotoSerie getActivePhotoSerie() {
+        for (ReceivePhotoSerie ps : photoSeries) {
+            if (ps.getStatus().equals(ReceiveStatus.RECEIVING_FILES)) {
                 return ps;
             }
-            if (ps.getStatus().equals(Status.NEW)) {
+            if (ps.getStatus().equals(ReceiveStatus.NEW)) {
                 return ps;
             }
             

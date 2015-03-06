@@ -6,7 +6,7 @@
 package de.quadrillenschule.azocamsyncd.astromode.gui;
 
 import de.quadrillenschule.azocamsyncd.astromode.PhotoProject;
-import de.quadrillenschule.azocamsyncd.astromode.PhotoSerie;
+import de.quadrillenschule.azocamsyncd.astromode.ReceivePhotoSerie;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 
@@ -69,7 +69,7 @@ public class PhotoProjectTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        PhotoSerie ps = project.getPhotoSeries().get(rowIndex);
+        ReceivePhotoSerie ps = project.getPhotoSeries().get(rowIndex);
         switch (Columns.values()[columnIndex]) {
             case NAME:
                 return ps.getName();
@@ -89,7 +89,7 @@ public class PhotoProjectTableModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        PhotoSerie ps = project.getPhotoSeries().get(rowIndex);
+        ReceivePhotoSerie ps = project.getPhotoSeries().get(rowIndex);
         switch (Columns.values()[columnIndex]) {
             case NAME:
                 ps.setName(aValue.toString());

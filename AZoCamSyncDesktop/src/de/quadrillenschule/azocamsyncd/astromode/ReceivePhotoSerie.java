@@ -16,7 +16,7 @@ import java.util.LinkedList;
  *
  * @author Andreas
  */
-public class PhotoSerie {
+public class ReceivePhotoSerie {
 
     /**
      * @return the exposureTimeInMs
@@ -39,19 +39,19 @@ public class PhotoSerie {
         this.project = project;
     }
 
-    public enum Status {
+    public enum ReceiveStatus {
 
         NEW, RECEIVING_FILES, COMPLETED
     };
 
-    private Status status = Status.NEW;
+    private ReceiveStatus status = ReceiveStatus.NEW;
     private int numberOfPlannedPhotos = 0;
     private String name = "lightframes";
     private LinkedList<File> photos;
     private PhotoProject project;
     private long exposureTimeInMs=0;
 
-    public PhotoSerie(PhotoProject project) {
+    public ReceivePhotoSerie(PhotoProject project) {
         photos = new LinkedList<>();
         this.project = project;
     }
@@ -70,9 +70,9 @@ public class PhotoSerie {
             gp.setProperty(GlobalProperties.CamSyncProperties.LATESTIMAGEPATH, newFile.getAbsolutePath());
         }
         photos.add(file);
-        status = Status.RECEIVING_FILES;
+        status = ReceiveStatus.RECEIVING_FILES;
         if (isComplete()) {
-            status = Status.COMPLETED;
+            status = ReceiveStatus.COMPLETED;
         }
 
     }
@@ -119,14 +119,14 @@ public class PhotoSerie {
     /**
      * @return the status
      */
-    public Status getStatus() {
+    public ReceiveStatus getStatus() {
         return status;
     }
 
     /**
      * @param status the status to set
      */
-    public void setStatus(Status status) {
+    public void setStatus(ReceiveStatus status) {
         this.status = status;
     }
 

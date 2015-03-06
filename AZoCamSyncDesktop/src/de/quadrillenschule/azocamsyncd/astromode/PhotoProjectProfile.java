@@ -19,7 +19,7 @@ import org.json.JSONObject;
  */
 public class PhotoProjectProfile {
 
-    protected LinkedList<PhotoSerie> photoSeries;
+    protected LinkedList<ReceivePhotoSerie> photoSeries;
     protected String profileName = "Unnamed Profile";
 
     public PhotoProjectProfile() {
@@ -34,7 +34,7 @@ public class PhotoProjectProfile {
             /* if ((i % 2) == 0) {
              name = s;
              } else {*/
-            PhotoSerie ps = new PhotoSerie(project);
+            ReceivePhotoSerie ps = new ReceivePhotoSerie(project);
             ps.setName(profile.split(",")[i]);
 
             ps.setNumberOfPlannedPhotos(Integer.parseInt(profile.split(",")[i + 1]));
@@ -49,16 +49,16 @@ public class PhotoProjectProfile {
         try {
             JSONObject jsa = new JSONObject(jsonProfile);
 
-            PhotoSerie[] psArray = new PhotoSerie[jsa.names().length()];
+            ReceivePhotoSerie[] psArray = new ReceivePhotoSerie[jsa.names().length()];
             for (int i = 0; i < jsa.names().length(); i++) {
                 JSONObject seriesArray = (JSONObject) jsa.get(jsa.names().getString(i));
-                PhotoSerie ps = new PhotoSerie(project);
+                ReceivePhotoSerie ps = new ReceivePhotoSerie(project);
                 ps.setName(jsa.names().get(i).toString());
                 ps.setNumberOfPlannedPhotos(seriesArray.getInt(Columns.NUMBER_OF_PLANNED_PHOTOS.name()));
                 ps.setExposureTimeInMs(seriesArray.getLong(Columns.EXPOSURE_TIME.name()));
                 psArray[seriesArray.getInt("ORDER_NUMBER")] = ps;
             }
-            for (PhotoSerie ps : psArray) {
+            for (ReceivePhotoSerie ps : psArray) {
                 photoSeries.add(ps);
             }
         } catch (JSONException ex) {
@@ -69,7 +69,7 @@ public class PhotoProjectProfile {
     /**
      * @return the photoSeries
      */
-    public LinkedList<PhotoSerie> getPhotoSeries() {
+    public LinkedList<ReceivePhotoSerie> getPhotoSeries() {
         return photoSeries;
     }
 
@@ -90,7 +90,7 @@ public class PhotoProjectProfile {
     public String toProfile() {
         String retval = "";
         String sep = "";
-        for (PhotoSerie ps : photoSeries) {
+        for (ReceivePhotoSerie ps : photoSeries) {
             retval += sep + ps.getName() + "," + ps.getNumberOfPlannedPhotos() + "," + ps.getExposureTimeInMs();
             sep = ",";
         }
@@ -102,7 +102,7 @@ public class PhotoProjectProfile {
         JSONObject seriesArray = new JSONObject();
         try {
             for (int j = 0; j < photoSeries.size(); j++) {
-                PhotoSerie ps = photoSeries.get(j);
+                ReceivePhotoSerie ps = photoSeries.get(j);
                 JSONObject serieObject = new JSONObject();
                 serieObject.put(PhotoProjectTableModel.Columns.NUMBER_OF_PLANNED_PHOTOS.name(), ps.getNumberOfPlannedPhotos());
                 serieObject.put(PhotoProjectTableModel.Columns.EXPOSURE_TIME.name(), ps.getExposureTimeInMs());
