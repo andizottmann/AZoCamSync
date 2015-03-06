@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Handler;
+import de.quadrillenschule.azocamsync.PhotoSerie;
 import de.quadrillenschule.azocamsynca.AzoTriggerServiceApplication;
 import de.quadrillenschule.azocamsynca.NikonIR;
 import java.util.LinkedList;
@@ -19,18 +20,20 @@ import java.util.LinkedList;
  */
 public class JobProcessor {
 
-    private LinkedList<TriggerJob> jobs = new LinkedList<TriggerJob>();
+    private LinkedList<TriggerPhotoSerie> jobs = new LinkedList<TriggerPhotoSerie>();
+    private LinkedList<JobProcessorStatusListener> jobProcessorStatusListeners = new LinkedList<JobProcessorStatusListener>();
+    private LinkedList<JobProgressListener> jobProgressListeners = new LinkedList<JobProgressListener>();
 
     public enum ProcessorStatus {
 
         IDLE, PROCESSING, PAUSED
     };
 
-    private ProcessorStatus status = ProcessorStatus.IDLE;
-    private static ProcessorStatus requestStatus = ProcessorStatus.IDLE;
+    private ProcessorStatus status = ProcessorStatus.PAUSED;
+    private static ProcessorStatus requestStatus = ProcessorStatus.PAUSED;
 
     private Handler handler;
-    Activity activity;
+    private Activity activity;
 
     public JobProcessor(Activity ac) {
         handler = new Handler();
@@ -40,17 +43,28 @@ public class JobProcessor {
 
     public void start() {
         setRequestStatus(ProcessorStatus.PROCESSING);
+        processingLoop();
     }
 
     public void pause() {
         setRequestStatus(ProcessorStatus.PAUSED);
+        processingLoop();
     }
 
-    public void executeNext() {
-        TriggerJob currentJobT = null;
-        for (TriggerJob j : jobs) {
-            if (j.getStatus() != TriggerJob.TriggerJobStatus.FINISHED) {
+    public void processingLoop() {
+
+        if (getRequestStatus() == ProcessorStatus.PAUSED) {
+            setStatus(ProcessorStatus.PAUSED);
+            return;
+        }
+        setStatus(ProcessorStatus.PROCESSING);
+        TriggerPhotoSerie currentJobT = null;
+        for (TriggerPhotoSerie j : jobs) {
+            if (j.getTriggerStatus() != TriggerPhotoSerie.TriggerJobStatus.FINISHED) {
                 currentJobT = j;
+                if (j.getTriggerStatus() == PhotoSerie.TriggerJobStatus.WAITFORUSER) {
+                    return;
+                }
                 break;
             }
         }
@@ -58,32 +72,33 @@ public class JobProcessor {
             setStatus(ProcessorStatus.IDLE);
             return;
         }
-        
-        final TriggerJob currentJob = currentJobT;
-        final NikonIR camera = ((AzoTriggerServiceApplication) activity.getApplication()).getCamera();
 
-        if (currentJob.getStatus() == TriggerJob.TriggerJobStatus.NEW) {
+        final TriggerPhotoSerie currentJob = currentJobT;
+        final NikonIR camera = ((AzoTriggerServiceApplication) getActivity().getApplication()).getCamera();
 
-            AlertDialog.Builder ad = new AlertDialog.Builder(activity);
-            ad.setMessage("Confirm that everything is prepared for:\n "
+        if (currentJob.getTriggerStatus() == PhotoSerie.TriggerJobStatus.NEW) {
+            currentJob.setTriggerStatus(PhotoSerie.TriggerJobStatus.WAITFORUSER);
+            AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());
+            ad.setMessage("Let's start\n "
                     + currentJob.getProject() + ": " + currentJob.getSeriesName() + "\n"
                     + currentJob.getNumber() + " x " + (int) (currentJob.getExposure() / 1000) + "s\n"
-                    + "Additional Gap:" + currentJob.getExposureGapTime() / 1000 + "s\n"
-                    + "Camera controls time: " + camera.isExposureSetOnCamera(currentJob.getExposure())
-                    + "Camera delays between trigger:" + camera.getDelayBetweenTrigger() / 1000 + "s\n"
-                    + "Total time: " + (currentJob.getNumber()*currentJob.getExposure() + currentJob.getExposureGapTime() + camera.getDelayBetweenTrigger() / 1000)
+                    + "Delay after each exposure:" + currentJob.getDelayAfterEachExposure() / 1000 + "s\n"
+                    + "Camera controls time: " + camera.isExposureSetOnCamera(currentJob.getExposure()) + "\n"
+                    + "Total time: " + ((currentJob.getNumber() * (currentJob.getExposure() + currentJob.getDelayAfterEachExposure())) / 1000)+"s"
             );
+           
             ad.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
 
                 public void onClick(DialogInterface arg0, int arg1) {
-                    currentJob.setStatus(TriggerJob.TriggerJobStatus.PREPARED);
-                    executeNext();
+                    currentJob.setTriggerStatus(PhotoSerie.TriggerJobStatus.PREPARED);
+                    processingLoop();
                 }
             });
-            ad.setNegativeButton("Abort", new DialogInterface.OnClickListener() {
+            ad.setNegativeButton("Pause", new DialogInterface.OnClickListener() {
 
                 public void onClick(DialogInterface arg0, int arg1) {
-                    currentJob.setStatus(TriggerJob.TriggerJobStatus.FINISHED);
+                    currentJob.setTriggerStatus(PhotoSerie.TriggerJobStatus.NEW);
+                    pause();
                 }
             });
             ad.create().show();
@@ -91,16 +106,23 @@ public class JobProcessor {
 
         final Handler handler = new Handler();
 
-        if (currentJob.getStatus() == TriggerJob.TriggerJobStatus.PREPARED) {
+        if ((currentJob.getTriggerStatus() == PhotoSerie.TriggerJobStatus.PREPARED||currentJob.getTriggerStatus() == PhotoSerie.TriggerJobStatus.RUNNING)) {
             handler.postDelayed(new Runnable() {
 
                 public void run() {
+                    if ((((AzoTriggerServiceApplication) getActivity().getApplication()).getJobProcessor().getStatus() == ProcessorStatus.PAUSED)
+                            && (!currentJob.isToggleIsOpen())) {
 
+                        return;
+                    }
                     camera.trigger();
+                    for (JobProgressListener j : jobProgressListeners) {
+                        j.jobProgressed(currentJob);
+                    }
                     if (currentJob.getFirstTriggerTime() == 0) {
                         currentJob.setFirstTriggerTime(System.currentTimeMillis());
                     }
-                    currentJob.setStatus(TriggerJob.TriggerJobStatus.RUNNING);
+                    currentJob.setTriggerStatus(PhotoSerie.TriggerJobStatus.RUNNING);
                     currentJob.setToggleIsOpen(!currentJob.isToggleIsOpen());
 
                     if (!camera.isExposureSetOnCamera(currentJob.getExposure())) {
@@ -116,21 +138,22 @@ public class JobProcessor {
                     if (currentJob.getTriggered() < currentJob.getNumber()) {
                         long time;
                         if (camera.isExposureSetOnCamera(currentJob.getExposure())) {
-                            time = currentJob.getExposure() + currentJob.getExposureGapTime() + camera.getDelayBetweenTrigger();
+                            time = currentJob.getExposure() + currentJob.getDelayAfterEachExposure();
                         } else {
                             if (currentJob.isToggleIsOpen()) {
                                 time = currentJob.getExposure();
                             } else {
-                                time = camera.getDelayBetweenTrigger();
+                                time = currentJob.getDelayAfterEachExposure();
                             }
                         }
                         handler.postDelayed(this, time);
                     } else {
-                        currentJob.setStatus(TriggerJob.TriggerJobStatus.FINISHED);
-                        executeNext();
+                        currentJob.setTriggerStatus(PhotoSerie.TriggerJobStatus.FINISHED);
+                        processingLoop();
                     }
                 }
             }, currentJob.getInitialDelay());
+        } else {
         }
 
     }
@@ -138,7 +161,7 @@ public class JobProcessor {
     /**
      * @return the jobs
      */
-    public LinkedList<TriggerJob> getJobs() {
+    public LinkedList<TriggerPhotoSerie> getJobs() {
         return jobs;
     }
 
@@ -164,10 +187,42 @@ public class JobProcessor {
     }
 
     /**
-     * @param status the status to set
+     * @param pstatus the status to set
      */
-    public void setStatus(ProcessorStatus status) {
-        this.status = status;
+    public void setStatus(ProcessorStatus pstatus) {
+        if (this.status == pstatus) {
+            return;
+        }
+        for (JobProcessorStatusListener j : jobProcessorStatusListeners) {
+            j.jobProcessStatusChanged(this.status, pstatus);
+        }
+        this.status = pstatus;
+    }
+
+    public void addJobProcesssorStatusListener(JobProcessorStatusListener j) {
+        if (!jobProcessorStatusListeners.contains(j)) {
+            jobProcessorStatusListeners.add(j);
+        }
+    }
+
+    public void addJobProgressListener(JobProgressListener j) {
+        if (!jobProgressListeners.contains(j)) {
+            jobProgressListeners.add(j);
+        }
+    }
+
+    /**
+     * @return the activity
+     */
+    public Activity getActivity() {
+        return activity;
+    }
+
+    /**
+     * @param activity the activity to set
+     */
+    public void setActivity(Activity activity) {
+        this.activity = activity;
     }
 
 }

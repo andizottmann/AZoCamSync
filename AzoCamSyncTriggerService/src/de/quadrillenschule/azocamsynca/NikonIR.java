@@ -25,12 +25,11 @@ public class NikonIR {
     String TRIGGER_CODE = "0000 0069 0005 0000 004b 0447 0014 003b 0014 008b 000f 09c4 0050 0000";
     Object irdaService;
     Method irWrite, irTest;
-    Activity ac;
+    private Activity activity;
     String rawTrigger;
-    private long delayBetweenTrigger = 3000;
 
     public NikonIR(Activity ac) {
-        this.ac = ac;
+        this.activity = ac;
         irdaService = ac.getSystemService("consumer_ir");
 
         Class c = irdaService.getClass();
@@ -74,7 +73,7 @@ public class NikonIR {
 
             args[1] = myIntArray;
 
-            irWrite.invoke(ac.getSystemService("consumer_ir"), args);
+            irWrite.invoke(getActivity().getSystemService("consumer_ir"), args);
 
         } catch (IllegalAccessException ex) {
             Logger.getLogger(NikonIR.class.getName()).log(Level.SEVERE, null, ex);
@@ -107,25 +106,27 @@ public class NikonIR {
         return irData;
     }
 
-    /**
-     * @return the delayBetweenTrigger
-     */
-    public long getDelayBetweenTrigger() {
-        return delayBetweenTrigger;
-    }
-
-    /**
-     * @param delayBetweenTrigger the delayBetweenTrigger to set
-     */
-    public void setDelayBetweenTrigger(long delayBetweenTrigger) {
-        this.delayBetweenTrigger = delayBetweenTrigger;
-    }
+   
 
     /**
      * @return the exposureSetOnCamera
      */
     public boolean isExposureSetOnCamera(long exposureTime) {
         return exposureTime<30000;
+    }
+
+    /**
+     * @return the activity
+     */
+    public Activity getActivity() {
+        return activity;
+    }
+
+    /**
+     * @param activity the activity to set
+     */
+    public void setActivity(Activity activity) {
+        this.activity = activity;
     }
 
    

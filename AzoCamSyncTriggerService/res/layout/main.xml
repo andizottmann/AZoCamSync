@@ -18,10 +18,17 @@
        
         />
         <Button
-            android:id="@+id/triggerJobButton"
+            android:id="@+id/startstopQueueButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Trigger Configured"
+            android:text="Start Processing"
+       
+        />
+        <Button
+            android:id="@+id/addJobButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Add Job"
        
         />
      <Button
@@ -107,7 +114,7 @@
         <TextView  
             android:layout_width="fill_parent" 
             android:layout_height="wrap_content" 
-            android:text="Additional gap"
+            android:text="Delay after each exposure"
         />
         <LinearLayout
             android:orientation="horizontal"
@@ -115,13 +122,13 @@
             android:layout_height="wrap_content"
         >
             <com.ikovac.timepickerwithseconds.view.TimePicker
-                android:id="@+id/exposureGapPicker"
+                android:id="@+id/delayAfterEachExposurePicker"
                 android:layout_gravity="center_horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
             />
             <Button
-                android:id="@+id/exposureGapHistoryButton"
+                android:id="@+id/delayAfterEachExposureHistoryButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="History"

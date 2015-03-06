@@ -26,14 +26,24 @@ public class AzoTriggerServiceApplication extends Application {
     }
 
     public void onActivityCreate(Activity a) {
-        setCamera(new NikonIR(a));
+        if (camera == null) {
+            setCamera(new NikonIR(a));
+        }
 
+      //  camera.setActivity(a);
         if (jobProcessor == null) {
             jobProcessor = new JobProcessor(a);
         }
+     //   jobProcessor.setActivity(a);
+
         if (webService == null) {
             webService = new WebService(jobProcessor);
         }
+    }
+
+    public void onActivityResume(Activity a) {
+      //  jobProcessor.setActivity(a);
+      //  camera.setActivity(a);
     }
 
     /**

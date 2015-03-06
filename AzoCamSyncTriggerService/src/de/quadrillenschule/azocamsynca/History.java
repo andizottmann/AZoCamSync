@@ -19,7 +19,7 @@ public class History {
     static int SIZE=7;
     public enum Fields {
 
-        PROJECT, SERIES_NAME, INITIAL_DELAY, EXPOSURE, EXPOSURE_GAP_NUMBER, NUMBER_OF_EXPOSURES
+        PROJECT, SERIES_NAME, INITIAL_DELAY, EXPOSURE, DELAY_AFTER_EACH_EXPOSURE, NUMBER_OF_EXPOSURES
     };
     Application application;
 
