@@ -1,189 +1,252 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:orientation="vertical"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
->
+
     
-    <LinearLayout 
-        android:orientation="vertical"
+<LinearLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+>
+    <Button
+        android:id="@+id/trigger"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Trigger Single"
+       
+    />
+    <Button
+        android:id="@+id/startstopQueueButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Start Processing"
+       
+    />
+   
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
     >
-        <Button
-            android:id="@+id/trigger"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Trigger Single"
-       
-        />
-        <Button
-            android:id="@+id/startstopQueueButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Start Processing"
-       
-        />
-        <Button
-            android:id="@+id/addJobButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Add Job"
-       
-        />
-     <Button
-            android:id="@+id/viewjoblist"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Job list"
-       
-        />
-        <TextView  
-            android:layout_width="fill_parent" 
-            android:layout_height="wrap_content" 
-            android:text="Number of exposures"
-        />
         <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="fill_parent"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
         >
-            <NumberPicker
-                android:layout_width="wrap_content" 
+            <TextView  
+                android:layout_width="fill_parent" 
                 android:layout_height="wrap_content" 
-                android:layout_gravity="center_horizontal"
-                android:id="@+id/numberOfExposuresPicker"
+                android:text="Project"
             />
-            <Button
-                android:id="@+id/numberOfExposuresHistoryButton"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="History"
+            >
+                <EditText
+                    android:id="@+id/projectEditText"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                />
+                <Button
+                    android:id="@+id/projectHistoryButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="History"
        
-            />
+                />
+            </LinearLayout>
         </LinearLayout>
-        <TextView  
-            android:layout_width="fill_parent" 
-            android:layout_height="wrap_content" 
-            android:text="Exposure"
-        />
         <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="fill_parent"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
         >
-            <com.ikovac.timepickerwithseconds.view.TimePicker
-                android:id="@+id/exposureTimePicker"
-                android:layout_gravity="center_horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <TextView  
+                android:layout_width="fill_parent" 
+                android:layout_height="wrap_content" 
+                android:text="Series"
             />
-            <Button
-                android:id="@+id/exposureHistoryButton"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="History"
+            >
+                <EditText
+                    android:id="@+id/seriesEditText"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                />
+                <Button
+                    android:id="@+id/seriesHistoryButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="History"
        
-            />
-        </LinearLayout>
-        <TextView  
-            android:layout_width="fill_parent" 
-            android:layout_height="wrap_content" 
-            android:text="Initial delay"
-        />
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-        >
-            <com.ikovac.timepickerwithseconds.view.TimePicker
-                android:id="@+id/initialDelayPicker"
-                android:layout_gravity="center_horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-            />
-            <Button
-                android:id="@+id/initialDelayHistoryButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="History"
-       
-            />
-        </LinearLayout>
-        <TextView  
-            android:layout_width="fill_parent" 
-            android:layout_height="wrap_content" 
-            android:text="Delay after each exposure"
-        />
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-        >
-            <com.ikovac.timepickerwithseconds.view.TimePicker
-                android:id="@+id/delayAfterEachExposurePicker"
-                android:layout_gravity="center_horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-            />
-            <Button
-                android:id="@+id/delayAfterEachExposureHistoryButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="History"
-       
-            />
-        </LinearLayout>
-         <TextView  
-            android:layout_width="fill_parent" 
-            android:layout_height="wrap_content" 
-            android:text="Project"
-        />
-         <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-        >
-            <EditText
-                android:id="@+id/projectEditText"
-                android:layout_gravity="center_horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-            />
-            <Button
-                android:id="@+id/projectHistoryButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="History"
-       
-            />
-        </LinearLayout>
-         <TextView  
-            android:layout_width="fill_parent" 
-            android:layout_height="wrap_content" 
-            android:text="Series"
-        />
-         <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-        >
-            <EditText
-                android:id="@+id/seriesEditText"
-                android:layout_gravity="center_horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-            />
-            <Button
-                android:id="@+id/seriesHistoryButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="History"
-       
-            />
+                />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
-</ScrollView>
-
-
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+    >
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+        >
+            <TextView  
+                android:layout_width="fill_parent" 
+                android:layout_height="wrap_content" 
+                android:text="Number of exposures"
+            />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+            >
+           
+                <Button
+                    android:id="@+id/numberOfExposuresButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+       
+                />
+                <Button
+                    android:id="@+id/numberOfExposuresHistoryButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="History"
+       
+                />
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+        >
+            <TextView  
+                android:layout_width="fill_parent" 
+                android:layout_height="wrap_content" 
+                android:text="Exposure"
+            />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+            >
+                <Button
+                    android:id="@+id/exposureTimeButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Exposure"
+       
+                />
+           
+                <Button
+                    android:id="@+id/exposureHistoryButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="History"
+       
+                />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+    >
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+        >
+            <TextView  
+                android:layout_width="fill_parent" 
+                android:layout_height="wrap_content" 
+                android:text="Initial delay"
+            />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+            >
+                <Button
+                    android:id="@+id/initialDelayButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0:00:03"
+       
+                />
+            
+                <Button
+                    android:id="@+id/initialDelayHistoryButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="History"
+       
+                />
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+        >
+            <TextView  
+                android:layout_width="fill_parent" 
+                android:layout_height="wrap_content" 
+                android:text="Delay after each exposure"
+            />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+            >
+                <Button
+                    android:id="@+id/delayAfterEachExposureButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0:00:03"
+       
+                />
+                <Button
+                    android:id="@+id/delayAfterEachExposureHistoryButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="History"
+       
+                />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+     <Button
+        android:id="@+id/addJobButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Job"
+       
+    />
+    <ListView
+        android:id="@+id/jobList"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+    />
+</LinearLayout>

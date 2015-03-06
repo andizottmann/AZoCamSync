@@ -5,6 +5,11 @@
  */
 package de.quadrillenschule.azocamsync;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 
 /**
  *
@@ -16,6 +21,11 @@ public abstract class PhotoSerie {
 
         NEW, WAITFORUSER,PREPARED, RUNNING, FINISHED
      };
+     
+      public enum Fields {
+
+        PROJECT, SERIES_NAME, INITIAL_DELAY, EXPOSURE, DELAY_AFTER_EACH_EXPOSURE, NUMBER_OF_EXPOSURES
+    };
     private long firstTriggerTime = 0;
     private int number = 0;
     private String seriesName = "flats";
@@ -165,6 +175,16 @@ public abstract class PhotoSerie {
      */
     public void setInitialDelay(long initialDelay) {
         this.initialDelay = initialDelay;
+    }
+    
+    public JSONObject toJSONObject(){
+    JSONObject retval=new JSONObject();
+         try {
+             retval.put(project, status);
+         } catch (JSONException ex) {
+             Logger.getLogger(PhotoSerie.class.getName()).log(Level.SEVERE, null, ex);
+         }
+    return retval;
     }
     
 }

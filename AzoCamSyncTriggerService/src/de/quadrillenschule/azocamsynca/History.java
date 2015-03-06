@@ -8,6 +8,7 @@ package de.quadrillenschule.azocamsynca;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import de.quadrillenschule.azocamsync.PhotoSerie;
 import java.util.LinkedList;
 
 /**
@@ -17,17 +18,14 @@ import java.util.LinkedList;
 public class History {
 
     static int SIZE=7;
-    public enum Fields {
-
-        PROJECT, SERIES_NAME, INITIAL_DELAY, EXPOSURE, DELAY_AFTER_EACH_EXPOSURE, NUMBER_OF_EXPOSURES
-    };
+   
     Application application;
 
     public History(Application application) {
         this.application = application;
     }
 
-    public LinkedList<String> getHistory(Fields field, String defaultString) {
+    public LinkedList<String> getHistory(PhotoSerie.Fields field, String defaultString) {
         LinkedList<String> retval = new LinkedList();
         SharedPreferences prefs = application.getSharedPreferences("HISTORY_AZOTRIGGER", Context.MODE_PRIVATE);
         for (String s : prefs.getString(field.name(), defaultString).split(",")) {
@@ -37,7 +35,7 @@ public class History {
         return retval;
     }
 
-    public void addHistory(Fields field, String value) {
+    public void addHistory(PhotoSerie.Fields field, String value) {
         SharedPreferences prefs = application.getSharedPreferences("HISTORY_AZOTRIGGER", Context.MODE_PRIVATE);
         LinkedList<String> history = getHistory(field, "");
         if (history.contains(value)) {

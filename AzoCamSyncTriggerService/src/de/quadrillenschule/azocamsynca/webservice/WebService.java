@@ -5,7 +5,6 @@
  */
 package de.quadrillenschule.azocamsynca.webservice;
 
-import de.quadrillenschule.azocamsynca.AZoJobListActivity;
 import de.quadrillenschule.azocamsynca.job.JobProcessor;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -40,7 +39,7 @@ public class WebService {
         try {
             server.start();
         } catch (Exception ex) {
-            Logger.getLogger(AZoJobListActivity.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(WebService.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }
