@@ -36,8 +36,8 @@ public class AzoTriggerServiceApplication extends Application {
         }
      //   jobProcessor.setActivity(a);
 
-        if (webService == null) {
-            webService = new WebService(jobProcessor);
+        if (getWebService() == null) {
+            setWebService(new WebService(jobProcessor));
         }
     }
 
@@ -72,5 +72,19 @@ public class AzoTriggerServiceApplication extends Application {
      */
     public void setJobProcessor(JobProcessor jobProcessor) {
         this.jobProcessor = jobProcessor;
+    }
+
+    /**
+     * @return the webService
+     */
+    public WebService getWebService() {
+        return webService;
+    }
+
+    /**
+     * @param webService the webService to set
+     */
+    public void setWebService(WebService webService) {
+        this.webService = webService;
     }
 }

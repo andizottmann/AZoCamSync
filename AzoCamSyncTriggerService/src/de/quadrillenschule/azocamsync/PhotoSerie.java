@@ -10,22 +10,20 @@ import java.util.logging.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
 /**
  *
  * @author D061339
  */
 public abstract class PhotoSerie {
-    
-     public enum TriggerJobStatus {
 
-        NEW, WAITFORUSER,PREPARED, RUNNING, FINISHED
-     };
-     
-      public enum Fields {
-
-        PROJECT, SERIES_NAME, INITIAL_DELAY, EXPOSURE, DELAY_AFTER_EACH_EXPOSURE, NUMBER_OF_EXPOSURES
+    public enum TriggerJobStatus {
+        NEW, WAITFORUSER, PREPARED, RUNNING, FINISHED_TRIGGERING
     };
+
+    public enum Fields {
+        PROJECT, SERIES_NAME, INITIAL_DELAY, EXPOSURE, DELAY_AFTER_EACH_EXPOSURE, NUMBER_OF_EXPOSURES, RECEIVED, ID
+    };
+
     private long firstTriggerTime = 0;
     private int number = 0;
     private String seriesName = "flats";
@@ -36,6 +34,43 @@ public abstract class PhotoSerie {
     private int triggered = 0;
     private long exposure = 0;
     private long delayAfterEachExposure = 0;
+    private long received = 0;
+    private String id;
+
+    public JSONObject toJSONObject() {
+        JSONObject retval = new JSONObject();
+        try {
+            retval.put(Fields.PROJECT.name(), getProject());
+            retval.put(Fields.SERIES_NAME.name(), getSeriesName());
+            retval.put(Fields.INITIAL_DELAY.name(), getInitialDelay());
+            retval.put(Fields.EXPOSURE.name(), getExposure());
+            retval.put(Fields.DELAY_AFTER_EACH_EXPOSURE.name(), getDelayAfterEachExposure());
+            retval.put(Fields.NUMBER_OF_EXPOSURES.name(), getNumber());
+            retval.put(Fields.ID.name(), getId());
+            retval.put(Fields.RECEIVED.name(), received);
+        } catch (JSONException ex) {
+            Logger.getLogger(PhotoSerie.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return retval;
+    }
+
+    public void fromJSONObject(JSONObject jso) {
+        try {
+            setProject(jso.getString(Fields.PROJECT.name()));
+            setSeriesName(jso.getString(Fields.SERIES_NAME.name()));
+            setInitialDelay(jso.getLong(Fields.INITIAL_DELAY.name()));
+            setExposure(jso.getLong(Fields.EXPOSURE.name()));
+            setDelayAfterEachExposure(jso.getLong(Fields.DELAY_AFTER_EACH_EXPOSURE.name()));
+            setNumber(jso.getInt(Fields.NUMBER_OF_EXPOSURES.name()));
+            setId(jso.getString(Fields.ID.name()));
+            setReceived(jso.getInt(Fields.RECEIVED.name()));
+
+        } catch (JSONException ex) {
+            Logger.getLogger(PhotoSerie.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return;
+    }
 
     /**
      * @return the initialDelay
@@ -176,15 +211,32 @@ public abstract class PhotoSerie {
     public void setInitialDelay(long initialDelay) {
         this.initialDelay = initialDelay;
     }
-    
-    public JSONObject toJSONObject(){
-    JSONObject retval=new JSONObject();
-         try {
-             retval.put(project, status);
-         } catch (JSONException ex) {
-             Logger.getLogger(PhotoSerie.class.getName()).log(Level.SEVERE, null, ex);
-         }
-    return retval;
+
+    /**
+     * @return the id
+     */
+    public String getId() {
+        return id;
     }
-    
+
+    /**
+     * @param id the id to set
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    /**
+     * @return the received
+     */
+    public long getReceived() {
+        return received;
+    }
+
+    /**
+     * @param received the received to set
+     */
+    public void setReceived(long received) {
+        this.received = received;
+    }
 }

@@ -13,6 +13,8 @@ import de.quadrillenschule.azocamsync.PhotoSerie;
 import de.quadrillenschule.azocamsynca.AzoTriggerServiceApplication;
 import de.quadrillenschule.azocamsynca.NikonIR;
 import java.util.LinkedList;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  *
@@ -60,7 +62,7 @@ public class JobProcessor {
         setStatus(ProcessorStatus.PROCESSING);
         TriggerPhotoSerie currentJobT = null;
         for (TriggerPhotoSerie j : jobs) {
-            if (j.getTriggerStatus() != TriggerPhotoSerie.TriggerJobStatus.FINISHED) {
+            if (j.getTriggerStatus() != TriggerPhotoSerie.TriggerJobStatus.FINISHED_TRIGGERING) {
                 currentJobT = j;
                 if (j.getTriggerStatus() == PhotoSerie.TriggerJobStatus.WAITFORUSER) {
                     return;
@@ -84,9 +86,9 @@ public class JobProcessor {
                     + currentJob.getNumber() + " x " + (int) (currentJob.getExposure() / 1000) + "s\n"
                     + "Delay after each exposure:" + currentJob.getDelayAfterEachExposure() / 1000 + "s\n"
                     + "Camera controls time: " + camera.isExposureSetOnCamera(currentJob.getExposure()) + "\n"
-                    + "Total time: " + ((currentJob.getNumber() * (currentJob.getExposure() + currentJob.getDelayAfterEachExposure())) / 1000)+"s"
+                    + "Total time: " + ((currentJob.getNumber() * (currentJob.getExposure() + currentJob.getDelayAfterEachExposure())) / 1000) + "s"
             );
-           
+
             ad.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
 
                 public void onClick(DialogInterface arg0, int arg1) {
@@ -106,7 +108,7 @@ public class JobProcessor {
 
         final Handler handler = new Handler();
 
-        if ((currentJob.getTriggerStatus() == PhotoSerie.TriggerJobStatus.PREPARED||currentJob.getTriggerStatus() == PhotoSerie.TriggerJobStatus.RUNNING)) {
+        if ((currentJob.getTriggerStatus() == PhotoSerie.TriggerJobStatus.PREPARED || currentJob.getTriggerStatus() == PhotoSerie.TriggerJobStatus.RUNNING)) {
             handler.postDelayed(new Runnable() {
 
                 public void run() {
@@ -148,7 +150,7 @@ public class JobProcessor {
                         }
                         handler.postDelayed(this, time);
                     } else {
-                        currentJob.setTriggerStatus(PhotoSerie.TriggerJobStatus.FINISHED);
+                        currentJob.setTriggerStatus(PhotoSerie.TriggerJobStatus.FINISHED_TRIGGERING);
                         processingLoop();
                     }
                 }
@@ -156,6 +158,14 @@ public class JobProcessor {
         } else {
         }
 
+    }
+
+    public JSONArray toJSONArray() {
+        JSONArray ja = new JSONArray();
+        for (PhotoSerie ps : jobs) {
+            ja.put(ps.toJSONObject());
+        }
+        return ja;
     }
 
     /**
@@ -225,4 +235,15 @@ public class JobProcessor {
         this.activity = activity;
     }
 
+    public void fireJobProgressEvent(PhotoSerie ps) {
+        for (JobProgressListener j : jobProgressListeners) {
+            j.jobProgressed(ps);
+        }
+    }
+
+    public void fireJobProcesserStatusEvent(ProcessorStatus oldStatus, ProcessorStatus newStatus) {
+        for (JobProcessorStatusListener j : jobProcessorStatusListeners) {
+            j.jobProcessStatusChanged(oldStatus, newStatus);
+        }
+    }
 }

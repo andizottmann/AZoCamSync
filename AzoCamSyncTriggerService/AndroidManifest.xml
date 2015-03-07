@@ -4,16 +4,21 @@
           android:versionCode="1"
           android:versionName="1.0"
 >
-    <uses-sdk android:minSdkVersion="11"/>
+    <uses-sdk android:minSdkVersion="17"/>
   
     <uses-feature android:name="android.hardware.consumerir" android:required="true" />
     <uses-permission android:name="android.permission.TRANSMIT_IR"
                      android:required="false" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <application android:label="@string/app_name" android:name="AzoTriggerServiceApplication">
+    <application android:label="@string/app_name" 
+                 android:name="AzoTriggerServiceApplication"
+    
+    >
        
         <activity android:name="AZoTriggerServiceActivity"
-                  android:label="@string/app_name">
+                  android:label="@string/app_name"
+        android:theme="@android:style/Theme.Holo"
+        >
           
             
             <intent-filter>

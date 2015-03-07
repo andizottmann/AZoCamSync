@@ -16,15 +16,14 @@ import java.util.UUID;
 public class TriggerPhotoSerie extends PhotoSerie{
 
    
-    String id;
-    private boolean toggleIsOpen = false;
+     private boolean toggleIsOpen = false;
 
     Activity ac;
     private JobProcessor jobProcessor;
 
     public TriggerPhotoSerie(Activity ac) {
-        id = UUID.randomUUID().toString();
         this.ac = ac;
+        setId(UUID.randomUUID().getMostSignificantBits()+"");
     }
 
 
