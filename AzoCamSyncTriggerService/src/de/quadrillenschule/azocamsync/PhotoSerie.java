@@ -17,16 +17,19 @@ import org.json.JSONObject;
 public abstract class PhotoSerie {
 
     public enum TriggerJobStatus {
+
         NEW, WAITFORUSER, PREPARED, RUNNING, FINISHED_TRIGGERING
     };
 
     public enum Fields {
+
         PROJECT, SERIES_NAME, INITIAL_DELAY, EXPOSURE, DELAY_AFTER_EACH_EXPOSURE, NUMBER_OF_EXPOSURES, RECEIVED, ID
     };
 
+    public static String TESTSHOTS="testShots";
     private long firstTriggerTime = 0;
     private int number = 0;
-    private String seriesName = "flats";
+    private String seriesName = TESTSHOTS;
     private TriggerJobStatus status = TriggerJobStatus.NEW;
     private long initialDelay = 0;
     private String project = "New Project";
@@ -238,5 +241,15 @@ public abstract class PhotoSerie {
      */
     public void setReceived(long received) {
         this.received = received;
+    }
+
+    public String shortDescription() {
+        return getTriggerStatus().name() + " "
+                + getProject() + "  " + getSeriesName() + "\n"
+                + " Triggered: " + getTriggered() + "/" + getNumber() + "  "
+                + " Received: " + getReceived() + "/" + getNumber() + "\n"
+                + " Planned: " + getNumber() + "x (" + getExposure() / 1000 + " + " + getDelayAfterEachExposure() / 1000 + ")s ="
+                + " Total time: " + ((getNumber() * (getExposure() + getDelayAfterEachExposure())) / 1000) + "s";
+
     }
 }

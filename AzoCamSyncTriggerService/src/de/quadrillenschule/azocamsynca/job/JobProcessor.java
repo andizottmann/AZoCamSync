@@ -12,9 +12,9 @@ import android.os.Handler;
 import de.quadrillenschule.azocamsync.PhotoSerie;
 import de.quadrillenschule.azocamsynca.AzoTriggerServiceApplication;
 import de.quadrillenschule.azocamsynca.NikonIR;
+import de.quadrillenschule.azocamsynca.R;
 import java.util.LinkedList;
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 /**
  *
@@ -80,9 +80,14 @@ public class JobProcessor {
 
         if (currentJob.getTriggerStatus() == PhotoSerie.TriggerJobStatus.NEW) {
             currentJob.setTriggerStatus(PhotoSerie.TriggerJobStatus.WAITFORUSER);
-            AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());
-            ad.setMessage("Let's start\n "
-                    + currentJob.getProject() + ": " + currentJob.getSeriesName() + "\n"
+            if (currentJob.getSeriesName().equals(PhotoSerie.TESTSHOTS)) {
+                doTestShots(currentJob);
+                return;
+            }
+            AlertDialog.Builder ad = new AlertDialog.Builder(getActivity(), R.style.dialog);
+            ad.setTitle("Let's start");
+            ad.setMessage(
+                    currentJob.getProject() + ": " + currentJob.getSeriesName() + "\n"
                     + currentJob.getNumber() + " x " + (int) (currentJob.getExposure() / 1000) + "s\n"
                     + "Delay after each exposure:" + currentJob.getDelayAfterEachExposure() / 1000 + "s\n"
                     + "Camera controls time: " + camera.isExposureSetOnCamera(currentJob.getExposure()) + "\n"
@@ -125,15 +130,20 @@ public class JobProcessor {
                         currentJob.setFirstTriggerTime(System.currentTimeMillis());
                     }
                     currentJob.setTriggerStatus(PhotoSerie.TriggerJobStatus.RUNNING);
-                    currentJob.setToggleIsOpen(!currentJob.isToggleIsOpen());
 
                     if (!camera.isExposureSetOnCamera(currentJob.getExposure())) {
                         if (!currentJob.isToggleIsOpen()) {
+                            currentJob.setToggleIsOpen(!currentJob.isToggleIsOpen());
+
                             currentJob.setTriggered(currentJob.getTriggered() + 1);
 
                             currentJob.setLastTriggerTime(System.currentTimeMillis());
+                        } else {
+                            currentJob.setToggleIsOpen(!currentJob.isToggleIsOpen());
+
                         }
                     } else {
+                    
                         currentJob.setTriggered(currentJob.getTriggered() + 1);
 
                     }
@@ -157,6 +167,50 @@ public class JobProcessor {
             }, currentJob.getInitialDelay());
         } else {
         }
+
+    }
+
+    public void doTestShots(final TriggerPhotoSerie job) {
+        final NikonIR camera = ((AzoTriggerServiceApplication) getActivity().getApplication()).getCamera();
+
+        final AlertDialog.Builder adb = new AlertDialog.Builder(getActivity(), R.style.dialog);
+        adb.setTitle("Test Shots");
+        adb.setMessage("This series collects all images during preparation of the project\n"
+                + job.getProject() + "\n"
+                + "Camera controls time: " + camera.isExposureSetOnCamera(job.getExposure())
+        );
+        if (!job.isToggleIsOpen()) {
+            adb.setPositiveButton("Finish", new DialogInterface.OnClickListener() {
+
+                public void onClick(DialogInterface dialog, int which) {
+                    job.setTriggerStatus(PhotoSerie.TriggerJobStatus.FINISHED_TRIGGERING);
+
+                    processingLoop();
+                }
+            });
+        }
+
+        adb.setNegativeButton("Trigger", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+                camera.trigger();
+                if (!camera.isExposureSetOnCamera(job.getExposure())) {
+                    job.setToggleIsOpen(!job.isToggleIsOpen());
+                 
+                    if (!job.isToggleIsOpen()) {
+                        job.setNumber(job.getNumber() + 1);
+                        job.setTriggered(job.getTriggered() + 1);
+
+                    }
+
+                } else {
+                    job.setNumber(job.getNumber() + 1);
+                    job.setTriggered(job.getTriggered() + 1);
+                }
+                doTestShots(job);
+            }
+        });
+        adb.create().show();
 
     }
 

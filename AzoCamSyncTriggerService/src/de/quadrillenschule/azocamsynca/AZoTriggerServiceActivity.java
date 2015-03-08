@@ -75,7 +75,7 @@ public class AZoTriggerServiceActivity extends Activity implements JobProcessorS
         numberOfExposuresButton.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
-                AlertDialog.Builder ab = new AlertDialog.Builder(myActivity);
+                final AlertDialog.Builder ab = new AlertDialog.Builder(myActivity);
                 final NumberPicker numberOfexposuresPicker = new NumberPicker(myActivity);
                 numberOfexposuresPicker.setMinValue(1);
                 numberOfexposuresPicker.setMaxValue(999);
@@ -86,6 +86,7 @@ public class AZoTriggerServiceActivity extends Activity implements JobProcessorS
 
                     public void onClick(DialogInterface dialog, int which) {
                         numberOfExposuresButton.setText("" + numberOfexposuresPicker.getValue());
+
                     }
                 });
                 ab.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -99,15 +100,18 @@ public class AZoTriggerServiceActivity extends Activity implements JobProcessorS
         numberOfExposuresHistory.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View arg0) {
-                ListPopupWindow lpw = new ListPopupWindow(myActivity);
+               
+                final ListPopupWindow lpw = new ListPopupWindow(myActivity);
                 lpw.setAdapter(new ArrayAdapter(myActivity, R.layout.history_list_item, history.getHistory(PhotoSerie.Fields.NUMBER_OF_EXPOSURES, "10")));
                 lpw.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
                     public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                         numberOfExposuresButton.setText("" + Integer.parseInt(history.getHistory(PhotoSerie.Fields.NUMBER_OF_EXPOSURES, "10").get(arg2)));
+                        lpw.dismiss();
                     }
 
                     public void onNothingSelected(AdapterView<?> arg0) {
+                        lpw.dismiss();
                     }
                 });
                 lpw.setAnchorView(findViewById(R.id.numberOfExposuresHistoryButton));
@@ -237,18 +241,18 @@ public class AZoTriggerServiceActivity extends Activity implements JobProcessorS
             }
         });
 
-        seriesEditText.setText(history.getHistory(PhotoSerie.Fields.SERIES_NAME, "flats").getFirst());
+        seriesEditText.setText(history.getHistory(PhotoSerie.Fields.SERIES_NAME, PhotoSerie.TESTSHOTS).getFirst());
 
         seriesHistoryButton.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View arg0) {
                 final History history = new History(myActivity.getApplication());
                 final ListPopupWindow lpw = new ListPopupWindow(myActivity);
-                lpw.setAdapter(new ArrayAdapter(myActivity, R.layout.history_list_item, history.getHistory(PhotoSerie.Fields.SERIES_NAME, "flats")));
+                lpw.setAdapter(new ArrayAdapter(myActivity, R.layout.history_list_item, history.getHistory(PhotoSerie.Fields.SERIES_NAME, PhotoSerie.TESTSHOTS)));
                 lpw.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
                     public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-                        seriesEditText.setText(history.getHistory(PhotoSerie.Fields.SERIES_NAME, "flats").get(arg2));
+                        seriesEditText.setText(history.getHistory(PhotoSerie.Fields.SERIES_NAME, PhotoSerie.TESTSHOTS).get(arg2));
                         lpw.dismiss();
                     }
 

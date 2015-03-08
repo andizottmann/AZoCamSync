@@ -13,11 +13,17 @@
         <item name="android:focusable">true</item>
         <item name="android:clickable">true</item>
     </style>
-     <style name="main_button" parent="@style/button">
+    <style name="main_button" parent="@style/button">
         <item name="android:textColor">#EEEEEE</item>
       
     </style>
-     <style name="value_button" parent="@android:style/Widget.Button">
+    <style name="dialog" >
+         <item name="android:textColorPrimary">#FF0000</item>
+          <item name="android:textSize">30dip</item>
+    </style>
+
+ 
+    <style name="value_button" parent="@android:style/Widget.Button">
         <item name="android:gravity">center_vertical|center_horizontal</item>
         <item name="android:textColor">#DD0000</item>
         <item name="android:shadowColor">#000000</item>
@@ -31,7 +37,7 @@
         <item name="android:clickable">true</item>
     </style>
     
-     <style name="edittext" parent="@android:style/Widget.EditText">
+    <style name="edittext" parent="@android:style/Widget.EditText">
        
         <item name="android:textColor">#EE0000</item>
       
