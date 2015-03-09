@@ -30,11 +30,11 @@ public class AzoTriggerServiceApplication extends Application {
             setCamera(new NikonIR(a));
         }
 
-      //  camera.setActivity(a);
+        //  camera.setActivity(a);
         if (jobProcessor == null) {
             jobProcessor = new JobProcessor(a);
         }
-     //   jobProcessor.setActivity(a);
+        //   jobProcessor.setActivity(a);
 
         if (getWebService() == null) {
             setWebService(new WebService(jobProcessor));
@@ -42,10 +42,13 @@ public class AzoTriggerServiceApplication extends Application {
     }
 
     public void onActivityResume(Activity a) {
-      //  jobProcessor.setActivity(a);
-      //  camera.setActivity(a);
+        jobProcessor.load();
     }
 
+ public void onActivityPause(Activity a) {
+        jobProcessor.store();
+    }
+    
     /**
      * @return the jobProcessor
      */

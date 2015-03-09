@@ -22,8 +22,9 @@ public class TriggerPhotoSerie extends PhotoSerie{
     private JobProcessor jobProcessor;
 
     public TriggerPhotoSerie(Activity ac) {
+        super();
         this.ac = ac;
-        setId(UUID.randomUUID().getMostSignificantBits()+"");
+       
     }
 
 

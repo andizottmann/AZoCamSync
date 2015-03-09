@@ -3,6 +3,7 @@ package de.quadrillenschule.azocamsynca;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -38,6 +39,7 @@ public class AZoTriggerServiceActivity extends Activity implements JobProcessorS
         ((AzoTriggerServiceApplication) getApplication()).getJobProcessor().addJobProgressListener(this);
         setContentView(R.layout.main);
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
     }
 
@@ -51,6 +53,13 @@ public class AZoTriggerServiceActivity extends Activity implements JobProcessorS
         prepareButtons();
         ListView jobListView = (ListView) findViewById(R.id.jobList);
         jobListView.setAdapter(new JobListAdapter(this, R.layout.job_list_item, ((AzoTriggerServiceApplication) getApplication()).getJobProcessor()));
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        ((AzoTriggerServiceApplication) getApplication()).onActivityPause(this);
 
     }
 
@@ -94,13 +103,15 @@ public class AZoTriggerServiceActivity extends Activity implements JobProcessorS
                     public void onClick(DialogInterface dialog, int which) {
                     }
                 });
+                
+               
                 ab.show();
             }
         });
         numberOfExposuresHistory.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View arg0) {
-               
+
                 final ListPopupWindow lpw = new ListPopupWindow(myActivity);
                 lpw.setAdapter(new ArrayAdapter(myActivity, R.layout.history_list_item, history.getHistory(PhotoSerie.Fields.NUMBER_OF_EXPOSURES, "10")));
                 lpw.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -141,6 +152,7 @@ public class AZoTriggerServiceActivity extends Activity implements JobProcessorS
                     public void onClick(DialogInterface dialog, int which) {
                     }
                 });
+              
                 ab.show();
             }
         });
@@ -325,7 +337,7 @@ public class AZoTriggerServiceActivity extends Activity implements JobProcessorS
 
             public void onClick(View arg0) {
                 JobProcessor jobProcessor = ((AzoTriggerServiceApplication) getApplication()).getJobProcessor();
-                if (jobProcessor.getStatus() != JobProcessor.ProcessorStatus.PROCESSING) {
+                if (jobProcessor.getStatus() == JobProcessor.ProcessorStatus.PAUSED) {
                     jobProcessor.start();
 
                 } else {

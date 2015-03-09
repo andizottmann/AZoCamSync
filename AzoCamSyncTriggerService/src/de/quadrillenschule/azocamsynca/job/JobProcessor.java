@@ -7,14 +7,21 @@ package de.quadrillenschule.azocamsynca.job;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Handler;
 import de.quadrillenschule.azocamsync.PhotoSerie;
 import de.quadrillenschule.azocamsynca.AzoTriggerServiceApplication;
 import de.quadrillenschule.azocamsynca.NikonIR;
 import de.quadrillenschule.azocamsynca.R;
 import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  *
@@ -85,10 +92,9 @@ public class JobProcessor {
                 return;
             }
             AlertDialog.Builder ad = new AlertDialog.Builder(getActivity(), R.style.dialog);
-            ad.setTitle("Let's start");
+            ad.setTitle(currentJob.getProject() + ": " + currentJob.getSeriesName());
             ad.setMessage(
-                    currentJob.getProject() + ": " + currentJob.getSeriesName() + "\n"
-                    + currentJob.getNumber() + " x " + (int) (currentJob.getExposure() / 1000) + "s\n"
+                    currentJob.getNumber() + " x " + (int) (currentJob.getExposure() / 1000) + "s\n\n"
                     + "Delay after each exposure:" + currentJob.getDelayAfterEachExposure() / 1000 + "s\n"
                     + "Camera controls time: " + camera.isExposureSetOnCamera(currentJob.getExposure()) + "\n"
                     + "Total time: " + ((currentJob.getNumber() * (currentJob.getExposure() + currentJob.getDelayAfterEachExposure())) / 1000) + "s"
@@ -108,6 +114,8 @@ public class JobProcessor {
                     pause();
                 }
             });
+            MediaPlayer mediaPlayer = MediaPlayer.create(activity, R.raw.oida_peda);
+            mediaPlayer.start();
             ad.create().show();
         }
 
@@ -143,7 +151,7 @@ public class JobProcessor {
 
                         }
                     } else {
-                    
+
                         currentJob.setTriggered(currentJob.getTriggered() + 1);
 
                     }
@@ -172,6 +180,7 @@ public class JobProcessor {
 
     public void doTestShots(final TriggerPhotoSerie job) {
         final NikonIR camera = ((AzoTriggerServiceApplication) getActivity().getApplication()).getCamera();
+        final JobProcessor jobProcessor = ((AzoTriggerServiceApplication) getActivity().getApplication()).getJobProcessor();
 
         final AlertDialog.Builder adb = new AlertDialog.Builder(getActivity(), R.style.dialog);
         adb.setTitle("Test Shots");
@@ -183,6 +192,7 @@ public class JobProcessor {
             adb.setPositiveButton("Finish", new DialogInterface.OnClickListener() {
 
                 public void onClick(DialogInterface dialog, int which) {
+                    jobProcessor.fireJobProgressEvent(job);
                     job.setTriggerStatus(PhotoSerie.TriggerJobStatus.FINISHED_TRIGGERING);
 
                     processingLoop();
@@ -196,7 +206,7 @@ public class JobProcessor {
                 camera.trigger();
                 if (!camera.isExposureSetOnCamera(job.getExposure())) {
                     job.setToggleIsOpen(!job.isToggleIsOpen());
-                 
+
                     if (!job.isToggleIsOpen()) {
                         job.setNumber(job.getNumber() + 1);
                         job.setTriggered(job.getTriggered() + 1);
@@ -210,8 +220,29 @@ public class JobProcessor {
                 doTestShots(job);
             }
         });
+        MediaPlayer mediaPlayer = MediaPlayer.create(activity, R.raw.oida_peda);
+        mediaPlayer.start();
         adb.create().show();
 
+    }
+
+    public static final String JOBQUEUE = "AZOJOBQUEUE";
+
+    public void store() {
+        SharedPreferences prefs = activity.getApplication().getSharedPreferences(JOBQUEUE, Context.MODE_PRIVATE);
+        prefs.edit().putString(JOBQUEUE, toJSONArray().toString()).commit();
+
+    }
+
+    public void load() {
+        SharedPreferences prefs = activity.getApplication().getSharedPreferences(JOBQUEUE, Context.MODE_PRIVATE);
+        String string;
+        string = prefs.getString(JOBQUEUE, "[]");
+        try {
+            jobs = fromJSONArray(new JSONArray(string));
+        } catch (JSONException ex) {
+            Logger.getLogger(JobProcessor.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public JSONArray toJSONArray() {
@@ -220,6 +251,20 @@ public class JobProcessor {
             ja.put(ps.toJSONObject());
         }
         return ja;
+    }
+
+    public LinkedList<TriggerPhotoSerie> fromJSONArray(JSONArray ja) {
+        LinkedList<TriggerPhotoSerie> retval = new LinkedList<TriggerPhotoSerie>();
+        for (int i = 0; i < ja.length(); i++) {
+            TriggerPhotoSerie tps = new TriggerPhotoSerie(activity);
+            try {
+                tps.fromJSONObject(ja.getJSONObject(i));
+            } catch (JSONException ex) {
+                Logger.getLogger(JobProcessor.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            retval.add(tps);
+        }
+        return retval;
     }
 
     /**

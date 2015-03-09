@@ -5,6 +5,7 @@
  */
 package de.quadrillenschule.azocamsync;
 
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.JSONException;
@@ -14,7 +15,7 @@ import org.json.JSONObject;
  *
  * @author D061339
  */
-public abstract class PhotoSerie {
+public class PhotoSerie {
 
     public enum TriggerJobStatus {
 
@@ -26,7 +27,7 @@ public abstract class PhotoSerie {
         PROJECT, SERIES_NAME, INITIAL_DELAY, EXPOSURE, DELAY_AFTER_EACH_EXPOSURE, NUMBER_OF_EXPOSURES, RECEIVED, ID
     };
 
-    public static String TESTSHOTS="testShots";
+    public static String TESTSHOTS = "testShots";
     private long firstTriggerTime = 0;
     private int number = 0;
     private String seriesName = TESTSHOTS;
@@ -39,6 +40,10 @@ public abstract class PhotoSerie {
     private long delayAfterEachExposure = 0;
     private long received = 0;
     private String id;
+
+    public PhotoSerie() {
+        setId(UUID.randomUUID().getMostSignificantBits() + "");
+    }
 
     public JSONObject toJSONObject() {
         JSONObject retval = new JSONObject();
