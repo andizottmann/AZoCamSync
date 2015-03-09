@@ -40,7 +40,7 @@ public class FTPConnection {
     LinkedList<FTPFile> remotePictureDirs = new LinkedList<>();
     public CountingOutputStream cos;
     public long downloadsize = 0;
-    public static final int TIMEOUT = 4000;
+    public static final int TIMEOUT = 10000;
     private boolean looksFullySynced = false;
 
     public FTPConnection() {

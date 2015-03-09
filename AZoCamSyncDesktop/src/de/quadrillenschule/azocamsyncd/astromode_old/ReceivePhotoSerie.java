@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.quadrillenschule.azocamsyncd.astromode;
+package de.quadrillenschule.azocamsyncd.astromode_old;
 
 import de.quadrillenschule.azocamsyncd.GlobalProperties;
 import java.io.File;

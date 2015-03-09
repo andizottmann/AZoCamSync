@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.quadrillenschule.azocamsyncd.astromode.gui;
+package de.quadrillenschule.azocamsyncd.astromode_old.gui;
 
 import de.quadrillenschule.azocamsyncd.GlobalProperties;
 import de.quadrillenschule.azocamsyncd.GlobalProperties.CamSyncProperties;
-import de.quadrillenschule.azocamsyncd.astromode.PhotoProject;
-import de.quadrillenschule.azocamsyncd.astromode.PhotoProjectProfile;
-import de.quadrillenschule.azocamsyncd.astromode.ReceivePhotoSerie;
+import de.quadrillenschule.azocamsyncd.astromode_old.PhotoProject;
+import de.quadrillenschule.azocamsyncd.astromode_old.PhotoProjectProfile;
+import de.quadrillenschule.azocamsyncd.astromode_old.ReceivePhotoSerie;
 import de.quadrillenschule.azocamsyncd.ftpservice.FTPConnection;
 import de.quadrillenschule.azocamsyncd.ftpservice.FTPConnectionListener;
 import java.awt.Frame;

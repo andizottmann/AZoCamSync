@@ -6,7 +6,7 @@
 package de.quadrillenschule.azocamsyncd;
 
 import static de.quadrillenschule.azocamsyncd.GlobalProperties.CamSyncProperties;
-import de.quadrillenschule.azocamsyncd.astromode.PhotoProjectProfile;
+import de.quadrillenschule.azocamsyncd.astromode_old.PhotoProjectProfile;
 import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,7 +30,7 @@ public class GlobalProperties {
     public enum CamSyncProperties {
 
         PULLINTERVALLSECS, SDCARD_IPS, LOCALSTORAGE_PATH, FILETYPES, SD_FILELIMIT, DATE_FORMAT, USE_DATEFOLDERS, LIST_OFSYNCED_IMAGES, LATESTIMAGEPATH,
-        NOTIFY_CONNECTION, NOTIFY_DOWNLOAD, TOOLTIPS, LAST_ASTRO_FOLDER, USE_DATE_ASTRO_FOLDER, ASTRO_PROFILE
+        NOTIFY_CONNECTION, NOTIFY_DOWNLOAD, TOOLTIPS, LAST_ASTRO_FOLDER, USE_DATE_ASTRO_FOLDER, ASTRO_PROFILE, SMARTPHONE_IPS
     };
 
     public static final Color COLOR_CONNECTED = new Color(100, 200, 90), COLOR_UNCONNECTED = new Color(200, 100, 90);

@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.quadrillenschule.azocamsyncd.astromode.gui;
+package de.quadrillenschule.azocamsyncd.astromode_old.gui;
 
-import de.quadrillenschule.azocamsyncd.astromode.ReceivePhotoSerie;
+import de.quadrillenschule.azocamsyncd.astromode_old.ReceivePhotoSerie;
 
 /**
  *

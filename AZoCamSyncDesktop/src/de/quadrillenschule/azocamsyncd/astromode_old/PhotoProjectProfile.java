@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.quadrillenschule.azocamsyncd.astromode;
+package de.quadrillenschule.azocamsyncd.astromode_old;
 
-import de.quadrillenschule.azocamsyncd.astromode.gui.PhotoProjectTableModel;
-import de.quadrillenschule.azocamsyncd.astromode.gui.PhotoProjectTableModel.Columns;
+import de.quadrillenschule.azocamsyncd.astromode_old.gui.PhotoProjectTableModel;
+import de.quadrillenschule.azocamsyncd.astromode_old.gui.PhotoProjectTableModel.Columns;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
