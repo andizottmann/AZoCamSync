@@ -6,6 +6,7 @@
 package de.quadrillenschule.azocamsynca.webservice;
 
 import android.app.Activity;
+import de.quadrillenschule.azocamsync.PhotoSerie;
 import de.quadrillenschule.azocamsynca.job.JobProcessor;
 import de.quadrillenschule.azocamsynca.job.TriggerPhotoSerie;
 import java.io.IOException;
@@ -30,14 +31,14 @@ public class WebService {
 
     public enum WebCommands {
 
-        list, jobprocessorstatus, startjobprocessor, pausejobprocessor, addjob, addform, help
+        list, jobprocessorstatus, startjobprocessor, pausejobprocessor, addjob, addform, help, updatejob, removejob
     };
 
     public enum WebParameters {
 
-        jsoncontent
+        jsoncontent, jobid, receivedImages
     };
-    public static final String COMMAND_RECEIVED = "Command received", SYNTAX_ERROR = "Syntax error";
+    public static final String COMMAND_RECEIVED = "Command received", SYNTAX_ERROR = "Syntax error", UNKNOWN_JOB = "Unknown job";
 
     final JobProcessor jobProcessor;
     private Activity activity;
@@ -73,6 +74,7 @@ public class WebService {
                     addJob(finalresponse, baseRequest);
                     return;
                 }
+                
                 if (baseRequest.getPathInfo().contains(WebCommands.addform.name())) {
                     response.getWriter().println(printForm());
                     return;
@@ -81,7 +83,14 @@ public class WebService {
                     response.getWriter().println(ArrayUtils.toString(WebCommands.values()));
                     return;
                 }
-
+                if (baseRequest.getPathInfo().contains(WebCommands.updatejob.name())) {
+                    updateJob(finalresponse, baseRequest);
+                    return;
+                }
+ if (baseRequest.getPathInfo().contains(WebCommands.removejob.name())) {
+                    removeJob(finalresponse, baseRequest);
+                    return;
+                }
                 response.getWriter().println("<h1>AZoCamsyncTrigger Webservice is alive!</h1>");
 
             }
@@ -126,6 +135,74 @@ public class WebService {
 
             public void run() {
                 jobProcessor.fireJobProgressEvent(tps);
+            }
+        });
+        try {
+            finalresponse.getWriter().println(COMMAND_RECEIVED);
+        } catch (IOException ex) {
+            Logger.getLogger(WebService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void updateJob(final HttpServletResponse finalresponse, final Request request) {
+        PhotoSerie myPs = null;
+
+        String jobId = request.getParameter(WebParameters.jobid.name());
+        long receivedImages = Integer.parseInt(request.getParameter(WebParameters.receivedImages.name()));
+        for (PhotoSerie ps : jobProcessor.getJobs()) {
+            if (ps.getId().equals(jobId)) {
+                ps.setReceived(receivedImages);
+                myPs = ps;
+                break;
+            }
+        }
+
+        if (myPs == null) {
+            try {
+                finalresponse.getWriter().println(UNKNOWN_JOB);
+            } catch (IOException ex) {
+                Logger.getLogger(WebService.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return;
+        };
+        final PhotoSerie finalPs = myPs;
+        getActivity().runOnUiThread(new Runnable() {
+
+            public void run() {
+                jobProcessor.fireJobProgressEvent(finalPs);
+            }
+        });
+        try {
+            finalresponse.getWriter().println(COMMAND_RECEIVED);
+        } catch (IOException ex) {
+            Logger.getLogger(WebService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void removeJob(final HttpServletResponse finalresponse, final Request request) {
+        PhotoSerie myPs = null;
+
+        String jobId = request.getParameter(WebParameters.jobid.name());
+        for (PhotoSerie ps : jobProcessor.getJobs()) {
+            if (ps.getId().equals(jobId)) {
+                 myPs = ps;
+                break;
+            }
+        }
+
+        if (myPs == null) {
+            try {
+                finalresponse.getWriter().println(UNKNOWN_JOB);
+            } catch (IOException ex) {
+                Logger.getLogger(WebService.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return;
+        };
+        jobProcessor.getJobs().remove(myPs);
+        getActivity().runOnUiThread(new Runnable() {
+
+            public void run() {
+                jobProcessor.fireJobProgressEvent(null);
             }
         });
         try {

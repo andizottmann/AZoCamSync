@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+    <color name="darkred">#600000</color>
+    <color name="midred">#900000</color>
+    <color name="red">#A00000</color>    
+    <color name="lightred">#DD0000</color>
+    <color name="lightgrey">#CCCCCC</color>
+    <color name="grey">#909090</color>
     <style name="button" parent="@android:style/Widget.Button">
         <item name="android:gravity">center_vertical|center_horizontal</item>
-        <item name="android:textColor">#909090</item>
+        <item name="android:textColor">@color/grey</item>
         <item name="android:shadowColor">#000000</item>
         <item name="android:shadowDx">0</item>
         <item name="android:shadowDy">0</item>
@@ -14,18 +20,18 @@
         <item name="android:clickable">true</item>
     </style>
     <style name="main_button" parent="@style/button">
-        <item name="android:textColor">#EEEEEE</item>
+        <item name="android:textColor">@color/lightgrey</item>
       
     </style>
     <style name="dialog" >
-         <item name="android:textColorPrimary">#FF0000</item>
-          <item name="android:textSize">30dip</item>
+        <item name="android:textColorPrimary">@color/lightred</item>
+        <item name="android:textSize">30dip</item>
     </style>
 
  
     <style name="value_button" parent="@android:style/Widget.Button">
         <item name="android:gravity">center_vertical|center_horizontal</item>
-        <item name="android:textColor">#909090</item>
+        <item name="android:textColor">@color/grey</item>
         <item name="android:shadowColor">#000000</item>
         <item name="android:shadowDx">0</item>
         <item name="android:shadowDy">0</item>
@@ -39,7 +45,8 @@
     
     <style name="edittext" parent="@android:style/Widget.EditText">
        
-        <item name="android:textColor">#909090</item>
+        <item name="android:textColor">@color/grey</item>
       
     </style>
+   
 </resources>

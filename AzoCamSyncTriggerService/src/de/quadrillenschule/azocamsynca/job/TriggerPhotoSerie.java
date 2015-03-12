@@ -13,10 +13,9 @@ import java.util.UUID;
  *
  * @author Andreas
  */
-public class TriggerPhotoSerie extends PhotoSerie{
+public class TriggerPhotoSerie extends PhotoSerie {
 
-   
-     private boolean toggleIsOpen = false;
+    private boolean toggleIsOpen = false;
 
     Activity ac;
     private JobProcessor jobProcessor;
@@ -24,9 +23,13 @@ public class TriggerPhotoSerie extends PhotoSerie{
     public TriggerPhotoSerie(Activity ac) {
         super();
         this.ac = ac;
-       
     }
 
+    public TriggerPhotoSerie(Activity ac, PhotoSerie ps) {
+        super();
+        this.ac = ac;
+        fromJSONObject(ps.toJSONObject());
+    }
 
     /**
      * @return the jobProcessor
@@ -41,7 +44,6 @@ public class TriggerPhotoSerie extends PhotoSerie{
     public void setJobProcessor(JobProcessor jobProcessor) {
         this.jobProcessor = jobProcessor;
     }
-
 
     /**
      * @return the toggleIsOpen

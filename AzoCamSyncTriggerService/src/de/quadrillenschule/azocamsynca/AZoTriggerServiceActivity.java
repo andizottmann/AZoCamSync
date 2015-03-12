@@ -3,15 +3,17 @@ package de.quadrillenschule.azocamsynca;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListPopupWindow;
 import android.widget.ListView;
 import android.widget.NumberPicker;
@@ -39,7 +41,7 @@ public class AZoTriggerServiceActivity extends Activity implements JobProcessorS
         ((AzoTriggerServiceApplication) getApplication()).getJobProcessor().addJobProgressListener(this);
         setContentView(R.layout.main);
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
     }
 
@@ -52,7 +54,7 @@ public class AZoTriggerServiceActivity extends Activity implements JobProcessorS
         prepareJobConfigurationFields();
         prepareButtons();
         ListView jobListView = (ListView) findViewById(R.id.jobList);
-        jobListView.setAdapter(new JobListAdapter(this, R.layout.job_list_item, ((AzoTriggerServiceApplication) getApplication()).getJobProcessor()));
+        jobListView.setAdapter(new JobListAdapter(this, this, R.layout.job_list_item, ((AzoTriggerServiceApplication) getApplication()).getJobProcessor()));
 
     }
 
@@ -61,6 +63,22 @@ public class AZoTriggerServiceActivity extends Activity implements JobProcessorS
         super.onPause();
         ((AzoTriggerServiceApplication) getApplication()).onActivityPause(this);
 
+    }
+
+    public void setValuesToEditor(PhotoSerie ps) {
+        final Button numberOfExposuresButton = (Button) findViewById(R.id.numberOfExposuresButton);
+        final Button exposureTimeButton = (Button) findViewById(R.id.exposureTimeButton);
+        final Button initialDelayButton = (Button) findViewById(R.id.initialDelayButton);
+        final Button delayAfterEachExposureButton = (Button) findViewById(R.id.delayAfterEachExposureButton);
+        final EditText projectEditText = (EditText) findViewById(R.id.projectEditText);
+        final EditText seriesEditText = (EditText) findViewById(R.id.seriesEditText);
+
+        numberOfExposuresButton.setText(ps.getNumber() + "");
+        exposureTimeButton.setText(Formats.toString(ps.getExposure()));
+        initialDelayButton.setText(Formats.toString(ps.getInitialDelay()));
+        delayAfterEachExposureButton.setText(Formats.toString(ps.getDelayAfterEachExposure()));
+        projectEditText.setText(ps.getProject());
+        seriesEditText.setText(ps.getSeriesName());
     }
 
     public void prepareJobConfigurationFields() {
@@ -95,7 +113,11 @@ public class AZoTriggerServiceActivity extends Activity implements JobProcessorS
 
                     public void onClick(DialogInterface dialog, int which) {
                         numberOfExposuresButton.setText("" + numberOfexposuresPicker.getValue());
-
+                        TriggerPhotoSerie selectedJob = ((JobListAdapter) ((ListView) findViewById(R.id.jobList)).getAdapter()).getSelectedJob();
+                        if (selectedJob != null) {
+                            selectedJob.setNumber(numberOfexposuresPicker.getValue());
+                            ((JobListAdapter) ((ListView) findViewById(R.id.jobList)).getAdapter()).notifyDataSetChanged();
+                        }
                     }
                 });
                 ab.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -103,8 +125,7 @@ public class AZoTriggerServiceActivity extends Activity implements JobProcessorS
                     public void onClick(DialogInterface dialog, int which) {
                     }
                 });
-                
-               
+
                 ab.show();
             }
         });
@@ -118,6 +139,11 @@ public class AZoTriggerServiceActivity extends Activity implements JobProcessorS
 
                     public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                         numberOfExposuresButton.setText("" + Integer.parseInt(history.getHistory(PhotoSerie.Fields.NUMBER_OF_EXPOSURES, "10").get(arg2)));
+                        TriggerPhotoSerie selectedJob = ((JobListAdapter) ((ListView) findViewById(R.id.jobList)).getAdapter()).getSelectedJob();
+                        if (selectedJob != null) {
+                            selectedJob.setNumber(Integer.parseInt(history.getHistory(PhotoSerie.Fields.NUMBER_OF_EXPOSURES, "10").get(arg2)));
+                            ((JobListAdapter) ((ListView) findViewById(R.id.jobList)).getAdapter()).notifyDataSetChanged();
+                        }
                         lpw.dismiss();
                     }
 
@@ -145,6 +171,11 @@ public class AZoTriggerServiceActivity extends Activity implements JobProcessorS
 
                     public void onClick(DialogInterface dialog, int which) {
                         exposureTimeButton.setText("" + Formats.toString(exposurePicker.getTimeInMs()));
+                        TriggerPhotoSerie selectedJob = ((JobListAdapter) ((ListView) findViewById(R.id.jobList)).getAdapter()).getSelectedJob();
+                        if (selectedJob != null) {
+                            selectedJob.setExposure(exposurePicker.getTimeInMs());
+                            ((JobListAdapter) ((ListView) findViewById(R.id.jobList)).getAdapter()).notifyDataSetChanged();
+                        }
                     }
                 });
                 ab.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -152,7 +183,7 @@ public class AZoTriggerServiceActivity extends Activity implements JobProcessorS
                     public void onClick(DialogInterface dialog, int which) {
                     }
                 });
-              
+
                 ab.show();
             }
         });
@@ -178,6 +209,11 @@ public class AZoTriggerServiceActivity extends Activity implements JobProcessorS
 
                     public void onClick(DialogInterface dialog, int which) {
                         initialDelayButton.setText("" + Formats.toString(initialDelayPicker.getTimeInMs()));
+                        TriggerPhotoSerie selectedJob = ((JobListAdapter) ((ListView) findViewById(R.id.jobList)).getAdapter()).getSelectedJob();
+                        if (selectedJob != null) {
+                            selectedJob.setInitialDelay(initialDelayPicker.getTimeInMs());
+                            ((JobListAdapter) ((ListView) findViewById(R.id.jobList)).getAdapter()).notifyDataSetChanged();
+                        }
                     }
                 });
                 ab.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -210,6 +246,11 @@ public class AZoTriggerServiceActivity extends Activity implements JobProcessorS
 
                     public void onClick(DialogInterface dialog, int which) {
                         delayAfterEachExposureButton.setText("" + Formats.toString(delayAfterEachExposurePicker.getTimeInMs()));
+                        TriggerPhotoSerie selectedJob = ((JobListAdapter) ((ListView) findViewById(R.id.jobList)).getAdapter()).getSelectedJob();
+                        if (selectedJob != null) {
+                            selectedJob.setDelayAfterEachExposure(delayAfterEachExposurePicker.getTimeInMs());
+                            ((JobListAdapter) ((ListView) findViewById(R.id.jobList)).getAdapter()).notifyDataSetChanged();
+                        }
                     }
                 });
                 ab.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -229,7 +270,17 @@ public class AZoTriggerServiceActivity extends Activity implements JobProcessorS
         });
 
         projectEditText.setText(history.getHistory(PhotoSerie.Fields.PROJECT, "Noname Project").getFirst());
+        projectEditText.setOnKeyListener(new View.OnKeyListener() {
 
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                TriggerPhotoSerie selectedJob = ((JobListAdapter) ((ListView) findViewById(R.id.jobList)).getAdapter()).getSelectedJob();
+                if (selectedJob != null) {
+                    selectedJob.setProject(projectEditText.getText().toString());
+                    ((JobListAdapter) ((ListView) findViewById(R.id.jobList)).getAdapter()).notifyDataSetChanged();
+                }
+                return false;
+            }
+        });
         projectHistoryButton.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View arg0) {
@@ -254,6 +305,17 @@ public class AZoTriggerServiceActivity extends Activity implements JobProcessorS
         });
 
         seriesEditText.setText(history.getHistory(PhotoSerie.Fields.SERIES_NAME, PhotoSerie.TESTSHOTS).getFirst());
+        seriesEditText.setOnKeyListener(new View.OnKeyListener() {
+
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                TriggerPhotoSerie selectedJob = ((JobListAdapter) ((ListView) findViewById(R.id.jobList)).getAdapter()).getSelectedJob();
+                if (selectedJob != null) {
+                    selectedJob.setSeriesName(seriesEditText.getText().toString());
+                    ((JobListAdapter) ((ListView) findViewById(R.id.jobList)).getAdapter()).notifyDataSetChanged();
+                }
+                return false;
+            }
+        });
 
         seriesHistoryButton.setOnClickListener(new View.OnClickListener() {
 
@@ -338,9 +400,11 @@ public class AZoTriggerServiceActivity extends Activity implements JobProcessorS
             public void onClick(View arg0) {
                 JobProcessor jobProcessor = ((AzoTriggerServiceApplication) getApplication()).getJobProcessor();
                 if (jobProcessor.getStatus() == JobProcessor.ProcessorStatus.PAUSED) {
+
                     jobProcessor.start();
 
                 } else {
+
                     jobProcessor.pause();
 
                 }
@@ -351,13 +415,14 @@ public class AZoTriggerServiceActivity extends Activity implements JobProcessorS
 
     }
 
-    public static void showHistoryPopup(Activity myActivity, View anchorView, final PhotoSerie.Fields field, final Button timebutton, String def) {
+    public static void showHistoryPopup(final Activity myActivity, View anchorView, final PhotoSerie.Fields field, final Button timebutton, String def) {
         final History history = new History(myActivity.getApplication());
         final ListPopupWindow lpw = new ListPopupWindow(myActivity);
         lpw.setAdapter(new ArrayAdapter(myActivity, R.layout.history_list_item, history.getHistory(field, def)));
         lpw.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+
                 timebutton.setText(history.getHistory(field, "0:00:04").get(arg2));
                 lpw.dismiss();
             }
@@ -370,6 +435,12 @@ public class AZoTriggerServiceActivity extends Activity implements JobProcessorS
 
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 timebutton.setText(history.getHistory(field, "0:00:04").get(arg2));
+                TriggerPhotoSerie tps = ((JobListAdapter) ((ListView) myActivity.findViewById(R.id.jobList)).getAdapter()).getSelectedJob();
+                if (tps != null) {
+                    tps.setFieldFromHR(field, timebutton.getText().toString());
+
+                    ((AzoTriggerServiceApplication) myActivity.getApplication()).getJobProcessor().fireJobProgressEvent(tps);
+                }
                 lpw.dismiss();
             }
 
@@ -385,7 +456,21 @@ public class AZoTriggerServiceActivity extends Activity implements JobProcessorS
     public void jobProcessStatusChanged(JobProcessor.ProcessorStatus oldStatus, JobProcessor.ProcessorStatus newStatus) {
         final Button startstopQueueButton = (Button) findViewById(R.id.startstopQueueButton);
         startstopQueueButton.setText(newStatus.name());
-
+        if (newStatus.equals(JobProcessor.ProcessorStatus.PROCESSING)) {
+            LinearLayout editorLL = ((LinearLayout) findViewById(R.id.editorLinearLayout));
+            //editorLL.setVisibility(View.INVISIBLE);
+            ViewGroup.LayoutParams lp = editorLL.getLayoutParams();
+            lp.width = 0;
+            lp.height = 0;
+            editorLL.setLayoutParams(lp);
+        } else {
+            LinearLayout editorLL = ((LinearLayout) findViewById(R.id.editorLinearLayout));
+            //editorLL.setVisibility(View.INVISIBLE);
+            ViewGroup.LayoutParams lp = editorLL.getLayoutParams();
+            lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            lp.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+            editorLL.setLayoutParams(lp);
+        }
     }
 
     public void jobProgressed(PhotoSerie ps) {

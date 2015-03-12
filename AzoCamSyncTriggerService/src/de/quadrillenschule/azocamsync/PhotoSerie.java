@@ -5,6 +5,8 @@
  */
 package de.quadrillenschule.azocamsync;
 
+import com.google.android.maps.Projection;
+import de.quadrillenschule.azocamsynca.helpers.Formats;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,7 +26,7 @@ public class PhotoSerie {
 
     public enum Fields {
 
-        PROJECT, SERIES_NAME, INITIAL_DELAY, EXPOSURE, DELAY_AFTER_EACH_EXPOSURE, NUMBER_OF_EXPOSURES, RECEIVED, ID
+        PROJECT, SERIES_NAME, INITIAL_DELAY, EXPOSURE, DELAY_AFTER_EACH_EXPOSURE, NUMBER_OF_EXPOSURES, RECEIVED, ID, TRIGGER_JOB_STATUS, TRIGGERED
     };
 
     public static String TESTSHOTS = "testShots";
@@ -45,6 +47,42 @@ public class PhotoSerie {
         setId(UUID.randomUUID().getMostSignificantBits() + "");
     }
 
+    public void setFieldFromHR(Fields field, String value) {
+        switch (field) {
+            case PROJECT:
+                setProject(value);
+                break;
+            case SERIES_NAME:
+                setSeriesName(value);
+                break;
+            case INITIAL_DELAY:
+                setInitialDelay(Formats.toLong(value));
+                break;
+            case EXPOSURE:
+                setExposure(Formats.toLong(value));
+                break;
+            case DELAY_AFTER_EACH_EXPOSURE:
+                setDelayAfterEachExposure(Formats.toLong(value));
+                break;
+            case NUMBER_OF_EXPOSURES:
+                setNumber(Integer.parseInt(value));
+                break;
+            case RECEIVED:
+                setReceived(Integer.parseInt(value));
+                break;
+            case ID:
+                setId(value);
+                break;
+            case TRIGGER_JOB_STATUS:
+                setTriggerStatus(TriggerJobStatus.valueOf(value));
+                break;
+            case TRIGGERED:
+                setTriggered(Integer.parseInt(value));
+                break;
+
+        }
+    }
+
     public JSONObject toJSONObject() {
         JSONObject retval = new JSONObject();
         try {
@@ -56,6 +94,8 @@ public class PhotoSerie {
             retval.put(Fields.NUMBER_OF_EXPOSURES.name(), getNumber());
             retval.put(Fields.ID.name(), getId());
             retval.put(Fields.RECEIVED.name(), received);
+            retval.put(Fields.TRIGGER_JOB_STATUS.name(), getTriggerStatus().name());
+            retval.put(Fields.TRIGGERED.name(), getTriggered());
         } catch (JSONException ex) {
             Logger.getLogger(PhotoSerie.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -72,12 +112,41 @@ public class PhotoSerie {
             setNumber(jso.getInt(Fields.NUMBER_OF_EXPOSURES.name()));
             setId(jso.getString(Fields.ID.name()));
             setReceived(jso.getInt(Fields.RECEIVED.name()));
+            setTriggerStatus(TriggerJobStatus.valueOf(jso.getString(Fields.TRIGGER_JOB_STATUS.name())));
+            setTriggered(jso.getInt(Fields.TRIGGERED.name()));
 
         } catch (JSONException ex) {
             Logger.getLogger(PhotoSerie.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return;
+    }
+
+    public Object getValueForField(PhotoSerie.Fields field) {
+        switch (field) {
+            case PROJECT:
+                return getProject();
+            case SERIES_NAME:
+                return getSeriesName();
+            case INITIAL_DELAY:
+                return getInitialDelay();
+            case EXPOSURE:
+                return getExposure();
+            case DELAY_AFTER_EACH_EXPOSURE:
+                return getDelayAfterEachExposure();
+            case NUMBER_OF_EXPOSURES:
+                return getNumber();
+            case RECEIVED:
+                return getReceived();
+            case ID:
+                return getId();
+            case TRIGGERED:
+                return getTriggered();
+            case TRIGGER_JOB_STATUS:
+                return getTriggerStatus();
+
+        }
+        return null;
     }
 
     /**

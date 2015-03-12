@@ -27,183 +27,190 @@
             android:layout_width="0px"        
             android:layout_height="fill_parent"
             android:text="Start Processing"
-             style="@style/main_button"
+            style="@style/main_button"
        
         />
     </LinearLayout>
-    <LinearLayout
-        android:orientation="horizontal"
+    <LinearLayout 
+        android:id="@+id/editorLinearLayout"          
+        android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
     >
         <LinearLayout
-            android:orientation="vertical" 
-            android:layout_weight="1"
-            android:layout_width="0px"  
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
         >
-          
-            <Button
-                android:id="@+id/projectHistoryButton"
-                android:layout_width="fill_parent"
+            <LinearLayout
+                android:orientation="vertical" 
+                android:layout_weight="1"
+                android:layout_width="0px"  
                 android:layout_height="wrap_content"
-                android:text="Project"
-                 style="@style/button"  
-            />
-            <EditText
-                android:id="@+id/projectEditText"
                 android:layout_gravity="center_horizontal"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                 style="@style/edittext"  
-            />
+            >
+          
+                <Button
+                    android:id="@+id/projectHistoryButton"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Project"
+                    style="@style/button"  
+                />
+                <EditText
+                    android:id="@+id/projectEditText"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/edittext"  
+                />
              
            
-        </LinearLayout>
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_weight="1"
-            android:layout_width="0px"  
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-        >
-          
-            <Button
-                android:id="@+id/seriesHistoryButton"
-                android:layout_width="fill_parent"
+            </LinearLayout>
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:layout_width="0px"  
                 android:layout_height="wrap_content"
-                android:text="Series"
-        style="@style/button"
-            />
-            <EditText
-                android:id="@+id/seriesEditText"
                 android:layout_gravity="center_horizontal"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                 style="@style/edittext"  
-            />
+            >
+          
+                <Button
+                    android:id="@+id/seriesHistoryButton"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Series"
+                    style="@style/button"
+                />
+                <EditText
+                    android:id="@+id/seriesEditText"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/edittext"  
+                />
            
           
-        </LinearLayout> 
-    </LinearLayout>
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-    >
+            </LinearLayout> 
+        </LinearLayout>
         <LinearLayout
-            android:orientation="vertical" android:layout_weight="1"
-            android:layout_width="0px"  
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
         >
-            <Button
-                android:id="@+id/numberOfExposuresHistoryButton"
-                android:layout_width="fill_parent"
+            <LinearLayout
+                android:orientation="vertical" android:layout_weight="1"
+                android:layout_width="0px"  
                 android:layout_height="wrap_content"
-                android:text="Number" 
-                 style="@style/button"   
-            />
-            <Button
-                android:id="@+id/numberOfExposuresButton"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="0"
-        style="@style/value_button"
-            />
+                android:layout_gravity="center_horizontal"
+            >
+                <Button
+                    android:id="@+id/numberOfExposuresHistoryButton"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Number" 
+                    style="@style/button"   
+                />
+                <Button
+                    android:id="@+id/numberOfExposuresButton"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    style="@style/value_button"
+                />
                
            
-        </LinearLayout>
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_weight="1"
-            android:layout_width="0px"  
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-        >
-            <Button
-                android:id="@+id/exposureHistoryButton"
-                android:layout_width="fill_parent"
+            </LinearLayout>
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:layout_width="0px"  
                 android:layout_height="wrap_content"
-                android:text="Exposure"
-        style="@style/button"
-            />
-            <Button
-                android:id="@+id/exposureTimeButton"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="0:00:04"
-        style="@style/value_button"
-            />
+                android:layout_gravity="center_horizontal"
+            >
+                <Button
+                    android:id="@+id/exposureHistoryButton"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Exposure"
+                    style="@style/button"
+                />
+                <Button
+                    android:id="@+id/exposureTimeButton"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="0:00:04"
+                    style="@style/value_button"
+                />
            
                
-        </LinearLayout>
+            </LinearLayout>
        
-    </LinearLayout>
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-    >
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_weight="1"
-            android:layout_width="0px"  
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-        >
-            <Button
-                android:id="@+id/initialDelayHistoryButton"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="Initial Delay"
-        style="@style/button"
-            />
-            <Button
-                android:id="@+id/initialDelayButton"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="0:00:03"
-        style="@style/value_button"
-            />
-            
         </LinearLayout>
         <LinearLayout
-            android:orientation="vertical"
-            android:layout_weight="1"
-            android:layout_width="0px"  
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
         >
-            <Button
-                android:id="@+id/delayAfterEachExposureHistoryButton"
-                android:layout_width="fill_parent"
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:layout_width="0px"  
                 android:layout_height="wrap_content"
-                android:text="Delay after each"
-        style="@style/button"
-            />
-            <Button
-                android:id="@+id/delayAfterEachExposureButton"
-                android:layout_width="fill_parent"
+                android:layout_gravity="center_horizontal"
+            >
+                <Button
+                    android:id="@+id/initialDelayHistoryButton"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Initial Delay"
+                    style="@style/button"
+                />
+                <Button
+                    android:id="@+id/initialDelayButton"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="0:00:03"
+                    style="@style/value_button"
+                />
+            
+            </LinearLayout>
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:layout_width="0px"  
                 android:layout_height="wrap_content"
-                android:text="0:00:03"
-        style="@style/value_button"
-            />
+                android:layout_gravity="center_horizontal"
+            >
+                <Button
+                    android:id="@+id/delayAfterEachExposureHistoryButton"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Delay after each"
+                    style="@style/button"
+                />
+                <Button
+                    android:id="@+id/delayAfterEachExposureButton"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="0:00:03"
+                    style="@style/value_button"
+                />
                
             
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
-    <Button
-        android:id="@+id/addJobButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Add Job"
-         style="@style/button"
+        <Button
+            android:id="@+id/addJobButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Add Job"
+            style="@style/button"
        
-    />
+        />
+    </LinearLayout>
     <ListView
         android:id="@+id/jobList"
         android:layout_width="fill_parent"

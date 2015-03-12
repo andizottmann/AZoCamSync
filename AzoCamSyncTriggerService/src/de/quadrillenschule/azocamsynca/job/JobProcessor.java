@@ -192,9 +192,9 @@ public class JobProcessor {
             adb.setPositiveButton("Finish", new DialogInterface.OnClickListener() {
 
                 public void onClick(DialogInterface dialog, int which) {
-                    jobProcessor.fireJobProgressEvent(job);
                     job.setTriggerStatus(PhotoSerie.TriggerJobStatus.FINISHED_TRIGGERING);
-
+                     jobProcessor.fireJobProgressEvent(job);
+                   
                     processingLoop();
                 }
             });
