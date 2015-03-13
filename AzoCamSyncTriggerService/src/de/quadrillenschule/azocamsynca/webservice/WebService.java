@@ -31,7 +31,7 @@ public class WebService {
 
     public enum WebCommands {
 
-        list, jobprocessorstatus, startjobprocessor, pausejobprocessor, addjob, addform, help, updatejob, removejob
+        list, jobprocessorstatus, startjobprocessor, pausejobprocessor, addjob, addform, help, update, updateTriggered, removejob
     };
 
     public enum WebParameters {
@@ -74,7 +74,10 @@ public class WebService {
                     addJob(finalresponse, baseRequest);
                     return;
                 }
-                
+                  if (baseRequest.getPathInfo().contains(WebCommands.update.name())) {
+                    updateJob(finalresponse, baseRequest);
+                    return;
+                }
                 if (baseRequest.getPathInfo().contains(WebCommands.addform.name())) {
                     response.getWriter().println(printForm());
                     return;
@@ -83,11 +86,11 @@ public class WebService {
                     response.getWriter().println(ArrayUtils.toString(WebCommands.values()));
                     return;
                 }
-                if (baseRequest.getPathInfo().contains(WebCommands.updatejob.name())) {
-                    updateJob(finalresponse, baseRequest);
+                if (baseRequest.getPathInfo().contains(WebCommands.updateTriggered.name())) {
+                    updateTriggered(finalresponse, baseRequest);
                     return;
                 }
- if (baseRequest.getPathInfo().contains(WebCommands.removejob.name())) {
+                if (baseRequest.getPathInfo().contains(WebCommands.removejob.name())) {
                     removeJob(finalresponse, baseRequest);
                     return;
                 }
@@ -144,7 +147,7 @@ public class WebService {
         }
     }
 
-    private void updateJob(final HttpServletResponse finalresponse, final Request request) {
+    private void updateTriggered(final HttpServletResponse finalresponse, final Request request) {
         PhotoSerie myPs = null;
 
         String jobId = request.getParameter(WebParameters.jobid.name());
@@ -179,13 +182,62 @@ public class WebService {
         }
     }
 
+      private void updateJob(final HttpServletResponse finalresponse, final Request request)  {
+        PhotoSerie myPs = null;
+
+        String jobId = request.getParameter(WebParameters.jobid.name());
+        for (PhotoSerie ps : jobProcessor.getJobs()) {
+            if (ps.getId().equals(jobId)) {
+               
+                myPs = ps;
+                break;
+            }
+        }
+          if (myPs == null) {
+            try {
+                finalresponse.getWriter().println(UNKNOWN_JOB);
+            } catch (IOException ex) {
+                Logger.getLogger(WebService.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return;
+        };
+        try {
+            JSONObject jso=new JSONObject(request.getParameter(WebParameters.jsoncontent.name()));
+            TriggerPhotoSerie updated=new TriggerPhotoSerie(activity);
+            updated.fromJSONObject(jso);
+            myPs=updated;
+            
+        } catch (JSONException ex) {
+            Logger.getLogger(WebService.class.getName()).log(Level.SEVERE, null, ex);
+              try {
+                finalresponse.getWriter().println(SYNTAX_ERROR);
+            } catch (IOException ex2) {
+                Logger.getLogger(WebService.class.getName()).log(Level.SEVERE, null, ex2);
+            }
+            return;
+        }
+     
+        final PhotoSerie finalPs = myPs;
+        getActivity().runOnUiThread(new Runnable() {
+
+            public void run() {
+                jobProcessor.fireJobProgressEvent(finalPs);
+            }
+        });
+        try {
+            finalresponse.getWriter().println(COMMAND_RECEIVED);
+        } catch (IOException ex) {
+            Logger.getLogger(WebService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+      
     private void removeJob(final HttpServletResponse finalresponse, final Request request) {
         PhotoSerie myPs = null;
 
         String jobId = request.getParameter(WebParameters.jobid.name());
         for (PhotoSerie ps : jobProcessor.getJobs()) {
             if (ps.getId().equals(jobId)) {
-                 myPs = ps;
+                myPs = ps;
                 break;
             }
         }
