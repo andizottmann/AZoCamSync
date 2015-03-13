@@ -83,6 +83,8 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         dateFormatjTextField.setText(gp.getProperty(CamSyncProperties.DATE_FORMAT));
         exploreWifiSDPanel1.setFtpConnection(f);
         exploreWifiSDPanel1.setLocalStorage(localStorage);
+        astroModeJPanel1.setFtpConnection(f);
+        
         configurejToggleButtonActionPerformed(null);
         imagejLabel2.setComponentPopupMenu(jPopupMenu1);
         //   latestImagejLabel.setComponentPopupMenu(jPopupMenu1);
@@ -147,6 +149,7 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         imagejPanel8 = new javax.swing.JPanel();
         bigImagejLabel = new javax.swing.JLabel();
         exploreWifiSDPanel1 = new de.quadrillenschule.azocamsyncd.gui.ExploreWifiSDPanel();
+        astroModeJPanel1 = new de.quadrillenschule.azocamsyncd.astromode.gui.AstroModeJPanel();
         sdCardjProgressBar = new javax.swing.JProgressBar();
         downloadjProgressBar = new javax.swing.JProgressBar();
         jPanel4 = new javax.swing.JPanel();
@@ -452,6 +455,7 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
 
         exploreWifiSDPanel1.setBorder(null);
         jTabbedPane1.addTab("Manage Remote Files", exploreWifiSDPanel1);
+        jTabbedPane1.addTab("Astro Mode", astroModeJPanel1);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridwidth = 2;
@@ -809,6 +813,7 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox alwaysOnTopjCheckBox;
+    private de.quadrillenschule.azocamsyncd.astromode.gui.AstroModeJPanel astroModeJPanel1;
     private javax.swing.JLabel bigImagejLabel;
     private javax.swing.JToggleButton configurejToggleButton;
     private javax.swing.JTextField dateFormatjTextField;
