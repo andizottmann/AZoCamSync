@@ -51,6 +51,7 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
     GlobalProperties gp;
     TrayIcon trayIcon;
     Dimension startSize;
+    SwingBackgroundUpdater sbu;
 
     /**
      * Creates new form AZoCamSyncJFrame
@@ -84,7 +85,7 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         exploreWifiSDPanel1.setFtpConnection(f);
         exploreWifiSDPanel1.setLocalStorage(localStorage);
         astroModeJPanel1.setFtpConnection(f);
-        
+
         configurejToggleButtonActionPerformed(null);
         imagejLabel2.setComponentPopupMenu(jPopupMenu1);
         //   latestImagejLabel.setComponentPopupMenu(jPopupMenu1);
@@ -207,7 +208,7 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         sdCardjPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Remote WiFi SD Card", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 12))); // NOI18N
         sdCardjPanel.setLayout(new java.awt.GridBagLayout());
 
-        sdCardPollingIntervalljComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "10 sec", "20 sec", "30 sec", "60 sec" }));
+        sdCardPollingIntervalljComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "5 sec", "10 sec", "20 sec", "30 sec", "60 sec" }));
         sdCardPollingIntervalljComboBox.setToolTipText("The frequency when the WiFi SD card is checked for connection and new images.");
         sdCardPollingIntervalljComboBox.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -599,7 +600,7 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    SwingBackgroundUpdater sbu = new SwingBackgroundUpdater(gp, f, localStorage, t);
+                    sbu = new SwingBackgroundUpdater(gp, f, localStorage, t);
 
                     sbu.start();
                 }
@@ -962,6 +963,7 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
             lasttimestamp = System.currentTimeMillis();
             lastbytes = 0;
             tdownload = new Timer(1000, new ActionListener() {
+                long lastreceivedtimestamp = System.currentTimeMillis();
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -970,15 +972,26 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
 
                         @Override
                         public void run() {
-                            long bytecount = f.cos.getByteCount();
+                            long bytecount = f.cis.getByteCount();
                             int kbytespersec = (int) (((double) (bytecount - lastbytes) / 1024.0) / (double) ((System.currentTimeMillis() - lasttimestamp) / 1000.0));
                             downloadjProgressBar.setString((int) (100.0 * ((double) bytecount / (double) f.downloadsize)) + "% - " + kbytespersec + " Kb/S");
                             downloadjProgressBar.setValue((int) (100.0 * ((double) bytecount / (double) f.downloadsize)));
                             // repaint();
                             downloadjProgressBar.repaint();
+                            if ((lastbytes == bytecount)&&(lastbytes>0)) {
+                                if (System.currentTimeMillis() - lastreceivedtimestamp > 10000) {
+                                    
+                                    sbu.interrupt();
+                                    sbu.isActive=false;
+                                   sbu.getTimer().start();
+                                }
+                            } else {
+                                lastreceivedtimestamp = System.currentTimeMillis();
+                            }
                             lasttimestamp = System.currentTimeMillis();
                             lasttimestamp = System.currentTimeMillis();
                             lastbytes = bytecount;
+
                         }
                     });
                     t.start();
@@ -1037,7 +1050,6 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
                 }
             }
         });
-       
 
     }
 
@@ -1178,4 +1190,6 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
             System.exit(0);
         }
     }
+    
+   
 }

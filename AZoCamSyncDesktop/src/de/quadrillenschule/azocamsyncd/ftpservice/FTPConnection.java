@@ -19,7 +19,7 @@ import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.output.CountingOutputStream;
+import org.apache.commons.io.input.CountingInputStream;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
@@ -38,9 +38,9 @@ public class FTPConnection {
     private String fileTypes[] = {"JPG", "NEF", "CR2", "TIF"};
     FTPClient ftpclient;
     LinkedList<FTPFile> remotePictureDirs = new LinkedList<>();
-    public CountingOutputStream cos;
+    public CountingInputStream cis;
     public long downloadsize = 0;
-    public static final int TIMEOUT = 10000;
+    public static final int TIMEOUT = 3000, LONG_TIMEOUT = 5000;
     private boolean looksFullySynced = false;
 
     public FTPConnection() {
@@ -84,7 +84,7 @@ public class FTPConnection {
                 }
             } catch (IOException ex) {
                 close();
-                //  notify(FTPConnectionStatus.NOCONNECTION, "", -1);
+                notify(FTPConnectionStatus.NOCONNECTION, "", -1);
                 Logger.getLogger(FTPConnection.class.getName()).log(Level.INFO, null, ex);
             }
 
@@ -103,7 +103,7 @@ public class FTPConnection {
                 // }
                 ftpclient = new FTPClient();
                 if (fileType == FTP.BINARY_FILE_TYPE) {
-                    ftpclient.setDefaultTimeout(180000);
+                    ftpclient.setDefaultTimeout(LONG_TIMEOUT);
                 } else {
                     ftpclient.setDefaultTimeout(TIMEOUT);
                 }
@@ -160,13 +160,21 @@ public class FTPConnection {
             InputStream is = null;
             try {
 
-                fos = new FileOutputStream(localFile);
+                 fos = new FileOutputStream(localFile);
+                ftpclient.setSoTimeout(LONG_TIMEOUT);
                 is = ftpclient.retrieveFileStream(af.dir + af.ftpFile.getName());
-                cos = new CountingOutputStream(fos);
+                cis = new CountingInputStream(is);
                 downloadsize = af.ftpFile.getSize();
                 notify(FTPConnectionStatus.DOWNLOADING, af.dir + af.ftpFile.getName(), ((int) (100.0 * ((afs.indexOf(af) + 1.0) / (double) afs.size()))));
+           //     ftpclient.setDataTimeout(TIMEOUT);
+             //   ftpclient.setSoTimeout(TIMEOUT);
 
-                IOUtils.copyLarge(is, cos);
+                //  Files.copy(cis, localFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                try {
+                    IOUtils.copyLarge(cis, fos);
+                } catch (Exception ie) {
+                    fos.close();
+                }
                 while (!ftpclient.completePendingCommand()) {
                     try {
                         Thread.currentThread().wait(500);
@@ -193,7 +201,7 @@ public class FTPConnection {
                 } catch (Exception ex2) {
                     close();
                 }
-               
+
             }
         }
         close();

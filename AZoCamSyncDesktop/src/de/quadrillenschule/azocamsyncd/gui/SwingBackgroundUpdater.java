@@ -105,6 +105,7 @@ public class SwingBackgroundUpdater extends Thread {
         }
 
         ftpConnection.close();
+
         isActive = false;
         if (ftpConnection.isLooksFullySynced()) {
             getTimer().setDelay(1000 * Integer.parseInt(gp.getProperty(GlobalProperties.CamSyncProperties.PULLINTERVALLSECS)));
@@ -149,5 +150,11 @@ public class SwingBackgroundUpdater extends Thread {
      */
     public Timer getTimer() {
         return timer;
+    }
+
+    @Override
+    public void interrupt() {
+        super.interrupt();
+
     }
 }

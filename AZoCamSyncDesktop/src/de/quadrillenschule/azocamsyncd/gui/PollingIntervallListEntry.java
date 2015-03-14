@@ -15,6 +15,7 @@ public class PollingIntervallListEntry {
 
     public static LinkedList<PollingIntervallListEntry> allEntries() {
         LinkedList<PollingIntervallListEntry> retval = new LinkedList<>();
+        retval.add(new PollingIntervallListEntry("5 Secs", 5));
         retval.add(new PollingIntervallListEntry("10 Secs", 10));
         retval.add(new PollingIntervallListEntry("20 Secs", 20));
         retval.add(new PollingIntervallListEntry("30 Secs", 30));

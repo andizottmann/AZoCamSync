@@ -122,11 +122,12 @@
                         <Component class="javax.swing.JComboBox" name="sdCardPollingIntervalljComboBox">
                           <Properties>
                             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                              <StringArray count="4">
-                                <StringItem index="0" value="10 sec"/>
-                                <StringItem index="1" value="20 sec"/>
-                                <StringItem index="2" value="30 sec"/>
-                                <StringItem index="3" value="60 sec"/>
+                              <StringArray count="5">
+                                <StringItem index="0" value="5 sec"/>
+                                <StringItem index="1" value="10 sec"/>
+                                <StringItem index="2" value="20 sec"/>
+                                <StringItem index="3" value="30 sec"/>
+                                <StringItem index="4" value="60 sec"/>
                               </StringArray>
                             </Property>
                             <Property name="toolTipText" type="java.lang.String" value="The frequency when the WiFi SD card is checked for connection and new images."/>
