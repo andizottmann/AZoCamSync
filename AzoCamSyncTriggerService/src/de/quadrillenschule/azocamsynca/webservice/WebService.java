@@ -31,7 +31,7 @@ public class WebService {
 
     public enum WebCommands {
 
-        list, jobprocessorstatus, startjobprocessor, pausejobprocessor, addjob, addform, help, update, updateTriggered, removejob
+        list, jobprocessorstatus, startjobprocessor, pausejobprocessor, addjob, addform, help, updateJob, updateTriggered, removejob
     };
 
     public enum WebParameters {
@@ -74,10 +74,7 @@ public class WebService {
                     addJob(finalresponse, baseRequest);
                     return;
                 }
-                  if (baseRequest.getPathInfo().contains(WebCommands.update.name())) {
-                    updateJob(finalresponse, baseRequest);
-                    return;
-                }
+                
                 if (baseRequest.getPathInfo().contains(WebCommands.addform.name())) {
                     response.getWriter().println(printForm());
                     return;
@@ -88,6 +85,10 @@ public class WebService {
                 }
                 if (baseRequest.getPathInfo().contains(WebCommands.updateTriggered.name())) {
                     updateTriggered(finalresponse, baseRequest);
+                    return;
+                }
+                  if (baseRequest.getPathInfo().contains(WebCommands.updateJob.name())) {
+                    updateJob(finalresponse, baseRequest);
                     return;
                 }
                 if (baseRequest.getPathInfo().contains(WebCommands.removejob.name())) {
@@ -205,6 +206,9 @@ public class WebService {
             JSONObject jso=new JSONObject(request.getParameter(WebParameters.jsoncontent.name()));
             TriggerPhotoSerie updated=new TriggerPhotoSerie(activity);
             updated.fromJSONObject(jso);
+            int index=jobProcessor.getJobs().indexOf(myPs);
+            jobProcessor.getJobs().add(index, updated);
+            jobProcessor.getJobs().remove(myPs);
             myPs=updated;
             
         } catch (JSONException ex) {

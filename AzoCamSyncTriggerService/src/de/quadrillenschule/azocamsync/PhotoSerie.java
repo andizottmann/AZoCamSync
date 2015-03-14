@@ -44,7 +44,7 @@ public class PhotoSerie {
     private String id;
 
     public PhotoSerie() {
-        setId(UUID.randomUUID().getMostSignificantBits() + "");
+        setId(UUID.randomUUID().toString() + "");
     }
 
     public void setFieldFromHR(Fields field, String value) {
