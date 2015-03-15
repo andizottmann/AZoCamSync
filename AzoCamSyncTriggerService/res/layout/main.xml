@@ -55,7 +55,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="Project"
-                    style="@style/button"  
+                    style="@style/history_button"  
                 />
                 <EditText
                     android:id="@+id/projectEditText"
@@ -80,7 +80,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="Series"
-                    style="@style/button"
+                    style="@style/history_button"
                 />
                 <EditText
                     android:id="@+id/seriesEditText"
@@ -110,7 +110,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="Number" 
-                    style="@style/button"   
+                    style="@style/history_button"   
                 />
                 <Button
                     android:id="@+id/numberOfExposuresButton"
@@ -134,7 +134,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="Exposure"
-                    style="@style/button"
+                    style="@style/history_button"
                 />
                 <Button
                     android:id="@+id/exposureTimeButton"
@@ -161,12 +161,13 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
             >
+               
                 <Button
                     android:id="@+id/initialDelayHistoryButton"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="Initial Delay"
-                    style="@style/button"
+                    style="@style/history_button"
                 />
                 <Button
                     android:id="@+id/initialDelayButton"
@@ -189,7 +190,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="Delay after each"
-                    style="@style/button"
+                    style="@style/history_button"
                 />
                 <Button
                     android:id="@+id/delayAfterEachExposureButton"
@@ -202,14 +203,31 @@
             
             </LinearLayout>
         </LinearLayout>
-        <Button
-            android:id="@+id/addJobButton"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Add Job"
-            style="@style/button"
+            android:layout_gravity="center_horizontal"
+        >
+            <Button
+                android:id="@+id/modifyJobButton"    
+                android:layout_weight="1"
+                android:layout_width="0px"  
+                android:layout_height="wrap_content"
+                android:text="Modify Job"
+                style="@style/button"
        
-        />
+            />
+            <Button
+                android:id="@+id/addJobButton"
+                android:layout_weight="1"
+                android:layout_width="0px"  
+                android:layout_height="wrap_content"
+                android:text="Add Job"
+                style="@style/button"
+       
+            />
+        </LinearLayout>
     </LinearLayout>
     <ListView
         android:id="@+id/jobList"

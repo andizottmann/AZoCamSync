@@ -33,7 +33,7 @@ public class JobListAdapter extends ArrayAdapter {
     
     public static enum ContextMenu {
         
-        Remove, Skip, MoveUp, MoveDown, Duplicate
+        Remove, Restart, Skip, MoveUp, MoveDown, Duplicate
     }
     
     public JobListAdapter(AZoTriggerServiceActivity activity, Context context, int textViewResourceId, JobProcessor jobProcessor) {
@@ -90,6 +90,7 @@ public class JobListAdapter extends ArrayAdapter {
                 if (selectedJob == null) {
                     selectedJob = job;
                     activity.setValuesToEditor(job);
+                    
                 } else {
                     if (selectedJob == job) {
                         selectedJob = null;
@@ -99,6 +100,7 @@ public class JobListAdapter extends ArrayAdapter {
                         activity.setValuesToEditor(job);
                     }
                 }
+                activity.setModifyButtonEnabled(selectedJob!=null);
                 ((JobListAdapter) ((ListView) parent.findViewById(R.id.jobList)).getAdapter()).notifyDataSetChanged();
                 
             }
@@ -140,6 +142,11 @@ public class JobListAdapter extends ArrayAdapter {
                         switch (cme) {
                             case Remove:
                                 jobs.remove(job);
+                                jobProcessor.fireJobProgressEvent(job);
+                                lpw.dismiss();
+                                break;
+                           case Restart:
+                               job.setTriggerStatus(PhotoSerie.TriggerJobStatus.NEW);
                                 jobProcessor.fireJobProgressEvent(job);
                                 lpw.dismiss();
                                 break;
