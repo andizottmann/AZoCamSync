@@ -394,6 +394,7 @@ public class AstroModeJPanel extends javax.swing.JPanel implements FTPConnection
             for (PhotoSerie p : jobList) {
                 if (p.getTriggered() > p.getReceived()) {
                     myPS = p;
+                    break;
                 }
             }
             if (myPS == null) {
@@ -412,18 +413,19 @@ public class AstroModeJPanel extends javax.swing.JPanel implements FTPConnection
             }
             if (message.toUpperCase().endsWith(".NEF")) {
                 myPS.setReceived(myPS.getReceived() + 1);
-            
-            SmartPhoneWrapper.SmartPhoneStatus smartPhoneStatus;
-            do {
-                try {
-                    smartPhoneStatus=SmartPhoneWrapper.update(myPS);
-                } catch (IOException ex) {
-                    Logger.getLogger(AstroModeJPanel.class.getName()).log(Level.SEVERE, null, ex);
-                    smartPhoneStatus=SmartPhoneWrapper.SmartPhoneStatus.ERROR;
-                    SmartPhoneWrapper.checkConnection();
-                }
-            } while (smartPhoneStatus!=SmartPhoneWrapper.SmartPhoneStatus.CONNECTED);
+
+                SmartPhoneWrapper.SmartPhoneStatus smartPhoneStatus;
+                do {
+                    try {
+                        smartPhoneStatus = SmartPhoneWrapper.update(myPS);
+                    } catch (IOException ex) {
+                        Logger.getLogger(AstroModeJPanel.class.getName()).log(Level.SEVERE, null, ex);
+                        smartPhoneStatus = SmartPhoneWrapper.SmartPhoneStatus.ERROR;
+                        SmartPhoneWrapper.checkConnection();
+                    }
+                } while (smartPhoneStatus != SmartPhoneWrapper.SmartPhoneStatus.CONNECTED);
             }
+            gp.saveStoredAstroJobList(jobList);
             updateTablejButtonActionPerformed(null);
         }
     }
@@ -445,6 +447,7 @@ public class AstroModeJPanel extends javax.swing.JPanel implements FTPConnection
             }
             jobList = remoteJobList;
             gp.saveStoredAstroJobList(jobList);
+
         } catch (IOException | JSONException ex) {
             try {
                 SmartPhoneWrapper.checkConnection();
