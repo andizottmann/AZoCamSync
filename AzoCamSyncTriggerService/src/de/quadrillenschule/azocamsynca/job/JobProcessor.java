@@ -1,4 +1,4 @@
-/*
+    /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -43,6 +43,7 @@ public class JobProcessor {
 
     private Handler handler;
     private Activity activity;
+    AlertDialog alertDialog;
 
     public JobProcessor(Activity ac) {
         handler = new Handler();
@@ -114,9 +115,12 @@ public class JobProcessor {
                     pause();
                 }
             });
+
             MediaPlayer mediaPlayer = MediaPlayer.create(activity, R.raw.oida_peda);
             mediaPlayer.start();
-            ad.create().show();
+            ad.create();
+            alertDialog=ad.show();
+            
         }
 
         final Handler handler = new Handler();
@@ -183,6 +187,7 @@ public class JobProcessor {
         final JobProcessor jobProcessor = ((AzoTriggerServiceApplication) getActivity().getApplication()).getJobProcessor();
 
         final AlertDialog.Builder adb = new AlertDialog.Builder(getActivity(), R.style.dialog);
+        job.setTriggerStatus(PhotoSerie.TriggerJobStatus.WAITFORUSER);
         adb.setTitle("Test Shots");
         adb.setMessage("This series collects all images during preparation of the project\n"
                 + job.getProject() + "\n"
@@ -193,8 +198,7 @@ public class JobProcessor {
 
                 public void onClick(DialogInterface dialog, int which) {
                     job.setTriggerStatus(PhotoSerie.TriggerJobStatus.FINISHED_TRIGGERING);
-                     jobProcessor.fireJobProgressEvent(job);
-                   
+                    jobProcessor.fireJobProgressEvent(job);
                     processingLoop();
                 }
             });
@@ -222,10 +226,18 @@ public class JobProcessor {
         });
         MediaPlayer mediaPlayer = MediaPlayer.create(activity, R.raw.oida_peda);
         mediaPlayer.start();
-        adb.create().show();
-
+        // adb.create().show();
+        adb.create();
+        
+        alertDialog=adb.show();
     }
 
+    public void confirmPreparedDialog() {
+        if ((alertDialog != null) ) {
+            alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).callOnClick();
+            alertDialog.dismiss();
+        }
+    }
     public static final String JOBQUEUE = "AZOJOBQUEUE";
 
     public void store() {

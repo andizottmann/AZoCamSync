@@ -7,6 +7,7 @@ package de.quadrillenschule.azocamsynca.webservice;
 
 import android.app.Activity;
 import de.quadrillenschule.azocamsync.PhotoSerie;
+import de.quadrillenschule.azocamsynca.AzoTriggerServiceApplication;
 import de.quadrillenschule.azocamsynca.job.JobProcessor;
 import de.quadrillenschule.azocamsynca.job.TriggerPhotoSerie;
 import java.io.IOException;
@@ -31,7 +32,7 @@ public class WebService {
 
     public enum WebCommands {
 
-        list, jobprocessorstatus, startjobprocessor, pausejobprocessor, addjob, addform, help, updateJob, updateTriggered, removejob
+        list, jobprocessorstatus, startjobprocessor, pausejobprocessor, confirmdialog, addjob, addform, help, updateJob, updateTriggered, removejob
     };
 
     public enum WebParameters {
@@ -74,7 +75,12 @@ public class WebService {
                     addJob(finalresponse, baseRequest);
                     return;
                 }
-                
+                if (baseRequest.getPathInfo().contains(WebCommands.confirmdialog.name())) {
+                    ((AzoTriggerServiceApplication) activity.getApplication()).getJobProcessor().confirmPreparedDialog();
+                    response.getWriter().println(COMMAND_RECEIVED);
+
+                    return;
+                }
                 if (baseRequest.getPathInfo().contains(WebCommands.addform.name())) {
                     response.getWriter().println(printForm());
                     return;
@@ -87,7 +93,7 @@ public class WebService {
                     updateTriggered(finalresponse, baseRequest);
                     return;
                 }
-                  if (baseRequest.getPathInfo().contains(WebCommands.updateJob.name())) {
+                if (baseRequest.getPathInfo().contains(WebCommands.updateJob.name())) {
                     updateJob(finalresponse, baseRequest);
                     return;
                 }
@@ -183,18 +189,18 @@ public class WebService {
         }
     }
 
-      private void updateJob(final HttpServletResponse finalresponse, final Request request)  {
+    private void updateJob(final HttpServletResponse finalresponse, final Request request) {
         PhotoSerie myPs = null;
 
         String jobId = request.getParameter(WebParameters.jobid.name());
         for (PhotoSerie ps : jobProcessor.getJobs()) {
             if (ps.getId().equals(jobId)) {
-               
+
                 myPs = ps;
                 break;
             }
         }
-          if (myPs == null) {
+        if (myPs == null) {
             try {
                 finalresponse.getWriter().println(UNKNOWN_JOB);
             } catch (IOException ex) {
@@ -203,24 +209,24 @@ public class WebService {
             return;
         };
         try {
-            JSONObject jso=new JSONObject(request.getParameter(WebParameters.jsoncontent.name()));
-            TriggerPhotoSerie updated=new TriggerPhotoSerie(activity);
+            JSONObject jso = new JSONObject(request.getParameter(WebParameters.jsoncontent.name()));
+            TriggerPhotoSerie updated = new TriggerPhotoSerie(activity);
             updated.fromJSONObject(jso);
-            int index=jobProcessor.getJobs().indexOf(myPs);
+            int index = jobProcessor.getJobs().indexOf(myPs);
             jobProcessor.getJobs().add(index, updated);
             jobProcessor.getJobs().remove(myPs);
-            myPs=updated;
-            
+            myPs = updated;
+
         } catch (JSONException ex) {
             Logger.getLogger(WebService.class.getName()).log(Level.SEVERE, null, ex);
-              try {
+            try {
                 finalresponse.getWriter().println(SYNTAX_ERROR);
             } catch (IOException ex2) {
                 Logger.getLogger(WebService.class.getName()).log(Level.SEVERE, null, ex2);
             }
             return;
         }
-     
+
         final PhotoSerie finalPs = myPs;
         getActivity().runOnUiThread(new Runnable() {
 
@@ -234,7 +240,7 @@ public class WebService {
             Logger.getLogger(WebService.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-      
+
     private void removeJob(final HttpServletResponse finalresponse, final Request request) {
         PhotoSerie myPs = null;
 
