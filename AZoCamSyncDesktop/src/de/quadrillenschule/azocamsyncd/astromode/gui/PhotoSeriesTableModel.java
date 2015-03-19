@@ -6,11 +6,7 @@
 package de.quadrillenschule.azocamsyncd.astromode.gui;
 
 import de.quadrillenschule.azocamsync.PhotoSerie;
-import de.quadrillenschule.azocamsyncd.astromode_old.gui.*;
-import de.quadrillenschule.azocamsyncd.astromode_old.PhotoProject;
-import de.quadrillenschule.azocamsyncd.astromode_old.ReceivePhotoSerie;
 import java.util.LinkedList;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 
 /**
