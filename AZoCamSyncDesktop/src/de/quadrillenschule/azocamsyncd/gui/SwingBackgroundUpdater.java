@@ -95,18 +95,19 @@ public class SwingBackgroundUpdater extends Thread {
                 //     ftpConnection.deleteFiles(Integer.parseInt(gp.getProperty(GlobalProperties.CamSyncProperties.SD_FILELIMIT)),localStorage);
             } catch (NumberFormatException nfe) {
             }
-            ftpConnection.remountSD();
 
             ftpConnection.notify(FTPConnectionListener.FTPConnectionStatus.CONNECTED, ftpConnection.getLastWorkingConnection(), -1);
 
         }
 
         ftpConnection.close();
-
         isActive = false;
         if (ftpConnection.isLooksFullySynced()) {
+            ftpConnection.remountSD();
+
             getTimer().setDelay(1000 * Integer.parseInt(gp.getProperty(GlobalProperties.CamSyncProperties.PULLINTERVALLSECS)));
             getTimer().setInitialDelay(1000 * Integer.parseInt(gp.getProperty(GlobalProperties.CamSyncProperties.PULLINTERVALLSECS)));
+
         } else {
             getTimer().setDelay(500);
 
