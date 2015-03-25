@@ -29,7 +29,7 @@ public class PhotoSerie {
         PROJECT, SERIES_NAME, INITIAL_DELAY, EXPOSURE, DELAY_AFTER_EACH_EXPOSURE, NUMBER_OF_EXPOSURES, RECEIVED, ID, TRIGGER_JOB_STATUS, TRIGGERED
     };
 
-    public static String TESTSHOTS = "testShots";
+    public static String TESTSHOTS = "testShots",LIGHTS="lights",DARKS="darks";
     private long firstTriggerTime = 0;
     private int number = 0;
     private String seriesName = TESTSHOTS;

@@ -124,7 +124,7 @@ public class WebService {
                 + "</html>";
     }
 
-    private void addJob(final HttpServletResponse finalresponse, final Request request) {
+    private synchronized void addJob(final HttpServletResponse finalresponse, final Request request) {
         final TriggerPhotoSerie tps = new TriggerPhotoSerie(activity);
         JSONObject json;
         try {
@@ -154,7 +154,7 @@ public class WebService {
         }
     }
 
-    private void updateTriggered(final HttpServletResponse finalresponse, final Request request) {
+    private synchronized void updateTriggered(final HttpServletResponse finalresponse, final Request request) {
         PhotoSerie myPs = null;
 
         String jobId = request.getParameter(WebParameters.jobid.name());
@@ -189,7 +189,7 @@ public class WebService {
         }
     }
 
-    private void updateJob(final HttpServletResponse finalresponse, final Request request) {
+    private  synchronized void updateJob(final HttpServletResponse finalresponse, final Request request) {
         PhotoSerie myPs = null;
 
         String jobId = request.getParameter(WebParameters.jobid.name());
@@ -241,7 +241,7 @@ public class WebService {
         }
     }
 
-    private void removeJob(final HttpServletResponse finalresponse, final Request request) {
+    private synchronized void removeJob(final HttpServletResponse finalresponse, final Request request) {
         PhotoSerie myPs = null;
 
         String jobId = request.getParameter(WebParameters.jobid.name());
@@ -274,7 +274,7 @@ public class WebService {
         }
     }
 
-    private void startJobProcessor(final HttpServletResponse finalresponse) {
+    private synchronized void startJobProcessor(final HttpServletResponse finalresponse) {
         getActivity().runOnUiThread(new Runnable() {
 
             public void run() {
@@ -289,7 +289,7 @@ public class WebService {
         return;
     }
 
-    private void pauseJobProcessor(final HttpServletResponse finalresponse) {
+    private synchronized void pauseJobProcessor(final HttpServletResponse finalresponse) {
         getActivity().runOnUiThread(new Runnable() {
 
             public void run() {
