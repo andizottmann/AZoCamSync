@@ -130,7 +130,14 @@ public class WebService {
         try {
             json = new JSONObject(request.getParameter(WebParameters.jsoncontent.name()));
             tps.fromJSONObject(json);
-            jobProcessor.getJobs().add(tps);
+            getActivity().runOnUiThread(new Runnable() {
+
+                public void run() {
+                      jobProcessor.getJobs().add(tps);
+          
+                    jobProcessor.fireJobProgressEvent(null);
+                }
+            });
         } catch (JSONException ex) {
             Logger.getLogger(WebService.class.getName()).log(Level.SEVERE, null, ex);
             try {
@@ -189,7 +196,7 @@ public class WebService {
         }
     }
 
-    private  synchronized void updateJob(final HttpServletResponse finalresponse, final Request request) {
+    private synchronized void updateJob(final HttpServletResponse finalresponse, final Request request) {
         PhotoSerie myPs = null;
 
         String jobId = request.getParameter(WebParameters.jobid.name());
@@ -260,10 +267,12 @@ public class WebService {
             }
             return;
         };
-        jobProcessor.getJobs().remove(myPs);
+        final PhotoSerie ps=myPs;
         getActivity().runOnUiThread(new Runnable() {
 
             public void run() {
+                  jobProcessor.getJobs().remove(ps);
+      
                 jobProcessor.fireJobProgressEvent(null);
             }
         });
