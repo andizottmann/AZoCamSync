@@ -101,7 +101,7 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         } catch (MalformedURLException ex) {
             Logger.getLogger(AZoCamSyncJFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        astroModeJPanel1.parentFrame = this;
     }
 
     public void startService() {
@@ -978,12 +978,13 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
                             downloadjProgressBar.setValue((int) (100.0 * ((double) bytecount / (double) f.downloadsize)));
                             // repaint();
                             downloadjProgressBar.repaint();
-                            if ((lastbytes == bytecount)&&(lastbytes>0)) {
+                            if ((lastbytes == bytecount) && (lastbytes > 0)) {
                                 if (System.currentTimeMillis() - lastreceivedtimestamp > 10000) {
-                                    
+
                                     sbu.interrupt();
-                                    sbu.isActive=false;
-                                   sbu.getTimer().start();
+                                    sbu.isActive = false;
+                                    sbu.getTimer().start();
+                                    
                                 }
                             } else {
                                 lastreceivedtimestamp = System.currentTimeMillis();
@@ -1190,6 +1191,5 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
             System.exit(0);
         }
     }
-    
-   
+
 }

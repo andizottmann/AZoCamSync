@@ -15,6 +15,7 @@ import de.quadrillenschule.azocamsyncd.astromode.SmartPhoneWrapper;
 import de.quadrillenschule.azocamsyncd.ftpservice.FTPConnection;
 import de.quadrillenschule.azocamsyncd.ftpservice.FTPConnectionListener;
 import java.awt.Color;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -22,6 +23,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,6 +33,7 @@ import javax.swing.JFileChooser;
 import javax.swing.Timer;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
@@ -53,6 +58,7 @@ public class AstroModeJPanel extends javax.swing.JPanel implements FTPConnection
     private Status status = Status.PAUSED;
     Timer updateTimer;
     public static boolean PROGRAMMATIC_SELECTION = false;
+    public Frame parentFrame = null;
 
     public AstroModeJPanel() {
         gp = new GlobalProperties();
@@ -101,6 +107,16 @@ public class AstroModeJPanel extends javax.swing.JPanel implements FTPConnection
         }
         ((PhotoSeriesTableModel) jobjTable.getModel()).fireTableDataChanged();
         smartPhoneStatus.setText(SmartPhoneWrapper.lastStatus().name());
+        Color statusColor = Color.BLACK;
+        switch (SmartPhoneWrapper.lastStatus()) {
+            case CONNECTED:
+                statusColor = Color.GREEN;
+                break;
+            case ERROR:
+                statusColor = Color.RED;
+                break;
+        }
+        smartPhoneStatus.setForeground(statusColor);
         try {
             if (SmartPhoneWrapper.getFromSmartPhone(WebService.WebCommands.jobprocessorstatus, true).contains(JobProcessor.ProcessorStatus.PAUSED.name())) {
                 pauseQueuejButton.setEnabled(false);
@@ -130,8 +146,6 @@ public class AstroModeJPanel extends javax.swing.JPanel implements FTPConnection
         java.awt.GridBagConstraints gridBagConstraints;
 
         jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        smartPhoneIPjTextField = new javax.swing.JTextField();
         startAstroModejButton = new javax.swing.JButton();
         updateTablejButton = new javax.swing.JButton();
         smartPhoneStatus = new javax.swing.JLabel();
@@ -155,35 +169,37 @@ public class AstroModeJPanel extends javax.swing.JPanel implements FTPConnection
         chooseDirjButton = new javax.swing.JButton();
         astroFolderjTextField = new javax.swing.JTextField();
         jSeparator1 = new javax.swing.JSeparator();
-        addJobjButton = new javax.swing.JButton();
-        modifyJobjButton = new javax.swing.JButton();
-        removeJobjButton = new javax.swing.JButton();
+        addDatejButton = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        smartPhoneIPjTextField = new javax.swing.JTextField();
+        jPanel6 = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
         confirmSPjButton = new javax.swing.JButton();
         startProcessorjButton = new javax.swing.JButton();
         pauseQueuejButton = new javax.swing.JButton();
+        jPanel8 = new javax.swing.JPanel();
+        addJobjButton = new javax.swing.JButton();
+        modifyJobjButton = new javax.swing.JButton();
+        removeJobjButton = new javax.swing.JButton();
+        jPanel7 = new javax.swing.JPanel();
+        addDefaultjButton = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
 
-        jLabel1.setText("Smartphone IPs:");
-        jPanel1.add(jLabel1);
+        jPanel1.setLayout(new java.awt.GridBagLayout());
 
-        smartPhoneIPjTextField.setText(gp.getProperty(CamSyncProperties.SMARTPHONE_IPS)
-        );
-        smartPhoneIPjTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                smartPhoneIPjTextFieldActionPerformed(evt);
-            }
-        });
-        jPanel1.add(smartPhoneIPjTextField);
-
+        startAstroModejButton.setFont(startAstroModejButton.getFont().deriveFont(startAstroModejButton.getFont().getStyle() | java.awt.Font.BOLD));
         startAstroModejButton.setText("Start AstroMode");
         startAstroModejButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 startAstroModejButtonActionPerformed(evt);
             }
         });
-        jPanel1.add(startAstroModejButton);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
+        jPanel1.add(startAstroModejButton, gridBagConstraints);
 
         updateTablejButton.setText("Update Table");
         updateTablejButton.addActionListener(new java.awt.event.ActionListener() {
@@ -191,12 +207,24 @@ public class AstroModeJPanel extends javax.swing.JPanel implements FTPConnection
                 updateTablejButtonActionPerformed(evt);
             }
         });
-        jPanel1.add(updateTablejButton);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
+        jPanel1.add(updateTablejButton, gridBagConstraints);
 
+        smartPhoneStatus.setFont(smartPhoneStatus.getFont().deriveFont(smartPhoneStatus.getFont().getStyle() | java.awt.Font.BOLD, smartPhoneStatus.getFont().getSize()+1));
         smartPhoneStatus.setText(SmartPhoneWrapper.lastStatus().name());
-        jPanel1.add(smartPhoneStatus);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 6, 0, 0);
+        jPanel1.add(smartPhoneStatus, gridBagConstraints);
 
-        add(jPanel1, java.awt.BorderLayout.NORTH);
+        add(jPanel1, java.awt.BorderLayout.SOUTH);
 
         jPanel2.setLayout(new java.awt.GridBagLayout());
 
@@ -301,13 +329,16 @@ public class AstroModeJPanel extends javax.swing.JPanel implements FTPConnection
 
         add(jPanel2, java.awt.BorderLayout.CENTER);
 
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Configure"));
+        jPanel3.setLayout(new java.awt.GridBagLayout());
+
         chooseDirjButton.setText("Choose Dir...");
         chooseDirjButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 chooseDirjButtonActionPerformed(evt);
             }
         });
-        jPanel3.add(chooseDirjButton);
+        jPanel3.add(chooseDirjButton, new java.awt.GridBagConstraints());
 
         astroFolderjTextField.setColumns(30);
         astroFolderjTextField.setText(gp.getProperty(CamSyncProperties.LAST_ASTRO_FOLDER)
@@ -322,34 +353,39 @@ public class AstroModeJPanel extends javax.swing.JPanel implements FTPConnection
                 astroFolderjTextFieldKeyReleased(evt);
             }
         });
-        jPanel3.add(astroFolderjTextField);
-        jPanel3.add(jSeparator1);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        jPanel3.add(astroFolderjTextField, gridBagConstraints);
+        jPanel3.add(jSeparator1, new java.awt.GridBagConstraints());
 
-        addJobjButton.setText("Add Job");
-        addJobjButton.addActionListener(new java.awt.event.ActionListener() {
+        addDatejButton.setText("Add date");
+        addDatejButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addJobjButtonActionPerformed(evt);
+                addDatejButtonActionPerformed(evt);
             }
         });
-        jPanel3.add(addJobjButton);
+        jPanel3.add(addDatejButton, new java.awt.GridBagConstraints());
 
-        modifyJobjButton.setText("Modify Job");
-        modifyJobjButton.addActionListener(new java.awt.event.ActionListener() {
+        jLabel1.setText("Smartphone IPs:");
+        jPanel3.add(jLabel1, new java.awt.GridBagConstraints());
+
+        smartPhoneIPjTextField.setText(gp.getProperty(CamSyncProperties.SMARTPHONE_IPS)
+        );
+        smartPhoneIPjTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                modifyJobjButtonActionPerformed(evt);
+                smartPhoneIPjTextFieldActionPerformed(evt);
             }
         });
-        jPanel3.add(modifyJobjButton);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.weightx = 1.0;
+        jPanel3.add(smartPhoneIPjTextField, gridBagConstraints);
 
-        removeJobjButton.setText("Remove Job");
-        removeJobjButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                removeJobjButtonActionPerformed(evt);
-            }
-        });
-        jPanel3.add(removeJobjButton);
+        add(jPanel3, java.awt.BorderLayout.NORTH);
 
-        add(jPanel3, java.awt.BorderLayout.SOUTH);
+        jPanel6.setLayout(new java.awt.GridBagLayout());
 
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Smartphone Actions"));
         jPanel5.setLayout(new java.awt.GridBagLayout());
@@ -391,7 +427,71 @@ public class AstroModeJPanel extends javax.swing.JPanel implements FTPConnection
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         jPanel5.add(pauseQueuejButton, gridBagConstraints);
 
-        add(jPanel5, java.awt.BorderLayout.LINE_END);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        jPanel6.add(jPanel5, gridBagConstraints);
+
+        jPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder("Current Job"));
+        jPanel8.setLayout(new java.awt.GridBagLayout());
+
+        addJobjButton.setText("Add Job");
+        addJobjButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addJobjButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        jPanel8.add(addJobjButton, gridBagConstraints);
+
+        modifyJobjButton.setText("Modify Job");
+        modifyJobjButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                modifyJobjButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        jPanel8.add(modifyJobjButton, gridBagConstraints);
+
+        removeJobjButton.setText("Remove Job");
+        removeJobjButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeJobjButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        jPanel8.add(removeJobjButton, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        jPanel6.add(jPanel8, gridBagConstraints);
+
+        jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder("Series"));
+
+        addDefaultjButton.setText("Add default");
+        addDefaultjButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addDefaultjButtonActionPerformed(evt);
+            }
+        });
+        jPanel7.add(addDefaultjButton);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        jPanel6.add(jPanel7, gridBagConstraints);
+
+        add(jPanel6, java.awt.BorderLayout.EAST);
     }// </editor-fold>//GEN-END:initComponents
 
     private void smartPhoneIPjTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_smartPhoneIPjTextFieldActionPerformed
@@ -515,8 +615,57 @@ public class AstroModeJPanel extends javax.swing.JPanel implements FTPConnection
         }
     }//GEN-LAST:event_removeJobjButtonActionPerformed
 
+    private void addDefaultjButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addDefaultjButtonActionPerformed
+        AddDefaultSeriesJDialog asjd = new AddDefaultSeriesJDialog(parentFrame, true);
+        asjd.setLocationRelativeTo(this);
+        asjd.setVisible(true);
+        if (!asjd.approved) {
+            return;
+        };
+        PhotoSerie testShots = new PhotoSerie();
+        testShots.setSeriesName(PhotoSerie.TESTSHOTS);
+        testShots.setProject(asjd.project);
+        testShots.setExposure(asjd.exposure);
+        testShots.setNumber(1);
+
+        PhotoSerie lights = new PhotoSerie();
+        lights.setSeriesName(PhotoSerie.LIGHTS);
+        lights.setProject(asjd.project);
+        lights.setExposure(asjd.exposure);
+        lights.setNumber(20);
+
+        PhotoSerie darks = new PhotoSerie();
+        darks.setSeriesName(PhotoSerie.DARKS);
+        darks.setProject(asjd.project);
+        darks.setExposure(asjd.exposure);
+        darks.setNumber(10);
+
+        try {
+            SmartPhoneWrapper.addJob(testShots);
+            SmartPhoneWrapper.addJob(lights);
+            SmartPhoneWrapper.addJob(darks);
+        } catch (IOException ex) {
+            Logger.getLogger(AstroModeJPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_addDefaultjButtonActionPerformed
+
+    private void addDatejButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addDatejButtonActionPerformed
+        GlobalProperties gp = new GlobalProperties();
+        SimpleDateFormat sdf = new SimpleDateFormat(
+                gp.getProperty(CamSyncProperties.DATE_FORMAT));
+
+        String text = astroFolderjTextField.getText();
+        if (text.contains("20") && text.contains("_")) {//Most likely already contains a date
+            text = text.substring(0, text.length() - 11);
+        }
+        text += System.getProperty("file.separator") + sdf.format(new Date(System.currentTimeMillis()));
+        astroFolderjTextField.setText(text);
+    }//GEN-LAST:event_addDatejButtonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton addDatejButton;
+    private javax.swing.JButton addDefaultjButton;
     private javax.swing.JButton addJobjButton;
     private javax.swing.JTextField astroFolderjTextField;
     private javax.swing.JButton chooseDirjButton;
@@ -536,6 +685,9 @@ public class AstroModeJPanel extends javax.swing.JPanel implements FTPConnection
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTable jobjTable;
@@ -572,10 +724,21 @@ public class AstroModeJPanel extends javax.swing.JPanel implements FTPConnection
                     + System.getProperty("file.separator")
                     + myPS.getProject() + System.getProperty("file.separator")
                     + myPS.getSeriesName());
-            try {
-                FileUtils.moveFileToDirectory(receivedFile, targetFolder, true);
-            } catch (IOException ex) {
-                Logger.getLogger(AstroModeJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            boolean moved = false;
+            int fileexistscounter = 0;
+            while (!moved) {
+                try {
+                    try {
+                        FileUtils.moveFileToDirectory(receivedFile, targetFolder, true);
+                        moved = true;
+                    } catch (FileExistsException fee) {
+                        fileexistscounter++;
+
+                        receivedFile.renameTo(new File(receivedFile.getAbsolutePath() + "_" + fileexistscounter));
+                    }
+                } catch (IOException ex) {
+                    Logger.getLogger(AstroModeJPanel.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
             if (message.toUpperCase().endsWith(".NEF")) {
                 myPS.setReceived(myPS.getReceived() + 1);
