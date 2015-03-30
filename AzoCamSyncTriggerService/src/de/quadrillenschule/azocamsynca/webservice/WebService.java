@@ -162,13 +162,13 @@ public class WebService {
     }
 
     private synchronized void updateTriggered(final HttpServletResponse finalresponse, final Request request) {
-        PhotoSerie myPs = null;
+       PhotoSerie myPs = null;
 
         String jobId = request.getParameter(WebParameters.jobid.name());
-        long receivedImages = Integer.parseInt(request.getParameter(WebParameters.receivedImages.name()));
+        final long receivedImages = Integer.parseInt(request.getParameter(WebParameters.receivedImages.name()));
         for (PhotoSerie ps : jobProcessor.getJobs()) {
             if (ps.getId().equals(jobId)) {
-                ps.setReceived(receivedImages);
+               
                 myPs = ps;
                 break;
             }
@@ -186,6 +186,7 @@ public class WebService {
         getActivity().runOnUiThread(new Runnable() {
 
             public void run() {
+                 finalPs.setReceived(receivedImages);
                 jobProcessor.fireJobProgressEvent(finalPs);
             }
         });

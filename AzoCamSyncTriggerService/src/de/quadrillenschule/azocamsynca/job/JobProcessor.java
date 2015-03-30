@@ -86,6 +86,9 @@ public class JobProcessor {
         final TriggerPhotoSerie currentJob = currentJobT;
         final NikonIR camera = ((AzoTriggerServiceApplication) getActivity().getApplication()).getCamera();
 
+        if (((currentJob.getTriggerStatus() == PhotoSerie.TriggerJobStatus.WAITFORUSER) && ((alertDialog == null) || (!alertDialog.isShowing())))) {
+            currentJob.setTriggerStatus(PhotoSerie.TriggerJobStatus.NEW);
+        }
         if (currentJob.getTriggerStatus() == PhotoSerie.TriggerJobStatus.NEW) {
             currentJob.setTriggerStatus(PhotoSerie.TriggerJobStatus.WAITFORUSER);
             if (currentJob.getSeriesName().equals(PhotoSerie.TESTSHOTS)) {
@@ -119,8 +122,8 @@ public class JobProcessor {
             MediaPlayer mediaPlayer = MediaPlayer.create(activity, R.raw.oida_peda);
             mediaPlayer.start();
             ad.create();
-            alertDialog=ad.show();
-            
+            alertDialog = ad.show();
+
         }
 
         final Handler handler = new Handler();
@@ -228,12 +231,12 @@ public class JobProcessor {
         mediaPlayer.start();
         // adb.create().show();
         adb.create();
-        
-        alertDialog=adb.show();
+
+        alertDialog = adb.show();
     }
 
     public void confirmPreparedDialog() {
-        if ((alertDialog != null) ) {
+        if ((alertDialog != null)) {
             alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).callOnClick();
             alertDialog.dismiss();
         }
