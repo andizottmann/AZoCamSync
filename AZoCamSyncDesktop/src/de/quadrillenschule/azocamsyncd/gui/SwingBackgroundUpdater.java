@@ -45,7 +45,9 @@ public class SwingBackgroundUpdater extends Thread {
             return;
         }
         ftpConnection.close();
+        
         isActive = true;
+       
         getTimer().setInitialDelay(getTimer().getDelay());
         getTimer().stop();
         LinkedList<AZoFTPFile> retval = ftpConnection.checkConnection(false);

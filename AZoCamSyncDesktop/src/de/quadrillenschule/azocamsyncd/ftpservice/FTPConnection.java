@@ -174,6 +174,7 @@ public class FTPConnection {
                     IOUtils.copyLarge(cis, fos);
                 } catch (Exception ie) {
                     fos.close();
+                    is.close();
                 }
                 while (!ftpclient.completePendingCommand()) {
                     try {

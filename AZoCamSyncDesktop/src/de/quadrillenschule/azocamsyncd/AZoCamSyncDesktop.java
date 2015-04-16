@@ -32,6 +32,7 @@ public class AZoCamSyncDesktop {
         f.setVisible(true);
         
         f.startService();
+        
     }
 
 }
