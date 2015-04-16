@@ -8,6 +8,9 @@ package de.quadrillenschule.azocamsynca.webservice;
 import android.app.Activity;
 import de.quadrillenschule.azocamsync.PhotoSerie;
 import de.quadrillenschule.azocamsynca.AzoTriggerServiceApplication;
+import de.quadrillenschule.azocamsynca.History;
+import de.quadrillenschule.azocamsynca.NikonIR;
+import de.quadrillenschule.azocamsynca.helpers.Formats;
 import de.quadrillenschule.azocamsynca.job.JobProcessor;
 import de.quadrillenschule.azocamsynca.job.TriggerPhotoSerie;
 import java.io.IOException;
@@ -32,7 +35,7 @@ public class WebService {
 
     public enum WebCommands {
 
-        list, jobprocessorstatus, startjobprocessor, pausejobprocessor, confirmdialog, addjob, addform, help, updateJob, updateTriggered, removejob
+        list, jobprocessorstatus, startjobprocessor, pausejobprocessor, confirmdialog, addjob, addform, help, updateJob, updateTriggered, removejob, pulltrigger
     };
 
     public enum WebParameters {
@@ -42,9 +45,11 @@ public class WebService {
     public static final String COMMAND_RECEIVED = "Command received", SYNTAX_ERROR = "Syntax error", UNKNOWN_JOB = "Unknown job";
 
     final JobProcessor jobProcessor;
+    final History history;
     private Activity activity;
 
     public WebService(final JobProcessor jobProcessor) {
+        history = new History(jobProcessor.getActivity().getApplication());
         this.jobProcessor = jobProcessor;
         Server server = new Server(8000);
         server.setHandler(new AbstractHandler() {
@@ -57,6 +62,10 @@ public class WebService {
                 if (baseRequest.getPathInfo().contains(WebCommands.list.name())) {
                     response.setContentType("application/json;charset=utf-8");
                     response.getWriter().println(jobProcessor.toJSONArray().toString());
+                    return;
+                }
+                if (baseRequest.getPathInfo().contains(WebCommands.pulltrigger.name())) {
+                    new NikonIR(activity).trigger();
                     return;
                 }
                 if (baseRequest.getPathInfo().contains(WebCommands.jobprocessorstatus.name())) {
@@ -133,8 +142,13 @@ public class WebService {
             getActivity().runOnUiThread(new Runnable() {
 
                 public void run() {
-                      jobProcessor.getJobs().add(tps);
-          
+                    jobProcessor.getJobs().add(tps);
+                    history.addHistory(PhotoSerie.Fields.EXPOSURE, Formats.toString(tps.getExposure()) + "");
+                    history.addHistory(PhotoSerie.Fields.NUMBER_OF_EXPOSURES, tps.getNumber() + "");
+                    history.addHistory(PhotoSerie.Fields.PROJECT, tps.getProject() + "");
+                    history.addHistory(PhotoSerie.Fields.SERIES_NAME, tps.getSeriesName() + "");
+                    history.addHistory(PhotoSerie.Fields.INITIAL_DELAY, Formats.toString(tps.getInitialDelay()) + "");
+                    history.addHistory(PhotoSerie.Fields.DELAY_AFTER_EACH_EXPOSURE, Formats.toString(tps.getDelayAfterEachExposure()) + "");
                     jobProcessor.fireJobProgressEvent(null);
                 }
             });
@@ -162,13 +176,13 @@ public class WebService {
     }
 
     private synchronized void updateTriggered(final HttpServletResponse finalresponse, final Request request) {
-       PhotoSerie myPs = null;
+        PhotoSerie myPs = null;
 
         String jobId = request.getParameter(WebParameters.jobid.name());
         final long receivedImages = Integer.parseInt(request.getParameter(WebParameters.receivedImages.name()));
         for (PhotoSerie ps : jobProcessor.getJobs()) {
             if (ps.getId().equals(jobId)) {
-               
+
                 myPs = ps;
                 break;
             }
@@ -186,7 +200,7 @@ public class WebService {
         getActivity().runOnUiThread(new Runnable() {
 
             public void run() {
-                 finalPs.setReceived(receivedImages);
+                finalPs.setReceived(receivedImages);
                 jobProcessor.fireJobProgressEvent(finalPs);
             }
         });
@@ -268,12 +282,12 @@ public class WebService {
             }
             return;
         };
-        final PhotoSerie ps=myPs;
+        final PhotoSerie ps = myPs;
         getActivity().runOnUiThread(new Runnable() {
 
             public void run() {
-                  jobProcessor.getJobs().remove(ps);
-      
+                jobProcessor.getJobs().remove(ps);
+
                 jobProcessor.fireJobProgressEvent(null);
             }
         });

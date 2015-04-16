@@ -112,7 +112,7 @@ public class NikonIR {
      * @return the exposureSetOnCamera
      */
     public boolean isExposureSetOnCamera(long exposureTime) {
-        return exposureTime<30000;
+        return false;
     }
 
     /**

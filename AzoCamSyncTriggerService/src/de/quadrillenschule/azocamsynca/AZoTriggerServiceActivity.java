@@ -2,10 +2,8 @@ package de.quadrillenschule.azocamsynca;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,8 +26,6 @@ import de.quadrillenschule.azocamsynca.job.JobProcessor;
 import de.quadrillenschule.azocamsynca.job.JobProcessorStatusListener;
 import de.quadrillenschule.azocamsynca.job.JobProgressListener;
 import de.quadrillenschule.azocamsynca.job.TriggerPhotoSerie;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 public class AZoTriggerServiceActivity extends Activity implements JobProcessorStatusListener, JobProgressListener {
 
@@ -496,4 +492,6 @@ public class AZoTriggerServiceActivity extends Activity implements JobProcessorS
     
     }
     }
+    
+  
 }

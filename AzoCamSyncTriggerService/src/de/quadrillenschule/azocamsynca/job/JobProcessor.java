@@ -35,7 +35,7 @@ public class JobProcessor {
 
     public enum ProcessorStatus {
 
-        IDLE, PROCESSING, PAUSED
+        PROCESSING, PAUSED
     };
 
     private ProcessorStatus status = ProcessorStatus.PAUSED;
@@ -72,23 +72,23 @@ public class JobProcessor {
         for (TriggerPhotoSerie j : jobs) {
             if (j.getTriggerStatus() != TriggerPhotoSerie.TriggerJobStatus.FINISHED_TRIGGERING) {
                 currentJobT = j;
-                if (j.getTriggerStatus() == PhotoSerie.TriggerJobStatus.WAITFORUSER) {
+                if ((j.getTriggerStatus() == PhotoSerie.TriggerJobStatus.WAITFORUSER) && ((alertDialog != null) && (alertDialog.isShowing()))) {
                     return;
+                }
+                if ((j.getTriggerStatus() == PhotoSerie.TriggerJobStatus.WAITFORUSER)) {
+                    currentJobT.setTriggerStatus(PhotoSerie.TriggerJobStatus.NEW);
                 }
                 break;
             }
         }
         if (currentJobT == null) {
-            setStatus(ProcessorStatus.IDLE);
+            setStatus(ProcessorStatus.PAUSED);
             return;
         }
 
         final TriggerPhotoSerie currentJob = currentJobT;
         final NikonIR camera = ((AzoTriggerServiceApplication) getActivity().getApplication()).getCamera();
 
-        if (((currentJob.getTriggerStatus() == PhotoSerie.TriggerJobStatus.WAITFORUSER) && ((alertDialog == null) || (!alertDialog.isShowing())))) {
-            currentJob.setTriggerStatus(PhotoSerie.TriggerJobStatus.NEW);
-        }
         if (currentJob.getTriggerStatus() == PhotoSerie.TriggerJobStatus.NEW) {
             currentJob.setTriggerStatus(PhotoSerie.TriggerJobStatus.WAITFORUSER);
             if (currentJob.getSeriesName().equals(PhotoSerie.TESTSHOTS)) {
@@ -150,11 +150,10 @@ public class JobProcessor {
                         if (!currentJob.isToggleIsOpen()) {
                             currentJob.setToggleIsOpen(!currentJob.isToggleIsOpen());
 
-                            currentJob.setTriggered(currentJob.getTriggered() + 1);
-
                             currentJob.setLastTriggerTime(System.currentTimeMillis());
                         } else {
                             currentJob.setToggleIsOpen(!currentJob.isToggleIsOpen());
+                            currentJob.setTriggered(currentJob.getTriggered() + 1);
 
                         }
                     } else {
