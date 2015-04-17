@@ -13,6 +13,7 @@ import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import de.quadrillenschule.azocamsync.PhotoSerie;
+import de.quadrillenschule.azocamsynca.AZoTriggerServiceActivity;
 import de.quadrillenschule.azocamsynca.AzoTriggerServiceApplication;
 import de.quadrillenschule.azocamsynca.NikonIR;
 import de.quadrillenschule.azocamsynca.R;
@@ -44,10 +45,13 @@ public class JobProcessor {
     private Handler handler;
     private Activity activity;
     AlertDialog alertDialog;
-
+private StatusUpdater statusUpdater;
+    
     public JobProcessor(Activity ac) {
         handler = new Handler();
         this.activity = ac;
+        statusUpdater=new StatusUpdater((AZoTriggerServiceActivity) ac);
+        
 
     }
 
@@ -81,6 +85,7 @@ public class JobProcessor {
                 break;
             }
         }
+    //    statusUpdater.startExposure(currentJobT);
         if (currentJobT == null) {
             setStatus(ProcessorStatus.PAUSED);
             return;
@@ -138,6 +143,8 @@ public class JobProcessor {
                         return;
                     }
                     camera.trigger();
+                     statusUpdater.startExposure(currentJob);
+       
                     for (JobProgressListener j : jobProgressListeners) {
                         j.jobProgressed(currentJob);
                     }

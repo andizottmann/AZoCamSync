@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.ListPopupWindow;
 import android.widget.ListView;
 import android.widget.NumberPicker;
+import android.widget.TextView;
 import com.ikovac.timepickerwithseconds.view.TimePicker;
 import de.quadrillenschule.azocamsync.PhotoSerie;
 import de.quadrillenschule.azocamsynca.helpers.Formats;
@@ -46,7 +47,13 @@ public class AZoTriggerServiceActivity extends Activity implements JobProcessorS
         setContentView(R.layout.main);
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-       
+        TextView statusTextView = ((TextView) findViewById(R.id.statustextView));
+
+        ViewGroup.LayoutParams lptv = statusTextView.getLayoutParams();
+        lptv.width = 0;
+        lptv.height = 0;
+        statusTextView.setLayoutParams(lptv);
+
     }
 
     @Override
@@ -176,7 +183,7 @@ public class AZoTriggerServiceActivity extends Activity implements JobProcessorS
                     }
                 });
 
-               ab.show();
+                ab.show();
             }
         });
 
@@ -209,7 +216,7 @@ public class AZoTriggerServiceActivity extends Activity implements JobProcessorS
                     public void onClick(DialogInterface dialog, int which) {
                     }
                 });
-               ab.show();
+                ab.show();
             }
         });
 
@@ -462,18 +469,29 @@ public class AZoTriggerServiceActivity extends Activity implements JobProcessorS
         startstopQueueButton.setText(newStatus.name());
         if (newStatus.equals(JobProcessor.ProcessorStatus.PROCESSING)) {
             LinearLayout editorLL = ((LinearLayout) findViewById(R.id.editorLinearLayout));
-            //editorLL.setVisibility(View.INVISIBLE);
+            TextView statusTextView = ((TextView) findViewById(R.id.statustextView));
             ViewGroup.LayoutParams lp = editorLL.getLayoutParams();
             lp.width = 0;
             lp.height = 0;
             editorLL.setLayoutParams(lp);
+
+            ViewGroup.LayoutParams lptv = statusTextView.getLayoutParams();
+            lptv.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            lptv.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+            statusTextView.setLayoutParams(lptv);
         } else {
             LinearLayout editorLL = ((LinearLayout) findViewById(R.id.editorLinearLayout));
             //editorLL.setVisibility(View.INVISIBLE);
+            TextView statusTextView = ((TextView) findViewById(R.id.statustextView));
+
             ViewGroup.LayoutParams lp = editorLL.getLayoutParams();
             lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
             lp.height = ViewGroup.LayoutParams.WRAP_CONTENT;
             editorLL.setLayoutParams(lp);
+            ViewGroup.LayoutParams lptv = statusTextView.getLayoutParams();
+            lptv.width = 0;
+            lptv.height = 0;
+            statusTextView.setLayoutParams(lptv);
         }
     }
 
@@ -486,12 +504,22 @@ public class AZoTriggerServiceActivity extends Activity implements JobProcessorS
         final Button modifyJobButton = (Button) findViewById(R.id.modifyJobButton);
         modifyJobButton.setEnabled(enabled);
     }
-    
-    public void confirmAlertDialog(){
-    if (alertDialog.isShowing()){
-    
+
+    public void confirmAlertDialog() {
+        if (alertDialog.isShowing()) {
+
+        }
     }
+
+    public void updateStatusText(final String text) {
+        final TextView statusTextView = (TextView) findViewById(R.id.statustextView);
+
+        runOnUiThread(new Runnable() {
+
+            public void run() {
+                statusTextView.setText(text);
+            }
+        });
+
     }
-    
-  
 }

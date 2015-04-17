@@ -38,11 +38,12 @@
     >
         <TextView 
             android:id="@+id/statustextView"     
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Status"
             android:textColor="#AA0000"
             android:padding="6dp"
+            android:textSize="24dp"
             android:textStyle="bold"
             
         />
