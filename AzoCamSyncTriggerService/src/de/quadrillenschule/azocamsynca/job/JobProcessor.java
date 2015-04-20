@@ -45,13 +45,13 @@ public class JobProcessor {
     private Handler handler;
     private Activity activity;
     AlertDialog alertDialog;
-private StatusUpdater statusUpdater;
-    
+
+    private StatusUpdater statusUpdater;
+
     public JobProcessor(Activity ac) {
         handler = new Handler();
         this.activity = ac;
-        statusUpdater=new StatusUpdater((AZoTriggerServiceActivity) ac);
-        
+        statusUpdater = new StatusUpdater((AZoTriggerServiceActivity) ac);
 
     }
 
@@ -85,8 +85,12 @@ private StatusUpdater statusUpdater;
                 break;
             }
         }
-    //    statusUpdater.startExposure(currentJobT);
+        //    statusUpdater.startExposure(currentJobT);
         if (currentJobT == null) {
+            if (jobs.size() > 0) {
+                MediaPlayer mediaPlayer = MediaPlayer.create(activity, R.raw.oida_peda);
+                mediaPlayer.start();
+            }
             setStatus(ProcessorStatus.PAUSED);
             return;
         }
@@ -94,7 +98,7 @@ private StatusUpdater statusUpdater;
         final TriggerPhotoSerie currentJob = currentJobT;
         final NikonIR camera = ((AzoTriggerServiceApplication) getActivity().getApplication()).getCamera();
 
-        if (currentJob.getTriggerStatus() == PhotoSerie.TriggerJobStatus.NEW) {
+        if ((currentJob.getTriggerStatus() == PhotoSerie.TriggerJobStatus.NEW) && (!currentJob.isToggleIsOpen())) {
             currentJob.setTriggerStatus(PhotoSerie.TriggerJobStatus.WAITFORUSER);
             if (currentJob.getSeriesName().equals(PhotoSerie.TESTSHOTS)) {
                 doTestShots(currentJob);
@@ -143,8 +147,8 @@ private StatusUpdater statusUpdater;
                         return;
                     }
                     camera.trigger();
-                     statusUpdater.startExposure(currentJob);
-       
+                    statusUpdater.startExposure(currentJob);
+
                     for (JobProgressListener j : jobProgressListeners) {
                         j.jobProgressed(currentJob);
                     }
