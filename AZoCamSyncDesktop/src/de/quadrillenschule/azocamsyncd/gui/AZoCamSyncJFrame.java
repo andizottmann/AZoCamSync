@@ -95,7 +95,11 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
         sdCardPollingIntervalljComboBox.setSelectedIndex(PollingIntervallListEntry.indexOf(Integer.parseInt(gp.getProperty(CamSyncProperties.PULLINTERVALLSECS))));
         try {
             ToolTipManager.sharedInstance().setEnabled(Boolean.parseBoolean(gp.getProperty(CamSyncProperties.TOOLTIPS)));
-
+            try {
+                gp.load();
+            } catch (IOException ex) {
+                Logger.getLogger(AZoCamSyncJFrame.class.getName()).log(Level.SEVERE, null, ex);
+            }
             lastDownloaded = new File(gp.getProperty(CamSyncProperties.LATESTIMAGEPATH));
             updateAllImageLabels(new File(gp.getProperty(CamSyncProperties.LATESTIMAGEPATH)));
         } catch (MalformedURLException ex) {
@@ -984,7 +988,7 @@ public class AZoCamSyncJFrame extends javax.swing.JFrame implements FTPConnectio
                                     sbu.interrupt();
                                     sbu.isActive = false;
                                     sbu.getTimer().start();
-                                    
+
                                 }
                             } else {
                                 lastreceivedtimestamp = System.currentTimeMillis();
