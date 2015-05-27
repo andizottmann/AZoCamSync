@@ -26,10 +26,10 @@ public class PhotoSerie {
 
     public enum Fields {
 
-        PROJECT, SERIES_NAME, INITIAL_DELAY, EXPOSURE, DELAY_AFTER_EACH_EXPOSURE, NUMBER_OF_EXPOSURES, RECEIVED, ID, TRIGGER_JOB_STATUS, TRIGGERED
+        PROJECT, SERIES_NAME, INITIAL_DELAY, EXPOSURE, DELAY_AFTER_EACH_EXPOSURE, ID, TRIGGER_JOB_STATUS, NUMBER_OF_EXPOSURES, TRIGGERED, RECEIVED
     };
 
-    public static String TESTSHOTS = "testShots",LIGHTS="lights",DARKS="darks";
+    public static String TESTSHOTS = "testShots", LIGHTS = "lights", DARKS = "darks";
     private long firstTriggerTime = 0;
     private int number = 0;
     private String seriesName = TESTSHOTS;
