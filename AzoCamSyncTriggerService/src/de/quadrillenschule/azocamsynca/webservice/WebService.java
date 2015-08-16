@@ -35,7 +35,7 @@ public class WebService {
 
     public enum WebCommands {
 
-        list, jobprocessorstatus, startjobprocessor, pausejobprocessor, confirmdialog, addjob, addform, help, updateJob, updateTriggered, removejob, pulltrigger
+        list, jobprocessorstatus, startjobprocessor, pausejobprocessor, confirmdialog, addjob, addform, help, updateJob, updateTriggered, removejob, pulltrigger,getshutterremainingtime
     };
 
     public enum WebParameters {
@@ -62,6 +62,10 @@ public class WebService {
                 if (baseRequest.getPathInfo().contains(WebCommands.list.name())) {
                     response.setContentType("application/json;charset=utf-8");
                     response.getWriter().println(jobProcessor.toJSONArray().toString());
+                    return;
+                }
+                  if (baseRequest.getPathInfo().contains(WebCommands.getshutterremainingtime.name())) {
+                    response.getWriter().println(jobProcessor.getStatusUpdater().getShutterRemainingTime());
                     return;
                 }
                 if (baseRequest.getPathInfo().contains(WebCommands.pulltrigger.name())) {

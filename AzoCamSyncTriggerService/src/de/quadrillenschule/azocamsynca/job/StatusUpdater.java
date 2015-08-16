@@ -52,12 +52,19 @@ public class StatusUpdater {
         if (tps == null) {
             return "No current job.";
         }
-        long value = ((tps.getExposure() - (System.currentTimeMillis() - startTime)) / 1000);
+        long value = getShutterRemainingTime();
 
         if (tps.isToggleIsOpen()) {
             return "Shutter open for: " + value + "s";
         } else {
             return "Shutter is closed.";
         }
+    }
+
+    public long getShutterRemainingTime() {
+        if ((tps == null) || (!tps.isToggleIsOpen())) {
+            return 0;
+        }
+        return ((tps.getExposure() - (System.currentTimeMillis() - startTime)) / 1000);
     }
 }

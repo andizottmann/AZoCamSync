@@ -34,6 +34,13 @@ public class JobProcessor {
     private LinkedList<JobProcessorStatusListener> jobProcessorStatusListeners = new LinkedList<JobProcessorStatusListener>();
     private LinkedList<JobProgressListener> jobProgressListeners = new LinkedList<JobProgressListener>();
 
+    /**
+     * @return the statusUpdater
+     */
+    public StatusUpdater getStatusUpdater() {
+        return statusUpdater;
+    }
+
     public enum ProcessorStatus {
 
         PROCESSING, PAUSED
@@ -147,7 +154,7 @@ public class JobProcessor {
                         return;
                     }
                     camera.trigger();
-                    statusUpdater.startExposure(currentJob);
+                    getStatusUpdater().startExposure(currentJob);
 
                     for (JobProgressListener j : jobProgressListeners) {
                         j.jobProgressed(currentJob);
