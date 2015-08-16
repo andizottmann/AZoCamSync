@@ -120,14 +120,16 @@ public class AstroModeJPanel extends javax.swing.JPanel implements FTPConnection
         }
         smartPhoneStatus.setForeground(statusColor);
         try {
-            if (SmartPhoneWrapper.getFromSmartPhone(WebService.WebCommands.jobprocessorstatus, true).contains(JobProcessor.ProcessorStatus.PAUSED.name())) {
+            if (SmartPhoneWrapper.getFromSmartPhone(WebService.WebCommands.jobprocessorstatus).contains(JobProcessor.ProcessorStatus.PAUSED.name())) {
                 pauseQueuejButton.setEnabled(false);
                 startProcessorjButton.setEnabled(true);
+
             } else {
                 pauseQueuejButton.setEnabled(true);
                 startProcessorjButton.setEnabled(false);
-
             }
+            shutterRemainingTimeLabel.setText(SmartPhoneWrapper.getFromSmartPhone(WebService.WebCommands.getshutterremainingtime));
+
         } catch (IOException ex) {
             Logger.getLogger(AstroModeJPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -180,6 +182,7 @@ public class AstroModeJPanel extends javax.swing.JPanel implements FTPConnection
         confirmSPjButton = new javax.swing.JButton();
         startProcessorjButton = new javax.swing.JButton();
         pauseQueuejButton = new javax.swing.JButton();
+        shutterRemainingTimeLabel = new javax.swing.JLabel();
         jPanel8 = new javax.swing.JPanel();
         addJobjButton = new javax.swing.JButton();
         modifyJobjButton = new javax.swing.JButton();
@@ -424,11 +427,9 @@ public class AstroModeJPanel extends javax.swing.JPanel implements FTPConnection
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
         jPanel5.add(confirmSPjButton, gridBagConstraints);
 
         startProcessorjButton.setText("Start Queue");
@@ -452,6 +453,16 @@ public class AstroModeJPanel extends javax.swing.JPanel implements FTPConnection
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         jPanel5.add(pauseQueuejButton, gridBagConstraints);
+
+        shutterRemainingTimeLabel.setText("0s");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        jPanel5.add(shutterRemainingTimeLabel, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
@@ -616,7 +627,7 @@ public class AstroModeJPanel extends javax.swing.JPanel implements FTPConnection
 
     private void confirmSPjButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confirmSPjButtonActionPerformed
         try {
-            SmartPhoneWrapper.getFromSmartPhone(WebService.WebCommands.confirmdialog, true);
+            SmartPhoneWrapper.getFromSmartPhone(WebService.WebCommands.confirmdialog);
         } catch (IOException ex) {
             Logger.getLogger(AstroModeJPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -625,7 +636,7 @@ public class AstroModeJPanel extends javax.swing.JPanel implements FTPConnection
 
     private void pauseQueuejButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pauseQueuejButtonActionPerformed
         try {
-            SmartPhoneWrapper.getFromSmartPhone(WebService.WebCommands.pausejobprocessor, true);
+            SmartPhoneWrapper.getFromSmartPhone(WebService.WebCommands.pausejobprocessor);
         } catch (IOException ex) {
             Logger.getLogger(AstroModeJPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -634,7 +645,7 @@ public class AstroModeJPanel extends javax.swing.JPanel implements FTPConnection
 
     private void startProcessorjButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startProcessorjButtonActionPerformed
         try {
-            SmartPhoneWrapper.getFromSmartPhone(WebService.WebCommands.startjobprocessor, true);
+            SmartPhoneWrapper.getFromSmartPhone(WebService.WebCommands.startjobprocessor);
         } catch (IOException ex) {
             Logger.getLogger(AstroModeJPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -756,6 +767,7 @@ public class AstroModeJPanel extends javax.swing.JPanel implements FTPConnection
     private javax.swing.JButton removeJobjButton;
     private javax.swing.JButton removeallJobsjButton;
     private javax.swing.JTextField seriesTextField;
+    private javax.swing.JLabel shutterRemainingTimeLabel;
     private javax.swing.JTextField smartPhoneIPjTextField;
     private javax.swing.JLabel smartPhoneStatus;
     private javax.swing.JButton startAstroModejButton;

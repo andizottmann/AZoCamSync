@@ -55,7 +55,7 @@ public class SmartPhoneWrapper {
     public static LinkedList<PhotoSerie> getJobs() throws JSONException, IOException {
 
         lastStatus = SmartPhoneStatus.TRYING;
-        JSONArray ja = new JSONArray(getFromSmartPhone(WebService.WebCommands.list, true));
+        JSONArray ja = new JSONArray(getFromSmartPhone(WebService.WebCommands.list));
         LinkedList<PhotoSerie> retval = new LinkedList<PhotoSerie>();
         for (int i = 0; i < ja.length(); i++) {
             PhotoSerie tps = new PhotoSerie();
@@ -186,7 +186,7 @@ public class SmartPhoneWrapper {
         }
     }
 
-    public static String getFromSmartPhone(WebService.WebCommands command, boolean doCheck) throws IOException {
+    public static String getFromSmartPhone(WebService.WebCommands command) throws IOException {
         String retval;
         SmartPhoneStatus status = SmartPhoneStatus.TRYING;
 
@@ -222,7 +222,7 @@ public class SmartPhoneWrapper {
         for (String ip : (LAST_WORKING_IP + "," + gp.getProperty(GlobalProperties.CamSyncProperties.SMARTPHONE_IPS)).split(",")) {
             LAST_WORKING_IP = ip;
             try {
-                if (getFromSmartPhone(WebService.WebCommands.help, false) != SmartPhoneStatus.ERROR.name()) {
+                if (getFromSmartPhone(WebService.WebCommands.help) != SmartPhoneStatus.ERROR.name()) {
 
                     lastStatus = SmartPhoneStatus.CONNECTED;
                     return SmartPhoneStatus.CONNECTED;
