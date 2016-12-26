@@ -45,9 +45,9 @@ public class SwingBackgroundUpdater extends Thread {
             return;
         }
         ftpConnection.close();
-        
+
         isActive = true;
-       
+
         getTimer().setInitialDelay(getTimer().getDelay());
         getTimer().stop();
         LinkedList<AZoFTPFile> retval = ftpConnection.checkConnection(false);
@@ -103,10 +103,11 @@ public class SwingBackgroundUpdater extends Thread {
         }
 
         ftpConnection.close();
-        isActive = false;
+       
         if (ftpConnection.isLooksFullySynced()) {
+          
             ftpConnection.remountSD();
-
+          
             getTimer().setDelay(1000 * Integer.parseInt(gp.getProperty(GlobalProperties.CamSyncProperties.PULLINTERVALLSECS)));
             getTimer().setInitialDelay(1000 * Integer.parseInt(gp.getProperty(GlobalProperties.CamSyncProperties.PULLINTERVALLSECS)));
 
@@ -115,6 +116,7 @@ public class SwingBackgroundUpdater extends Thread {
 
             getTimer().setDelay(500);
         }
+        isActive = false;
         getTimer().start();
 
     }
